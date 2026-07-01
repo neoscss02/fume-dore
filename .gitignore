@@ -1,0 +1,11 @@
+# internal working docs — not for public site
+_*.md
+*_PROMPT.md
+AI_SALE_PROMPT.md
+cutout.py
+index1.html
+
+# OS / editor junk
+Thumbs.db
+.DS_Store
+desktop.ini

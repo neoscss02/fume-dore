@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="th" data-lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FAFIN FUME — Luxury Car Perfume</title>
+<meta name="description" content="FAFIN FUME — น้ำหอมปรับอากาศในรถยนต์ระดับลักชัวรี กลิ่น Fruity หรูหรา ติดทนนาน" />
+<link rel="icon" type="image/png" href="images/Logo.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:wght@400;500;600;700;800;900&family=Jost:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&family=Pridi:wght@400;500;600;700&family=Cinzel:wght@500;600;700&family=Kanit:wght@500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --black:#0a0a0a;--piano:#050505;--graphite:#16151a;
+    --gold:#d4af37;--gold-bright:#f4d77e;--gold-deep:#b8902e;
+    --champagne:#e8d9a8;--warm-white:#f4efe4;--muted:#9a948a;
+    --line:rgba(212,175,55,.18);
+    --gold-grad:linear-gradient(135deg,#b8902e 0%,#f4d77e 45%,#d4af37 60%,#9c7724 100%);
+    --gold-metal:linear-gradient(180deg,#fdeeb8 0%,#e8c565 20%,#f8e296 42%,#c99a2e 60%,#a87d22 74%,#f2d57a 100%);
+    --serif:'Playfair Display',serif;
+    --serif2:'Cormorant Garamond',serif;
+    --sans:'Jost',sans-serif;
+    --serif-th:'Pridi',serif;
+    --sans-th:'Sarabun',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--piano);color:var(--warm-white);font-family:var(--sans);font-weight:300;line-height:1.78;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  /* Thai fonts when TH active */
+  html[data-lang="th"] body{font-family:var(--sans-th);font-weight:300}
+  html[data-lang="th"] h1,html[data-lang="th"] h2,html[data-lang="th"] h3,
+  html[data-lang="th"] .benefit-list h4,html[data-lang="th"] .spec b{font-family:var(--serif-th)}
+  html[data-lang="th"] .review p{font-family:var(--serif-th);font-style:normal}
+  html[data-lang="th"] .gold-text{font-family:var(--serif-th)}
+  ::selection{background:var(--gold);color:#000}
+  img{display:block;max-width:100%}
+  a{text-decoration:none;color:inherit}
+  .gold-text{background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  .wrap{max-width:1320px;margin:0 auto;padding:0 40px}
+  .eyebrow{font-family:var(--sans);font-weight:400;letter-spacing:.42em;text-transform:uppercase;font-size:.72rem;color:var(--gold);display:inline-flex;align-items:center;gap:14px}
+  html[data-lang="th"] .eyebrow{letter-spacing:.18em;font-family:var(--sans-th)}
+  .eyebrow::before{content:"";width:38px;height:1px;background:var(--gold-grad)}
+  h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.1}
+  html[data-lang="th"] h1,html[data-lang="th"] h2{line-height:1.3}
+  .section{padding:172px 0;position:relative}
+  .section+.section::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:180px;height:1px;background:linear-gradient(90deg,transparent,var(--gold-deep),transparent);opacity:.4}
+
+  .bg-fixed{position:fixed;inset:0;z-index:-3;background:
+    radial-gradient(1200px 700px at 78% -8%,rgba(212,175,55,.06),transparent 60%),
+    radial-gradient(900px 600px at 5% 112%,rgba(212,175,55,.04),transparent 55%),
+    radial-gradient(135% 125% at 50% 45%,transparent 52%,rgba(0,0,0,.62) 100%),
+    linear-gradient(180deg,#060605 0%,#080807 42%,#050504 100%)}
+  .grain{position:fixed;inset:0;z-index:-2;opacity:.055;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .particles{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+  .particles i{position:absolute;bottom:-10px;width:3px;height:3px;border-radius:50%;background:radial-gradient(circle,var(--gold-bright),rgba(212,175,55,0));animation:rise linear infinite;opacity:0}
+  @keyframes rise{0%{transform:translateY(0) scale(.6);opacity:0}10%{opacity:.9}90%{opacity:.7}100%{transform:translateY(-105vh) scale(1.1);opacity:0}}
+
+  header{position:fixed;top:0;left:0;right:0;z-index:100;transition:.5s cubic-bezier(.2,.7,.2,1)}
+  header.scrolled{background:rgba(7,7,7,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);box-shadow:0 10px 40px rgba(0,0,0,.5)}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:26px 40px;max-width:1500px;margin:0 auto;transition:.4s;gap:24px}
+  header.scrolled .nav{padding:16px 40px}
+  .brand{display:flex;align-items:center;gap:2px;flex:none;opacity:0;pointer-events:none;transition:opacity .45s ease}
+  header.scrolled .brand{opacity:1;pointer-events:auto}
+  .crest{width:38px;height:38px;flex:none}
+  .brand b{font-family:var(--serif);font-weight:600;letter-spacing:.32em;font-size:1.05rem;color:var(--warm-white)}
+  .brand-logo{height:70px;width:auto;display:block;transition:.4s cubic-bezier(.2,.7,.2,1);filter:drop-shadow(0 3px 14px rgba(212,175,55,.32))}
+  header.scrolled .brand-logo{height:56px}
+  .brand-name{font-family:var(--serif);font-weight:700;font-size:1.42rem;letter-spacing:.09em;
+    background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;white-space:nowrap}
+  header.scrolled .brand-name{font-size:1.3rem}
+  .foot-logo{height:70px;width:auto;display:block;filter:drop-shadow(0 3px 14px rgba(212,175,55,.24))}
+  .foot-name{font-family:var(--serif);font-weight:700;font-size:1.35rem;letter-spacing:.07em;margin-top:8px;
+    background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  .menu{display:flex;gap:42px;list-style:none;margin-left:auto}
+  .menu a{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:#cfc9bd;position:relative;transition:.3s}
+  html[data-lang="th"] .menu a{font-family:var(--sans-th);letter-spacing:.06em;text-transform:none;font-size:.92rem}
+  .menu a::after{content:"";position:absolute;left:0;bottom:-7px;width:0;height:1px;background:var(--gold-grad);transition:.35s}
+  .menu a:hover{color:var(--gold-bright)}.menu a:hover::after{width:100%}
+  /* language switch */
+  .lang{display:flex;align-items:center;border:1px solid var(--line);border-radius:40px;overflow:hidden;flex:none}
+  .lang-btn{font-family:var(--sans);font-size:.72rem;letter-spacing:.14em;padding:9px 15px;color:var(--muted);background:transparent;border:none;cursor:pointer;transition:.35s}
+  .lang-btn.active{background:var(--gold-grad);color:#0a0a0a;font-weight:500}
+  .nav-cta{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;padding:12px 26px;border:1px solid var(--gold);border-radius:40px;color:var(--gold-bright);transition:.4s;position:relative;overflow:hidden;flex:none}
+  html[data-lang="th"] .nav-cta{font-family:var(--sans-th);letter-spacing:.04em;text-transform:none;font-size:.9rem}
+  .nav-cta:hover{color:#0a0a0a;border-color:transparent}
+  .nav-cta::before{content:"";position:absolute;inset:0;background:var(--gold-grad);transform:translateY(101%);transition:.4s;z-index:-1}
+  .nav-cta:hover::before{transform:translateY(0)}
+
+  .hero{position:relative;overflow:hidden;padding:0;background:#050505}
+  .hero-inner{position:relative;width:100%;margin:0 auto;font-size:0}
+  .hero-banner-img{width:100%;aspect-ratio:16/9;object-fit:cover;object-position:center;display:block}
+  .hero-inner::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(90deg,rgba(5,5,5,.92) 0%,rgba(5,5,5,.6) 26%,rgba(5,5,5,.1) 46%,rgba(5,5,5,0) 60%)}
+  .hero-photo{position:absolute;top:20%;right:2%;width:48%;max-width:660px;z-index:1}
+  .hero-photo img{width:100%;height:auto;filter:drop-shadow(0 30px 50px rgba(0,0,0,.6)) drop-shadow(0 0 70px rgba(212,175,55,.13))}
+  .hero-shade{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(120% 95% at 40% 50%,transparent 56%,rgba(0,0,0,.4) 100%)}
+  .hero .wrap{position:relative;z-index:5;width:100%}
+  .hero-brand{position:absolute;top:50%;left:5.5%;transform:translateY(-50%);z-index:3;width:42%;max-width:600px;text-align:center}
+  .hero-cta-btn{margin-top:30px;box-shadow:0 12px 34px rgba(212,175,55,.32)}
+  .hero-crest{height:175px;width:auto;margin:0 auto 6px;display:block;filter:drop-shadow(0 6px 18px rgba(212,175,55,.45));animation:floaty 6s ease-in-out infinite}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .hero-name{font-family:var(--serif);font-weight:800;font-size:clamp(2.3rem,4.8vw,3.7rem);letter-spacing:1px;margin-bottom:12px;line-height:1;
+    background:var(--gold-metal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;filter:drop-shadow(0 2px 2px rgba(0,0,0,.55))}
+  .hero-brand h1{font-family:var(--serif2);font-size:clamp(2.1rem,3.9vw,3.2rem);font-weight:300;letter-spacing:2px;line-height:1.05;color:#fbf6ea;text-shadow:0 2px 3px rgba(0,0,0,.5);margin:6px 0 2px}
+  .hero-sub{font-family:var(--serif);font-size:clamp(1.3rem,2.3vw,1.9rem);font-weight:400;color:#fbf6ea;letter-spacing:.5px;margin-top:-2px;line-height:1.1;text-shadow:0 2px 3px rgba(0,0,0,.45)}
+  .hero-div{width:80px;height:2px;background:var(--gold-metal);margin:16px auto;border-radius:2px}
+  .hero-tag1{font-family:'Kanit',sans-serif;font-size:clamp(1.5rem,3vw,2.15rem);font-weight:600;
+    background:var(--gold-metal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;filter:drop-shadow(0 2px 2px rgba(0,0,0,.5))}
+  html[data-lang="en"] .hero-tag1{font-family:var(--serif2);font-style:italic;font-weight:600}
+  .hero-tag2{color:#eae4d6;font-size:clamp(1.25rem,2.6vw,1.75rem);font-weight:300;margin-top:8px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+  html[data-lang="th"] .hero-tag2{font-family:var(--sans-th)}
+  .hero-icons{display:flex;gap:30px;margin:22px 0 0;flex-wrap:wrap;justify-content:center}
+  .hero-ic{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;max-width:140px}
+  .hero-ic .circle{width:70px;height:70px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--gold);background:radial-gradient(circle,rgba(212,175,55,.08),transparent);transition:.4s}
+  .hero-ic:hover .circle{border-color:var(--gold);box-shadow:0 0 24px rgba(212,175,55,.25);transform:translateY(-4px)}
+  .hero-ic .circle svg{width:32px;height:32px}
+  .ic-img{width:66px;height:66px;object-fit:contain;transition:.45s cubic-bezier(.2,.7,.2,1)}
+  .hero-ic:hover .ic-img{transform:translateY(-5px) scale(1.05);filter:drop-shadow(0 0 20px rgba(212,175,55,.45))}
+  .hero-ic span{font-size:.94rem;color:#eae4d6;line-height:1.35}
+  html[data-lang="th"] .hero-ic span{font-family:var(--sans-th)}
+  /* feature bar */
+  .fbar{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--piano);position:relative;z-index:6;margin-top:-70px}
+  .fbar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+  .fbar-item{background:var(--piano);display:flex;align-items:center;gap:15px;padding:30px 26px;transition:.4s}
+  .fbar-item:hover{background:linear-gradient(160deg,rgba(212,175,55,.06),transparent)}
+  .fbar-item svg{width:36px;height:36px;color:var(--gold);flex:none}
+  .fbar-ico{width:48px;height:48px;object-fit:contain;flex:none;transition:.4s cubic-bezier(.2,.7,.2,1)}
+  .fbar-item:hover .fbar-ico{transform:translateY(-3px) scale(1.06);filter:drop-shadow(0 0 16px rgba(212,175,55,.4))}
+  .fbar-item b{font-family:var(--serif);font-weight:500;font-size:1.24rem;color:var(--warm-white);display:block;margin-bottom:4px;letter-spacing:.3px}
+  html[data-lang="th"] .fbar-item b{font-family:var(--serif-th)}
+  .fbar-item span{font-size:.85rem;color:#cbc4b5}
+  @media(max-width:880px){.fbar-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.fbar-grid{grid-template-columns:1fr}}
+  /* image-less single-column sections */
+  .split.solo{grid-template-columns:1fr;max-width:820px;margin:0 auto}
+  .detail-grid.solo{grid-template-columns:1fr;max-width:820px;margin:0 auto}
+  .sec-media{border-radius:20px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 60px rgba(0,0,0,.55);aspect-ratio:4/5;background:#0a0908}
+  .sec-media img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+  .split:hover .sec-media img,.detail-grid:hover .sec-media img{transform:scale(1.04)}
+  .lifestyle.noimg{background:radial-gradient(700px 340px at 78% 25%,rgba(212,175,55,.12),transparent 60%),linear-gradient(120deg,#0c0b09,#131110 60%,#0a0908)}
+  .hero-bg{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .hero-bg .floor{position:absolute;left:0;right:0;bottom:0;height:30%;
+    background:linear-gradient(180deg,transparent,rgba(20,16,8,.5) 55%,rgba(0,0,0,.72));
+    border-top:1px solid rgba(212,175,55,.05)}
+  .hero-bg .vig{position:absolute;inset:0;background:radial-gradient(118% 88% at 62% 42%,transparent 48%,rgba(0,0,0,.55) 100%)}
+  .hero-bg .bok{position:absolute;border-radius:50%;filter:blur(3px);
+    background:radial-gradient(circle,rgba(244,215,126,.55),transparent 70%);animation:bokfloat 9s ease-in-out infinite}
+  @keyframes bokfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+  .hero-glow{position:absolute;right:-5%;top:50%;transform:translateY(-50%);width:60vw;height:60vw;max-width:820px;max-height:820px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.16),rgba(212,175,55,.04) 40%,transparent 68%);filter:blur(10px);z-index:0;animation:breathe 8s ease-in-out infinite}
+  @keyframes breathe{0%,100%{opacity:.8;transform:translateY(-50%) scale(1)}50%{opacity:1;transform:translateY(-50%) scale(1.06)}}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;width:100%;position:relative;z-index:2}
+  .hero-copy{max-width:600px}
+  .hero h1{font-size:clamp(2.1rem,3.9vw,3.2rem);font-weight:300;letter-spacing:2px;margin:6px 0 2px}
+  html[data-lang="th"] .hero h1{font-size:clamp(2.1rem,3.9vw,3.2rem)}
+  .hero h1 em{font-style:italic;font-weight:400;font-family:var(--serif2);display:block;font-size:.62em;color:var(--champagne);letter-spacing:2px}
+  html[data-lang="th"] .hero h1 em{font-family:var(--sans-th);font-style:normal;letter-spacing:.04em;font-size:.42em;margin-top:10px}
+  .hero p.lead{font-size:1.06rem;color:#c7c1b5;font-weight:300;max-width:480px;margin-bottom:40px}
+  .hero-actions{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:12px;font-family:var(--sans);font-weight:500;font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;border:none;padding:18px 38px;border-radius:46px;position:relative;transition:.45s;color:#0a0a0a;background:var(--gold-grad);background-size:200% 200%;box-shadow:0 10px 30px rgba(212,175,55,.25),inset 0 0 0 1px rgba(255,255,255,.15)}
+  html[data-lang="th"] .btn{font-family:var(--sans-th);letter-spacing:.02em;text-transform:none;font-size:.95rem}
+  .btn:hover{background-position:right center;box-shadow:0 16px 48px rgba(212,175,55,.42),0 0 0 4px rgba(212,175,55,.12);transform:translateY(-3px)}
+  .btn-ghost{background:transparent;color:var(--gold-bright);box-shadow:none;border:1px solid var(--line);padding:18px 34px}
+  .btn-ghost:hover{border-color:var(--gold);box-shadow:0 0 30px rgba(212,175,55,.18);transform:translateY(-3px)}
+  .hero-visual{position:relative;display:flex;justify-content:center;align-items:center}
+  .pedestal-wrap{position:relative;z-index:2;animation:float 6s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+  .pedestal-wrap img{filter:drop-shadow(0 34px 46px rgba(0,0,0,.55)) drop-shadow(0 0 60px rgba(212,175,55,.14))}
+  .hero-stats{display:flex;gap:46px;margin-top:62px;padding-top:34px;border-top:1px solid var(--line)}
+  .hero-stats div b{font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--gold-bright);display:block;line-height:1}
+  .hero-stats div span{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  html[data-lang="th"] .hero-stats div span{font-family:var(--sans-th);letter-spacing:.02em;text-transform:none;font-size:.82rem}
+  .scroll-cue{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);z-index:3;font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:10px}
+  .scroll-cue i{width:1px;height:46px;background:linear-gradient(var(--gold),transparent);animation:cue 2s infinite}
+  @keyframes cue{0%{opacity:0;transform:scaleY(.3)}50%{opacity:1}100%{opacity:0;transform:scaleY(1) translateY(8px)}}
+
+  .marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 0;overflow:hidden;background:rgba(0,0,0,.25)}
+  .marquee-track{display:flex;gap:60px;white-space:nowrap;animation:scrollx 28s linear infinite;width:max-content}
+  .marquee span{font-family:var(--serif2);font-style:italic;font-size:1.3rem;color:var(--muted);letter-spacing:1px;display:inline-flex;align-items:center;gap:60px}
+  html[data-lang="th"] .marquee span{font-family:var(--serif-th);font-style:normal;font-size:1.15rem}
+  .marquee span::after{content:"✦";color:var(--gold);font-style:normal}
+  @keyframes scrollx{to{transform:translateX(-50%)}}
+
+  .sec-head{text-align:center;max-width:680px;margin:0 auto 100px}
+  .sec-head h2{font-size:clamp(2.2rem,4vw,3.4rem);margin:20px 0 18px}
+  .sec-head p{color:#c4bdad;font-weight:300;font-size:1.05rem}
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:26px}
+  .feat{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;min-height:360px;display:flex;flex-direction:column;justify-content:flex-end;padding:30px 28px;transition:.5s cubic-bezier(.2,.7,.2,1)}
+  .feat-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+  .feat::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(5,5,5,.05) 0%,rgba(5,5,5,.5) 52%,rgba(5,5,5,.94) 100%)}
+  .feat::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold-grad);opacity:0;transition:.5s;z-index:3}
+  .feat:hover{transform:translateY(-8px);box-shadow:0 30px 60px rgba(0,0,0,.5);border-color:rgba(212,175,55,.45)}
+  .feat:hover::before{opacity:1}
+  .feat:hover .feat-bg{transform:scale(1.06)}
+  .feat-ico{width:56px;height:56px;margin-bottom:26px;color:var(--gold)}
+  .feat h3{position:relative;z-index:2;font-size:1.4rem;font-weight:600;margin-bottom:10px;color:var(--warm-white)}
+  .feat p{position:relative;z-index:2;font-size:.92rem;color:#d8d1c2;font-weight:300;line-height:1.5}
+
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+  .split-media{position:relative;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(60% 60% at 50% 45%,rgba(212,175,55,.10),transparent 70%)}
+  .split-media img{width:100%;height:auto;max-height:560px;object-fit:contain;transition:1.6s ease;
+    filter:drop-shadow(0 30px 44px rgba(0,0,0,.5)) drop-shadow(0 0 50px rgba(212,175,55,.10))}
+  .split-media:hover img{transform:scale(1.04)}
+  .benefit-list{list-style:none;margin-top:36px}
+  .benefit-list li{display:flex;gap:20px;padding:22px 0;border-bottom:1px solid var(--line)}
+  .benefit-list li:last-child{border-bottom:none}
+  .benefit-list .n{font-family:var(--serif);font-size:1.1rem;color:var(--gold);flex:none;width:40px}
+  .benefit-list h4{font-family:var(--serif);font-weight:600;font-size:1.46rem;margin-bottom:7px;color:var(--warm-white)}
+  .benefit-list p{font-size:.98rem;color:#cbc4b5;line-height:1.5}
+
+  .detail-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:70px;align-items:center}
+  .detail-visual{position:relative;display:flex;justify-content:center}
+  .detail-ring{position:absolute;width:118%;aspect-ratio:1;border:1px solid var(--line);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);animation:spin 40s linear infinite}
+  .detail-ring::before{content:"";position:absolute;top:-4px;left:50%;width:8px;height:8px;border-radius:50%;background:var(--gold-bright);box-shadow:0 0 14px var(--gold)}
+  .detail-ring.r2{width:138%;animation-duration:60s;animation-direction:reverse;opacity:.5}
+  @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+  .detail-visual img{position:relative;z-index:2;filter:drop-shadow(0 30px 44px rgba(0,0,0,.5)) drop-shadow(0 0 50px rgba(212,175,55,.12))}
+  .spec{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:38px}
+  .spec div{background:var(--piano);padding:24px 26px}
+  .spec span{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px}
+  html[data-lang="th"] .spec span{font-family:var(--sans-th);letter-spacing:.02em;text-transform:none;font-size:.88rem}
+  .spec b{font-family:var(--serif);font-weight:500;font-size:1.35rem;color:var(--warm-white)}
+  .notes{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+  .notes em{font-style:normal;font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;color:var(--champagne);padding:9px 18px;border:1px solid var(--line);border-radius:30px}
+  html[data-lang="th"] .notes em{font-family:var(--sans-th);letter-spacing:.02em;text-transform:none;font-size:.95rem}
+
+  .lifestyle{position:relative;border-radius:24px;overflow:hidden;min-height:520px;display:flex;align-items:center;
+    box-shadow:inset 0 0 120px 30px rgba(5,5,5,.85)}
+  .lifestyle .bgimg{position:absolute;inset:0;z-index:0}
+  .lifestyle .bgimg img{width:100%;height:100%;object-fit:cover;object-position:center}
+  .lifestyle::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(5,5,5,.94) 0%,rgba(5,5,5,.72) 32%,rgba(5,5,5,.28) 55%,rgba(5,5,5,.05) 76%)}
+  .lifestyle-badge{position:absolute;top:34px;right:42px;z-index:2;height:74px;width:auto;opacity:.9;filter:drop-shadow(0 4px 14px rgba(212,175,55,.4))}
+  .lifestyle::after{content:"";position:absolute;inset:0;z-index:1;background:
+    linear-gradient(90deg,rgba(5,5,5,.95) 0%,rgba(5,5,5,.72) 42%,rgba(5,5,5,.12) 100%),
+    radial-gradient(120% 140% at 70% 50%,transparent 50%,rgba(5,5,5,.7) 100%)}
+  .lifestyle-copy{position:relative;z-index:2;max-width:540px;padding:70px}
+  .lifestyle-copy h2{font-size:clamp(2rem,3.6vw,3rem);margin:18px 0 20px}
+  .lifestyle-copy p{color:#c7c1b5;margin-bottom:32px}
+
+  .reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+  .review{padding:40px 34px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(160deg,rgba(255,255,255,.025),transparent);transition:.5s}
+  .review:hover{transform:translateY(-6px);border-color:rgba(212,175,55,.35);box-shadow:0 30px 60px rgba(0,0,0,.4)}
+  .stars{color:var(--gold);letter-spacing:3px;margin-bottom:18px;font-size:.95rem}
+  .review p{font-family:var(--serif2);font-size:1.22rem;font-style:italic;color:#e6e0d4;line-height:1.55;margin-bottom:26px}
+  .reviewer{display:flex;align-items:center;gap:14px}
+  .reviewer .av{width:46px;height:46px;border-radius:50%;background:var(--gold-grad);display:flex;align-items:center;justify-content:center;font-family:var(--serif);color:#000;font-weight:600;font-size:1.1rem}
+  .reviewer b{display:block;font-family:var(--sans);font-weight:500;font-size:.92rem;letter-spacing:.04em}
+  html[data-lang="th"] .reviewer b{font-family:var(--sans-th)}
+  .reviewer span{font-size:.74rem;color:var(--muted);letter-spacing:.1em}
+
+  .cta{position:relative;text-align:center;border-radius:28px;overflow:hidden;padding:120px 40px;border:1px solid var(--line);
+    background:
+      radial-gradient(800px 400px at 50% 0%,rgba(212,175,55,.12),transparent 65%),
+      repeating-linear-gradient(118deg,rgba(255,255,255,.015) 0 2px,transparent 2px 8px),
+      radial-gradient(120% 100% at 50% 120%,rgba(212,175,55,.05),transparent 60%),
+      linear-gradient(180deg,#0c0b09,#070706)}
+  .cta::after{content:"";position:absolute;inset:0;border-radius:28px;pointer-events:none;box-shadow:inset 0 1px 0 rgba(244,215,126,.12),inset 0 0 80px rgba(0,0,0,.4)}
+  .cta h2{font-size:clamp(2.4rem,5vw,4rem);margin-bottom:22px}
+  .cta p{color:#c7c1b5;max-width:520px;margin:0 auto 22px}
+  .cta .cta-note{margin-top:30px;font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  html[data-lang="th"] .cta-note{font-family:var(--sans-th);letter-spacing:.02em;text-transform:none;font-size:.85rem}
+
+  footer{border-top:1px solid var(--line);padding:80px 0 40px;background:var(--piano)}
+  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:50px;margin-bottom:60px}
+  .foot-brand p{color:var(--muted);font-size:.9rem;margin-top:22px;max-width:300px}
+  .foot-col h5{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:22px}
+  html[data-lang="th"] .foot-col h5{font-family:var(--sans-th);letter-spacing:.04em;text-transform:none;font-size:.85rem}
+  .foot-col a{display:block;color:#b6b0a4;font-size:.9rem;margin-bottom:14px;transition:.3s}
+  .foot-col a:hover{color:var(--gold-bright);padding-left:6px}
+  .foot-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:30px;border-top:1px solid var(--line);flex-wrap:wrap;gap:16px}
+  .foot-bottom p{font-size:.78rem;color:var(--muted);letter-spacing:.05em}
+  .socials{display:flex;gap:16px}
+  .socials a{width:40px;height:40px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);transition:.4s}
+  .socials a:hover{background:var(--gold-grad);color:#000;border-color:transparent;transform:translateY(-3px)}
+
+  /* ===== Trust bar ===== */
+  .trust{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(0,0,0,.25)}
+  .trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+  .trust-item{background:var(--piano);display:flex;align-items:center;gap:16px;padding:34px 30px;transition:.4s}
+  .trust-item:hover{background:linear-gradient(160deg,rgba(212,175,55,.06),transparent)}
+  .trust-item svg{width:38px;height:38px;color:var(--gold);flex:none}
+  .trust-item b{font-family:var(--serif);font-weight:500;font-size:1.22rem;color:var(--warm-white);display:block;margin-bottom:4px;letter-spacing:.3px}
+  html[data-lang="th"] .trust-item b{font-family:var(--serif-th)}
+  .trust-item span{font-size:.88rem;color:#cbc4b5}
+  @media(max-width:880px){.trust-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.trust-grid{grid-template-columns:1fr}}
+
+  /* ===== Mobile nav ===== */
+  .burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px;flex:none}
+  .burger span{width:26px;height:2px;background:var(--gold);border-radius:2px;transition:.35s}
+  .burger.on span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .burger.on span:nth-child(2){opacity:0}
+  .burger.on span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  .mobile-nav{position:fixed;inset:0;z-index:90;background:rgba(7,7,7,.97);backdrop-filter:blur(16px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+    opacity:0;pointer-events:none;transition:.45s cubic-bezier(.2,.7,.2,1)}
+  .mobile-nav.open{opacity:1;pointer-events:auto}
+  .mobile-nav a{font-family:var(--serif);font-size:1.5rem;color:#e6e0d4;letter-spacing:.05em;transition:.3s}
+  html[data-lang="th"] .mobile-nav a{font-family:var(--serif-th)}
+  .mobile-nav a:hover{color:var(--gold-bright)}
+  .mobile-nav .m-cta{margin-top:14px;background:var(--gold-grad);color:#0a0a0a;padding:14px 44px;border-radius:40px;font-size:1.15rem}
+
+  .reveal{opacity:0;transform:translateY(48px);transition:1.25s cubic-bezier(.16,.72,.18,1)}
+  .reveal.in{opacity:1;transform:none}
+  .reveal.d1{transition-delay:.16s}.reveal.d2{transition-delay:.32s}.reveal.d3{transition-delay:.48s}
+
+  .img-fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;aspect-ratio:3/4;max-width:420px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);text-align:center;padding:30px;gap:10px;background:rgba(212,175,55,.03)}
+  .img-fallback b{color:var(--gold);font-family:var(--serif);font-size:1.1rem}
+  .img-fallback code{font-size:.78rem;color:var(--champagne)}
+
+  /* ===== AI Sale Chat Widget ===== */
+  .chat-fab{position:fixed;right:28px;bottom:28px;z-index:200;width:64px;height:64px;border-radius:50%;
+    background:var(--gold-grad);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    color:#0a0a0a;box-shadow:0 14px 36px rgba(212,175,55,.4),inset 0 0 0 1px rgba(255,255,255,.18);
+    transition:.4s cubic-bezier(.2,.7,.2,1)}
+  .chat-fab:hover{transform:translateY(-4px) scale(1.05);box-shadow:0 20px 52px rgba(212,175,55,.55)}
+  .chat-fab svg{width:30px;height:30px}
+  .chat-fab .badge{position:absolute;top:-4px;right:-4px;background:#0a0a0a;color:var(--gold-bright);
+    font-family:var(--sans);font-size:.56rem;font-weight:600;letter-spacing:.08em;padding:3px 7px;border-radius:20px;border:1px solid var(--gold)}
+  .chat-fab .pulse{position:absolute;inset:0;border-radius:50%;border:2px solid var(--gold);animation:pulse 2.4s ease-out infinite;pointer-events:none}
+  @keyframes pulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.7);opacity:0}}
+  .chat-fab.open{transform:scale(.85);opacity:0;pointer-events:none}
+  .chat-panel{position:fixed;right:28px;bottom:104px;z-index:200;width:380px;max-width:calc(100vw - 40px);
+    height:560px;max-height:calc(100vh - 150px);background:linear-gradient(180deg,#100f0c,#0a0908);
+    border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;
+    box-shadow:0 40px 90px rgba(0,0,0,.6);transform:translateY(20px) scale(.96);opacity:0;pointer-events:none;
+    transition:.4s cubic-bezier(.2,.7,.2,1);transform-origin:bottom right}
+  .chat-panel.open{transform:none;opacity:1;pointer-events:auto}
+  .chat-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line);
+    background:radial-gradient(120% 100% at 0% 0%,rgba(212,175,55,.14),transparent)}
+  .chat-head .ava{width:42px;height:42px;border-radius:50%;background:var(--gold-grad);display:flex;align-items:center;justify-content:center;flex:none}
+  .chat-head .ava svg{width:24px;height:24px;color:#0a0a0a}
+  .chat-head b{font-family:var(--serif);font-size:1.05rem;color:var(--warm-white);display:block;line-height:1.2;letter-spacing:.04em}
+  html[data-lang="th"] .chat-head b{font-family:var(--serif-th)}
+  .chat-head .stat{font-size:.72rem;color:#7fd98f;display:flex;align-items:center;gap:6px}
+  .chat-head .stat::before{content:"";width:7px;height:7px;border-radius:50%;background:#5fd97a;box-shadow:0 0 8px #5fd97a}
+  html[data-lang="th"] .chat-head .stat{font-family:var(--sans-th)}
+  .chat-close{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.5rem;line-height:1;transition:.3s;padding:0 4px}
+  .chat-close:hover{color:var(--gold-bright)}
+  .chat-body{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+  .chat-body::-webkit-scrollbar{width:6px}.chat-body::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px}
+  .msg{max-width:82%;padding:11px 15px;border-radius:16px;font-size:.9rem;line-height:1.5;animation:msgin .35s ease}
+  @keyframes msgin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .msg.bot{align-self:flex-start;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#e8e2d6;border-bottom-left-radius:5px}
+  .msg.user{align-self:flex-end;background:var(--gold-grad);color:#0a0a0a;border-bottom-right-radius:5px}
+  html[data-lang="th"] .msg{font-family:var(--sans-th)}
+  .chat-quick{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 12px}
+  .chat-quick button{font-family:var(--sans);font-size:.76rem;color:var(--gold-bright);background:rgba(212,175,55,.08);
+    border:1px solid var(--line);border-radius:20px;padding:8px 13px;cursor:pointer;transition:.3s}
+  html[data-lang="th"] .chat-quick button{font-family:var(--sans-th)}
+  .chat-quick button:hover{background:var(--gold-grad);color:#0a0a0a;border-color:transparent}
+  .chat-foot{display:flex;gap:10px;padding:13px 14px;border-top:1px solid var(--line);background:rgba(0,0,0,.3)}
+  .chat-foot input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:24px;
+    padding:12px 18px;color:var(--warm-white);font-family:var(--sans-th);font-size:.9rem;outline:none;transition:.3s}
+  .chat-foot input:focus{border-color:var(--gold)}
+  .chat-send{width:46px;height:46px;border-radius:50%;background:var(--gold-grad);border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;color:#0a0a0a;flex:none;transition:.3s}
+  .chat-send:hover{transform:scale(1.08)}
+  @media(max-width:560px){.chat-panel{right:12px;left:12px;width:auto;bottom:90px}.chat-fab{right:18px;bottom:18px}}
+
+  @media(max-width:980px){
+    .hero-crest{height:104px}
+    .hero .hero-brand{width:48%;left:4%}
+    .hero-inner::before{background:linear-gradient(90deg,rgba(5,5,5,.95) 0%,rgba(5,5,5,.72) 30%,rgba(5,5,5,.22) 52%,rgba(5,5,5,0) 66%)}
+  }
+  @media(max-width:720px){
+    .hero-banner-img{opacity:.4}
+    .hero-inner::before{background:linear-gradient(180deg,rgba(5,5,5,.5),rgba(5,5,5,.82))}
+    .hero .hero-brand{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:520px}
+    .hero-crest{height:92px}
+  }
+  /* respect reduced motion */
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  }
+
+  @media(max-width:980px){
+    .menu{display:none}
+    .burger{display:flex}
+    .hero-grid,.split,.detail-grid{grid-template-columns:1fr;gap:50px}
+    .hero-visual{order:-1}
+    .features,.reviews-grid{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr 1fr;gap:36px}
+    .section{padding:90px 0}.wrap{padding:0 24px}
+    .lifestyle-copy{padding:48px 30px}.spec{grid-template-columns:1fr}
+    .nav-cta{display:none}
+  }
+  @media(max-width:560px){
+    .hero-stats{gap:26px}.foot-grid{grid-template-columns:1fr}.nav{padding:18px 24px}
+    .brand b{font-size:.9rem;letter-spacing:.2em}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-fixed"></div>
+<div class="grain"></div>
+<div class="particles" id="particles"></div>
+
+<!-- ===== NAV ===== -->
+<header id="header">
+  <nav class="nav">
+    <a class="brand" href="#top">
+      <img class="brand-logo" src="images/Logo.png" alt="FAFIN FUME" />
+      <span class="brand-name">FAFIN&nbsp;FUME</span>
+    </a>
+    <ul class="menu">
+      <li><a href="#features" data-i18n="nav.features">Features</a></li>
+      <li><a href="#benefits" data-i18n="nav.benefits">Benefits</a></li>
+      <li><a href="#detail" data-i18n="nav.fragrance">The Fragrance</a></li>
+    </ul>
+    <div class="lang" role="group" aria-label="Language">
+      <button class="lang-btn" data-lang="th" type="button">TH</button>
+      <button class="lang-btn" data-lang="en" type="button">EN</button>
+    </div>
+    <a href="#cta" class="nav-cta" data-i18n="nav.order">Order Now</a>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+<div class="mobile-nav" id="mobileNav">
+  <a href="#features" data-i18n="nav.features">Features</a>
+  <a href="#benefits" data-i18n="nav.benefits">Benefits</a>
+  <a href="#detail" data-i18n="nav.fragrance">The Fragrance</a>
+  <a href="#cta" class="m-cta" data-i18n="nav.order">Order Now</a>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <img class="hero-banner-img" src="images/hero-banner.png" alt="FAFIN FUME Fruity Car Perfume" />
+    <div class="hero-brand">
+      <img class="hero-crest reveal" src="images/Logo.png" alt="FAFIN FUME" />
+      <div class="hero-name reveal">FAFIN&nbsp;FUME</div>
+      <h1 class="reveal d1">FRUITY</h1>
+      <div class="hero-sub reveal d1">Car Perfume</div>
+      <div class="hero-div reveal d1"></div>
+      <div class="hero-tag1 reveal d2" data-i18n="hero.tag1">หอมสดชื่น...ทุกการเดินทาง</div>
+      <div class="hero-tag2 reveal d2" data-i18n="hero.tag2">เติมความหอม สะท้อนตัวตนที่มีสไตล์</div>
+      <div class="hero-icons reveal d3">
+        <div class="hero-ic"><img class="ic-img" src="images/ic-long-lasting.png" alt="" /><span data-i18n="hero.i1">หอมติดทนนาน</span></div>
+        <div class="hero-ic"><img class="ic-img" src="images/ic-premium.png" alt="" /><span data-i18n="hero.i2">กลิ่นพรีเมียม คุณภาพสูง</span></div>
+        <div class="hero-ic"><img class="ic-img" src="images/ic-luxury.png" alt="" /><span data-i18n="hero.i3">ดีไซน์หรูหรา ไม่เหมือนใคร</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURE BAR ===== -->
+<div class="fbar">
+  <div class="wrap"><div class="fbar-grid">
+    <div class="fbar-item"><img class="fbar-ico" src="images/fb-long-lasting.png" alt="" /><div><b data-i18n="fb1.t">หอมยาวนาน</b><span data-i18n="fb1.d">นานสูงสุด 30-45 วัน</span></div></div>
+    <div class="fbar-item"><img class="fbar-ico" src="images/fb-for-car.png" alt="" /><div><b data-i18n="fb2.t">ออกแบบสำหรับรถยนต์</b><span data-i18n="fb2.d">โดยเฉพาะ</span></div></div>
+    <div class="fbar-item"><img class="fbar-ico" src="images/fb-fruity.png" alt="" /><div><b data-i18n="fb3.t">กลิ่นผลไม้หอมสดชื่น</b><span data-i18n="fb3.d">ไม่ฉุน</span></div></div>
+    <div class="fbar-item"><img class="fbar-ico" src="images/fb-gift.png" alt="" /><div><b data-i18n="fb4.t">แพ็คเกจหรู</b><span data-i18n="fb4.d">เหมาะสำหรับเป็นของขวัญ</span></div></div>
+  </div></div>
+</div>
+
+<!-- ===== FEATURES ===== -->
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow reveal" data-i18n="feat.eyebrow">Why FAFIN FUME</span>
+      <h2 class="reveal d1" data-i18n="feat.title">Crafted for the<br><span class="gold-text">Connoisseur</span></h2>
+      <p class="reveal d2" data-i18n="feat.sub">Every detail is designed for true luxury.</p>
+    </div>
+    <div class="features">
+      <div class="feat reveal">
+        <img class="feat-bg" src="images/feat-lasting.png" alt="" />
+        <h3 data-i18n="f1.t">Long Lasting</h3><p data-i18n="f1.d">Fragrance that lasts over 60 days, diffusing gently throughout every drive.</p>
+      </div>
+      <div class="feat reveal d1">
+        <img class="feat-bg" src="images/feat-premium.png" alt="" />
+        <h3 data-i18n="f2.t">Premium Fragrance</h3><p data-i18n="f2.d">Premium-grade fragrance oil — a fresh, luxurious Fruity scent that never overwhelms.</p>
+      </div>
+      <div class="feat reveal d1">
+        <img class="feat-bg" src="images/feat-gift.png" alt="" />
+        <h3 data-i18n="f5.t">Perfect Gift</h3><p data-i18n="f5.d">Presented in a luxurious gift box — a perfect present for someone special.</p>
+      </div>
+      <div class="feat reveal d2">
+        <img class="feat-bg" src="images/feat-quality.png" alt="" />
+        <h3 data-i18n="f6.t">Luxury Quality</h3><p data-i18n="f6.d">International-standard quality with carefully selected materials worthy of true luxury.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BENEFITS ===== -->
+<section class="section" id="benefits">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <span class="eyebrow reveal" data-i18n="ben.eyebrow">The Experience</span>
+        <h2 class="reveal d1" style="font-size:clamp(2rem,3.6vw,3rem);margin:20px 0 8px" data-i18n="ben.title">A Scent That<br><span class="gold-text">Speaks of Status</span></h2>
+        <ul class="benefit-list reveal d2">
+          <li><span class="n">01</span><div><h4 data-i18n="b1.t">Refined Fruity Accord</h4><p data-i18n="b1.d">Luxurious ripe-fruit notes balancing freshness and sweetness in perfect harmony.</p></div></li>
+          <li><span class="n">02</span><div><h4 data-i18n="b2.t">Slow-Diffusion Technology</h4><p data-i18n="b2.d">Releases scent slowly and consistently, so it lasts far longer without fading fast.</p></div></li>
+          <li><span class="n">03</span><div><h4 data-i18n="b3.t">Crystal-Cut Bottle</h4><p data-i18n="b3.d">A faceted glass bottle that catches the light and looks expensive every time you see it.</p></div></li>
+          <li><span class="n">04</span><div><h4 data-i18n="b4.t">Crafted in Limited Batches</h4><p data-i18n="b4.d">Produced in limited quantities with care in every bottle — for a truly exclusive feel.</p></div></li>
+        </ul>
+      </div>
+      <div class="sec-media reveal d1"><img src="images/benefits-experience.png" alt="FAFIN FUME Fruity Car Perfume" /></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRODUCT DETAIL ===== -->
+<section class="section" id="detail">
+  <div class="wrap">
+    <div class="detail-grid">
+      <div class="sec-media reveal"><img src="images/fafin-hero-cut.png" alt="FAFIN FUME Fruity Car Perfume" /></div>
+      <div>
+        <span class="eyebrow reveal" data-i18n="det.eyebrow">The Fragrance · Fruity</span>
+        <h2 class="reveal d1" style="font-size:clamp(2.2rem,4vw,3.4rem);margin:20px 0 18px" data-i18n="det.title">An Olfactory<br><span class="gold-text">Masterpiece</span></h2>
+        <p class="reveal d2" style="color:#c7c1b5;max-width:460px" data-i18n="det.desc">The signature Fruity scent of FAFIN FUME blends the freshness of fine fruits with a warm, luxurious base — for the perfect atmosphere inside your car.</p>
+        <div class="notes reveal d2">
+          <em data-i18n="note.top">Top · Pear &amp; Bergamot</em><em data-i18n="note.heart">Heart · Peach Blossom</em><em data-i18n="note.base">Base · Warm Musk</em>
+        </div>
+        <div class="spec reveal d3">
+          <div><span data-i18n="spec.vol">Volume</span><b data-i18n="spec.volv">Net wt. 8 ml.</b></div>
+          <div><span data-i18n="spec.fam">Fragrance Family</span><b data-i18n="spec.famv">Fruity</b></div>
+          <div><span data-i18n="spec.long">Longevity</span><b data-i18n="spec.longv">60+ Days</b></div>
+          <div><span data-i18n="spec.bottle">Bottle</span><b data-i18n="spec.bottlev">Cut Crystal Glass</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LIFESTYLE ===== -->
+<section class="section" id="lifestyle">
+  <div class="wrap">
+    <div class="lifestyle reveal">
+      <div class="bgimg"><img src="images/lifestyle.png" alt="FAFIN FUME luxury car interior at night" /></div>
+      <img class="lifestyle-badge" src="images/Logo.png" alt="FAFIN FUME" />
+      <div class="lifestyle-copy">
+        <span class="eyebrow" data-i18n="life.eyebrow">The FAFIN Lifestyle</span>
+        <h2 data-i18n="life.title">Where Luxury<br><span class="gold-text">Meets the Road</span></h2>
+        <p data-i18n="life.desc">For those who care about every detail in life — FAFIN FUME is a symbol of taste and luxury that travels with you everywhere.</p>
+        <a href="#cta" class="btn"><span data-i18n="life.cta">Make It Yours</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== REVIEWS (ปิดไว้ก่อน ยังไม่มีรีวิว) ===== -->
+<section class="section" id="reviews" style="display:none">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow reveal" data-i18n="rev.eyebrow">Trusted by Connoisseurs</span>
+      <h2 class="reveal d1" data-i18n="rev.title">Words From Our<br><span class="gold-text">Owners</span></h2>
+    </div>
+    <div class="reviews-grid">
+      <div class="review reveal">
+        <div class="stars">★★★★★</div>
+        <p data-i18n="r1.q">“The scent is so luxurious — opening the car door feels like stepping into a luxury showroom. Long-lasting, just as promised.”</p>
+        <div class="reviewer"><div class="av">K</div><div><b data-i18n="r1.n">Khun Kritsana</b><span data-i18n="r1.m">BMW Owner · Bangkok</span></div></div>
+      </div>
+      <div class="review reveal d1">
+        <div class="stars">★★★★★</div>
+        <p data-i18n="r2.q">“The bottle is so beautiful I almost don't want to use it. The black & gold design is so premium — a gift anyone would love.”</p>
+        <div class="reviewer"><div class="av">P</div><div><b data-i18n="r2.n">Khun Parichat</b><span data-i18n="r2.m">Mercedes Owner · Phuket</span></div></div>
+      </div>
+      <div class="review reveal d2">
+        <div class="stars">★★★★★</div>
+        <p data-i18n="r3.q">“The Fruity scent is just right — not harsh, soft and elegant. Even on long drives it's gentle on the senses. Truly impressed.”</p>
+        <div class="reviewer"><div class="av">N</div><div><b data-i18n="r3.n">Khun Nattapol</b><span data-i18n="r3.m">Lexus Owner · Chiang Mai</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="section" id="cta">
+  <div class="wrap">
+    <div class="cta reveal">
+      <span class="eyebrow" style="justify-content:center" data-i18n="cta.eyebrow">Limited Edition · Net 8 ml</span>
+      <h2 style="margin-top:18px" data-i18n="cta.title">Elevate Every<br><span class="gold-text">Journey</span></h2>
+      <p data-i18n="cta.desc">Own the luxurious scent of FAFIN FUME today and transform your favourite car into your own special space.</p>
+      <a href="#" class="btn" style="font-size:.9rem;padding:20px 48px"><span data-i18n="cta.btn">Order Now — ฿99</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <p class="cta-note" data-i18n="cta.note">Free Shipping · Cash on Delivery · 100% Authentic</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TRUST BAR ===== -->
+<div class="trust">
+  <div class="wrap">
+    <div class="trust-grid">
+      <div class="trust-item">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M24 4 6 11v12c0 10 7 16 18 21 11-5 18-11 18-21V11L24 4Z"/><path d="m17 24 5 5 9-10"/></svg>
+        <div><b data-i18n="trust.t1">รับประกันสินค้า</b><span data-i18n="trust.d1">คืนสินค้าภายใน 7 วัน</span></div>
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 14h22v18H4zM26 20h10l6 7v5H26z"/><circle cx="13" cy="36" r="4"/><circle cx="33" cy="36" r="4"/></svg>
+        <div><b data-i18n="trust.t2">จัดส่งรวดเร็ว</b><span data-i18n="trust.d2">1–2 วันทำการ</span></div>
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="24" cy="19" r="13"/><path d="m17 19 5 5 9-10M16 31l-3 13 11-6 11 6-3-13"/></svg>
+        <div><b data-i18n="trust.t3">ของแท้ 100%</b><span data-i18n="trust.d3">มั่นใจในคุณภาพ</span></div>
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M42 24c0 9-8 16-18 16-3 0-6-.7-8.5-2L6 41l3-9.5C7 29 6 26.6 6 24 6 15 14 8 24 8s18 7 18 16Z"/><path d="M17 22h14M17 28h9"/></svg>
+        <div><b data-i18n="trust.t4">บริการลูกค้า</b><span data-i18n="trust.d4">พร้อมให้คำแนะนำ</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#top" style="flex-direction:column;align-items:flex-start;gap:4px">
+          <img class="foot-logo" src="images/Logo.png" alt="FAFIN FUME" />
+          <span class="foot-name">FAFIN&nbsp;FUME</span>
+        </a>
+        <p data-i18n="foot.desc">Luxury car perfume for those who live life with class.</p>
+      </div>
+      <div class="foot-col"><h5 data-i18n="foot.shop">Shop</h5><a href="#detail" data-i18n="foot.shop1">Fruity</a><a href="#features" data-i18n="foot.shop2">Features</a><a href="#cta" data-i18n="foot.shop3">Order</a><a href="#reviews" data-i18n="foot.shop4">Reviews</a></div>
+      <div class="foot-col"><h5 data-i18n="foot.company">Company</h5><a href="#" data-i18n="foot.comp1">About Us</a><a href="#" data-i18n="foot.comp2">Our Story</a><a href="#" data-i18n="foot.comp3">Contact</a><a href="#" data-i18n="foot.comp4">Stores</a></div>
+      <div class="foot-col"><h5 data-i18n="foot.support">Support</h5><a href="#" data-i18n="foot.sup1">Shipping</a><a href="#" data-i18n="foot.sup2">Returns</a><a href="#" data-i18n="foot.sup3">FAQ</a><a href="#" data-i18n="foot.sup4">Privacy</a></div>
+    </div>
+    <div class="foot-bottom">
+      <p data-i18n="foot.copy">© 2026 FAFIN FUME : ผู้พัฒนาระบบ neos-css.com by Comtech Solution System Co., Ltd. · สงวนลิขสิทธิ์ทุกประการ</p>
+      <div class="socials">
+        <a href="#" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H7v3h3v7h3v-7h3l1-3h-4v-2c0-.6.4-1 1-1Z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+        <a href="#" aria-label="Line"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 4 3.6 7.3 8.5 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.2-6C21.4 14.3 22 12.7 22 11c0-4.4-4.5-8-10-8Z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== AI SALE CHAT ===== -->
+<button class="chat-fab" id="chatFab" aria-label="AI Sale Chat">
+  <span class="pulse"></span>
+  <span class="badge">AI</span>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5Z"/><path d="M8.5 11h7M8.5 8h7M8.5 14h4"/></svg>
+</button>
+<div class="chat-panel" id="chatPanel" role="dialog" aria-label="AI Sale">
+  <div class="chat-head">
+    <div class="ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l1.6 4.2L18 8.5l-3.4 2.7L15.5 16 12 13.4 8.5 16l.9-4.8L6 8.5l4.4-1.3L12 3Z"/></svg></div>
+    <div><b>FAFIN&nbsp;FUME</b><span class="stat" data-i18n="chat.status">ผู้ช่วย AI · ออนไลน์</span></div>
+    <button class="chat-close" id="chatClose" aria-label="Close">&times;</button>
+  </div>
+  <div class="chat-body" id="chatBody">
+    <div class="msg bot" data-i18n="chat.greet">สวัสดีค่ะ 🌹 ยินดีต้อนรับสู่ FAFIN FUME มีอะไรให้ช่วยดูแลไหมคะ? สอบถามราคา กลิ่น หรือวิธีสั่งซื้อได้เลยค่ะ</div>
+  </div>
+  <div class="chat-quick" id="chatQuick">
+    <button data-q="price" data-i18n="chat.q1">ราคาเท่าไหร่?</button>
+    <button data-q="scent" data-i18n="chat.q2">มีกลิ่นอะไรบ้าง?</button>
+    <button data-q="ship" data-i18n="chat.q3">ส่งกี่วัน?</button>
+    <button data-q="order" data-i18n="chat.q4">สั่งซื้อยังไง?</button>
+  </div>
+  <div class="chat-foot">
+    <input id="chatInput" type="text" autocomplete="off" data-i18n-ph="chat.ph" placeholder="พิมพ์ข้อความ..." />
+    <button class="chat-send" id="chatSend" aria-label="Send"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z"/></svg></button>
+  </div>
+</div>
+
+<script>
+  /* ================= i18n DICTIONARY (แยกไทย / อังกฤษ ชัดเจน) ================= */
+  const I18N = {
+    /* ---------- ภาษาไทย ---------- */
+    th:{
+      "nav.features":"จุดเด่น","nav.benefits":"คุณประโยชน์","nav.fragrance":"กลิ่นหอม","nav.reviews":"รีวิว","nav.order":"สั่งซื้อ",
+      "hero.tag1":"หอมสดชื่น...ทุกการเดินทาง","hero.tag2":"เติมความหอม สะท้อนตัวตนที่มีสไตล์","hero.i1":"หอมติดทนนาน","hero.i2":"กลิ่นพรีเมียม<br>คุณภาพสูง","hero.i3":"ดีไซน์หรูหรา<br>ไม่เหมือนใคร","hero.cta":"สั่งซื้อเลย",
+      "fb1.t":"หอมยาวนาน","fb1.d":"นานสูงสุด 30-45 วัน","fb2.t":"ออกแบบสำหรับรถยนต์","fb2.d":"โดยเฉพาะ","fb3.t":"กลิ่นผลไม้หอมสดชื่น","fb3.d":"ไม่ฉุน","fb4.t":"แพ็คเกจหรู","fb4.d":"เหมาะสำหรับเป็นของขวัญ",
+      "hero.eyebrow":"น้ำหอมรถยนต์ลักชัวรี · ขนาด 8 มล.",
+      "hero.title":'ขับเคลื่อนด้วย<br><span class="gold-text">ความหรูหรา</span><em>กลิ่นซิกเนเจอร์จาก FAFIN FUME</em>',
+      "hero.lead":"สัมผัสกลิ่นหอม Fruity ระดับลักชัวรี ที่เปลี่ยนทุกการเดินทางให้กลายเป็นประสบการณ์เหนือระดับ หรูหรา ติดทนนาน ออกแบบมาเพื่อรถยนต์ของคนพิเศษ",
+      "hero.cta1":"เลือกชมสินค้า","hero.cta2":"สำรวจกลิ่นหอม",
+      "hero.stat1":"วันที่ติดทน","hero.stat2":"น้ำมันหอมพรีเมียม","hero.stat3":"คะแนนจากผู้ใช้จริง",
+      "scroll":"เลื่อนลง",
+      "m1":"กลิ่นหอมติดทนนาน","m2":"งานคราฟต์ระดับลักชัวรี","m3":"กลิ่นผลไม้พรีเมียม","m4":"สำหรับผู้ขับขี่ระดับพรีเมียม",
+      "feat.eyebrow":"ทำไมต้อง FAFIN FUME",
+      "feat.title":'สร้างสรรค์เพื่อ<br><span class="gold-text">ผู้มีรสนิยม</span>',
+      "feat.sub":"ทุกรายละเอียดถูกออกแบบมาเพื่อความหรูหราที่แท้จริง",
+      "f1.t":"ติดทนยาวนาน","f1.d":"กลิ่นหอมติดทนกว่า 60 วัน ค่อย ๆ กระจายอย่างนุ่มนวลตลอดการขับขี่",
+      "f2.t":"กลิ่นหอมพรีเมียม","f2.d":"น้ำมันหอมระเหยเกรดพรีเมียม กลิ่น Fruity สดชื่น หรูหรา ไม่ฉุน",
+      "f3.t":"ดีไซน์หรูหรา","f3.d":"ขวดคริสตัลเจียระไน ฝาไม้พรีเมียม ดีไซน์ดำ-ทองหรูหราทุกมุมมอง",
+      "f4.t":"ติดตั้งง่าย","f4.d":"แขวนกับกระจกมองหลังได้ทันที พร้อมเชือกถักทองสุดประณีต",
+      "f5.t":"ของขวัญสุดพิเศษ","f5.d":"กล่องของขวัญหรูหรา เหมาะเป็นของขวัญสุดพิเศษสำหรับคนสำคัญ",
+      "f6.t":"คุณภาพระดับลักชัวรี","f6.d":"มาตรฐานระดับสากล คัดสรรทุกวัตถุดิบ เพื่อความหรูหราที่คู่ควร",
+      "ben.eyebrow":"ประสบการณ์",
+      "ben.title":'กลิ่นหอมที่บ่งบอก<br><span class="gold-text">ความมีระดับ</span>',
+      "b1.t":"กลิ่น Fruity ขั้นพรีเมียม","b1.d":"กลิ่นผลไม้สุกหรูหรา ผสานความสดชื่นและความหวานอย่างสมดุล",
+      "b2.t":"เทคโนโลยีกระจายกลิ่นช้า","b2.d":"ปล่อยกลิ่นช้า ๆ สม่ำเสมอ ไม่จางหายเร็ว อยู่ได้ยาวนาน",
+      "b3.t":"ขวดคริสตัลเจียระไน","b3.d":"ขวดแก้วเจียระไนสะท้อนแสง ดูแพงทุกครั้งที่มองเห็น",
+      "b4.t":"ผลิตจำนวนจำกัด","b4.d":"ผลิตจำนวนจำกัด ใส่ใจทุกขวด เพื่อความพิเศษเฉพาะตัว",
+      "det.eyebrow":"กลิ่นหอม · Fruity",
+      "det.title":'งานศิลป์<br><span class="gold-text">แห่งกลิ่นหอม</span>',
+      "det.desc":"กลิ่น Fruity อันเป็นเอกลักษณ์ของ FAFIN FUME ผสานความสดชื่นของผลไม้ชั้นเลิศเข้ากับกลิ่นอบอุ่นหรูหรา เพื่อบรรยากาศที่สมบูรณ์แบบภายในรถของคุณ",
+      "note.top":"กลิ่นแรก · แพร์ & เบอร์กาม็อท","note.heart":"กลิ่นกลาง · ดอกพีช","note.base":"กลิ่นฐาน · มัสก์อบอุ่น",
+      "spec.vol":"ปริมาณ","spec.volv":"สุทธิ 8 มล.","spec.fam":"กลุ่มกลิ่น","spec.famv":"Fruity (ผลไม้)",
+      "spec.long":"ความติดทน","spec.longv":"60+ วัน","spec.bottle":"ขวด","spec.bottlev":"แก้วคริสตัลเจียระไน",
+      "life.eyebrow":"ไลฟ์สไตล์ FAFIN",
+      "life.title":'ที่ซึ่งความหรู<br><span class="gold-text">มาบรรจบกับท้องถนน</span>',
+      "life.desc":"สำหรับผู้ที่ใส่ใจในทุกรายละเอียดของชีวิต FAFIN FUME คือสัญลักษณ์ของรสนิยมและความหรูหราที่เดินทางไปกับคุณทุกที่",
+      "life.cta":"เป็นเจ้าของเลย",
+      "rev.eyebrow":"ได้รับความไว้วางใจจากผู้มีรสนิยม",
+      "rev.title":'เสียงจาก<br><span class="gold-text">ลูกค้าตัวจริง</span>',
+      "r1.q":"“กลิ่นหรูมาก เปิดประตูรถมาเหมือนเข้าโชว์รูมรถหรู ติดทนนานจริงตามที่บอก”","r1.n":"คุณกฤษณะ","r1.m":"เจ้าของ BMW · กรุงเทพฯ",
+      "r2.q":"“ขวดสวยจนไม่กล้าใช้ ดีไซน์ดำทองพรีเมียมมาก ซื้อเป็นของขวัญใครก็ปลื้ม”","r2.n":"คุณปาริชาต","r2.m":"เจ้าของ Mercedes · ภูเก็ต",
+      "r3.q":"“กลิ่น Fruity กำลังดี ไม่ฉุน หอมละมุน นั่งรถนาน ๆ ก็สบายจมูก ประทับใจสุด ๆ”","r3.n":"คุณณัฐพล","r3.m":"เจ้าของ Lexus · เชียงใหม่",
+      "cta.eyebrow":"รุ่นพิเศษจำนวนจำกัด · ขนาด 8 มล.",
+      "cta.title":'ยกระดับทุก<br><span class="gold-text">การเดินทาง</span>',
+      "cta.desc":"เป็นเจ้าของกลิ่นหอมระดับลักชัวรีของ FAFIN FUME วันนี้ แล้วเปลี่ยนรถคันโปรดให้กลายเป็นพื้นที่สุดพิเศษของคุณ",
+      "cta.btn":"สั่งซื้อเลย — ฿99","cta.note":"ส่งฟรี · เก็บเงินปลายทาง · ของแท้ 100%",
+      "trust.t1":"รับประกันสินค้า","trust.d1":"คืนสินค้าภายใน 7 วัน","trust.t2":"จัดส่งรวดเร็ว","trust.d2":"1–2 วันทำการ",
+      "trust.t3":"ของแท้ 100%","trust.d3":"มั่นใจในคุณภาพ","trust.t4":"บริการลูกค้า","trust.d4":"พร้อมให้คำแนะนำ",
+      "foot.desc":"น้ำหอมปรับอากาศในรถยนต์ระดับลักชัวรี สำหรับผู้ที่ใช้ชีวิตอย่างมีระดับ",
+      "foot.shop":"สินค้า","foot.shop1":"กลิ่น Fruity","foot.shop2":"จุดเด่น","foot.shop3":"สั่งซื้อ","foot.shop4":"รีวิว",
+      "foot.company":"บริษัท","foot.comp1":"เกี่ยวกับเรา","foot.comp2":"เรื่องราวของเรา","foot.comp3":"ติดต่อเรา","foot.comp4":"ร้านค้า",
+      "foot.support":"ช่วยเหลือ","foot.sup1":"การจัดส่ง","foot.sup2":"การคืนสินค้า","foot.sup3":"คำถามที่พบบ่อย","foot.sup4":"นโยบายความเป็นส่วนตัว",
+      "foot.copy":"© 2026 FAFIN FUME : ผู้พัฒนาระบบ neos-css.com by Comtech Solution System Co., Ltd. · สงวนลิขสิทธิ์ทุกประการ",
+      "chat.status":"ผู้ช่วย AI · ออนไลน์","chat.greet":"สวัสดีค่ะ 🌹 ยินดีต้อนรับสู่ FAFIN FUME มีอะไรให้ช่วยดูแลไหมคะ? สอบถามราคา กลิ่น หรือวิธีสั่งซื้อได้เลยค่ะ",
+      "chat.q1":"ราคาเท่าไหร่?","chat.q2":"มีกลิ่นอะไรบ้าง?","chat.q3":"ส่งกี่วัน?","chat.q4":"สั่งซื้อยังไง?","chat.ph":"พิมพ์ข้อความ..."
+    },
+    /* ---------- English ---------- */
+    en:{
+      "nav.features":"Features","nav.benefits":"Benefits","nav.fragrance":"The Fragrance","nav.reviews":"Reviews","nav.order":"Order Now",
+      "hero.tag1":"Freshness in Every Journey","hero.tag2":"Add fragrance, express your style","hero.i1":"Long Lasting","hero.i2":"Premium<br>Quality","hero.i3":"Unique<br>Luxury Design","hero.cta":"Order Now",
+      "fb1.t":"Long Lasting","fb1.d":"Up to 30–45 days","fb2.t":"Made for Cars","fb2.d":"Specifically designed","fb3.t":"Fresh Fruity Scent","fb3.d":"Never harsh","fb4.t":"Luxury Packaging","fb4.d":"Perfect for gifting",
+      "hero.eyebrow":"Luxury Car Perfume · Net 8 ml",
+      "hero.title":'Drive in<br><span class="gold-text">Pure Elegance</span><em>The signature scent of FAFIN FUME</em>',
+      "hero.lead":"Experience the luxurious Fruity accord that turns every drive into an elevated experience — refined, long-lasting, and crafted for the distinguished driver.",
+      "hero.cta1":"Shop The Collection","hero.cta2":"Discover Fragrance",
+      "hero.stat1":"Days Lasting","hero.stat2":"Premium Oil","hero.stat3":"Rated by Owners",
+      "scroll":"Scroll",
+      "m1":"Long Lasting Fragrance","m2":"Handcrafted Luxury","m3":"Premium Fruity Notes","m4":"For The Distinguished Driver",
+      "feat.eyebrow":"Why FAFIN FUME",
+      "feat.title":'Crafted for the<br><span class="gold-text">Connoisseur</span>',
+      "feat.sub":"Every detail is designed for true luxury.",
+      "f1.t":"Long Lasting","f1.d":"Fragrance that lasts over 60 days, diffusing gently throughout every drive.",
+      "f2.t":"Premium Fragrance","f2.d":"Premium-grade fragrance oil — a fresh, luxurious Fruity scent that never overwhelms.",
+      "f3.t":"Luxury Design","f3.d":"Cut-crystal bottle with a premium wooden cap — black & gold elegance from every angle.",
+      "f4.t":"Easy Installation","f4.d":"Hangs instantly on your rear-view mirror with a finely braided golden rope.",
+      "f5.t":"Perfect Gift","f5.d":"Presented in a luxurious gift box — a perfect present for someone special.",
+      "f6.t":"Luxury Quality","f6.d":"International-standard quality with carefully selected materials worthy of true luxury.",
+      "ben.eyebrow":"The Experience",
+      "ben.title":'A Scent That<br><span class="gold-text">Speaks of Status</span>',
+      "b1.t":"Refined Fruity Accord","b1.d":"Luxurious ripe-fruit notes balancing freshness and sweetness in perfect harmony.",
+      "b2.t":"Slow-Diffusion Technology","b2.d":"Releases scent slowly and consistently, so it lasts far longer without fading fast.",
+      "b3.t":"Crystal-Cut Bottle","b3.d":"A faceted glass bottle that catches the light and looks expensive every time you see it.",
+      "b4.t":"Crafted in Limited Batches","b4.d":"Produced in limited quantities with care in every bottle — for a truly exclusive feel.",
+      "det.eyebrow":"The Fragrance · Fruity",
+      "det.title":'An Olfactory<br><span class="gold-text">Masterpiece</span>',
+      "det.desc":"The signature Fruity scent of FAFIN FUME blends the freshness of fine fruits with a warm, luxurious base — for the perfect atmosphere inside your car.",
+      "note.top":"Top · Pear & Bergamot","note.heart":"Heart · Peach Blossom","note.base":"Base · Warm Musk",
+      "spec.vol":"Volume","spec.volv":"Net wt. 8 ml.","spec.fam":"Fragrance Family","spec.famv":"Fruity",
+      "spec.long":"Longevity","spec.longv":"60+ Days","spec.bottle":"Bottle","spec.bottlev":"Cut Crystal Glass",
+      "life.eyebrow":"The FAFIN Lifestyle",
+      "life.title":'Where Luxury<br><span class="gold-text">Meets the Road</span>',
+      "life.desc":"For those who care about every detail in life — FAFIN FUME is a symbol of taste and luxury that travels with you everywhere.",
+      "life.cta":"Make It Yours",
+      "rev.eyebrow":"Trusted by Connoisseurs",
+      "rev.title":'Words From Our<br><span class="gold-text">Owners</span>',
+      "r1.q":"“The scent is so luxurious — opening the car door feels like stepping into a luxury showroom. Long-lasting, just as promised.”","r1.n":"Kritsana","r1.m":"BMW Owner · Bangkok",
+      "r2.q":"“The bottle is so beautiful I almost don't want to use it. The black & gold design is so premium — a gift anyone would love.”","r2.n":"Parichat","r2.m":"Mercedes Owner · Phuket",
+      "r3.q":"“The Fruity scent is just right — not harsh, soft and elegant. Even on long drives it's gentle on the senses. Truly impressed.”","r3.n":"Nattapol","r3.m":"Lexus Owner · Chiang Mai",
+      "cta.eyebrow":"Limited Edition · Net 8 ml",
+      "cta.title":'Elevate Every<br><span class="gold-text">Journey</span>',
+      "cta.desc":"Own the luxurious scent of FAFIN FUME today and transform your favourite car into your own special space.",
+      "cta.btn":"Order Now — ฿99","cta.note":"Free Shipping · Cash on Delivery · 100% Authentic",
+      "trust.t1":"Product Warranty","trust.d1":"7-day returns","trust.t2":"Fast Delivery","trust.d2":"1–2 business days",
+      "trust.t3":"100% Authentic","trust.d3":"Quality assured","trust.t4":"Customer Service","trust.d4":"Always here to help",
+      "foot.desc":"Luxury car perfume for those who live life with class.",
+      "foot.shop":"Shop","foot.shop1":"Fruity","foot.shop2":"Features","foot.shop3":"Order","foot.shop4":"Reviews",
+      "foot.company":"Company","foot.comp1":"About Us","foot.comp2":"Our Story","foot.comp3":"Contact","foot.comp4":"Stores",
+      "foot.support":"Support","foot.sup1":"Shipping","foot.sup2":"Returns","foot.sup3":"FAQ","foot.sup4":"Privacy",
+      "foot.copy":"© 2026 FAFIN FUME : System developed by neos-css.com by Comtech Solution System Co., Ltd. · All rights reserved.",
+      "chat.status":"AI Assistant · Online","chat.greet":"Hello 🌹 Welcome to FAFIN FUME! How can I help you today? Feel free to ask about price, scents, or how to order.",
+      "chat.q1":"How much is it?","chat.q2":"What scents?","chat.q3":"Delivery time?","chat.q4":"How to order?","chat.ph":"Type a message..."
+    }
+  };
+
+  /* ===== AI Sale chat canned replies (เปลี่ยนเป็น AI จริงได้ที่ botReply) ===== */
+  const CHAT_REPLIES={
+    th:{
+      price:"ราคาเพียง 99 บาทค่ะ (ขนาด 8 มล.) 🎁 มีโปรซื้อหลายขวดส่งฟรีด้วยนะคะ",
+      scent:"ตอนนี้มีกลิ่น Fruity (ผลไม้สดชื่น) หอมละมุน ไม่ฉุน ติดทน 30–45 วันค่ะ 🍑✨",
+      ship:"จัดส่งไว 1–2 วันทำการค่ะ 🚗 เก็บเงินปลายทาง (COD) ได้ด้วยนะคะ",
+      order:"สั่งง่าย ๆ เลยค่ะ! กดปุ่ม “สั่งซื้อสินค้า” บนหน้าเว็บ หรือทักไลน์ @fafin.fume เดี๋ยวมีแอดมินดูแลต่อค่ะ 💛",
+      def:"ขอบคุณที่สนใจ FAFIN FUME ค่ะ 🌹 รบกวนพิมพ์คำถามเพิ่มเติม หรือกดเมนูด้านบน หรือทักไลน์ @fafin.fume เดี๋ยวแอดมินช่วยดูแลค่ะ"
+    },
+    en:{
+      price:"It's only 99 THB (8 ml) 🎁 We also offer free shipping when you buy a few bottles!",
+      scent:"Right now we have the Fruity scent — fresh, soft, never harsh, lasting 30–45 days 🍑✨",
+      ship:"Fast delivery within 1–2 business days 🚗 Cash on delivery (COD) is available too.",
+      order:"Easy! Tap the “Order Now” button on the page, or message us on Line @fafin.fume and our team will assist you 💛",
+      def:"Thank you for your interest in FAFIN FUME 🌹 Please type your question, tap a menu above, or message Line @fafin.fume and our team will help you."
+    }
+  };
+
+  function applyLang(lang){
+    if(!I18N[lang]) lang='th';
+    document.documentElement.setAttribute('lang',lang);
+    document.documentElement.setAttribute('data-lang',lang);
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const v=I18N[lang][el.getAttribute('data-i18n')];
+      if(v!==undefined) el.innerHTML=v;
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+      const v=I18N[lang][el.getAttribute('data-i18n-ph')];
+      if(v!==undefined) el.placeholder=v;
+    });
+    document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+    try{localStorage.setItem('fafin_lang',lang)}catch(e){}
+  }
+  document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click',()=>applyLang(b.dataset.lang)));
+  (function(){let saved='th';try{saved=localStorage.getItem('fafin_lang')||'th'}catch(e){}applyLang(saved)})();
+
+  /* sticky header + reveal + particles */
+  const header=document.getElementById('header');
+  const heroPhoto=document.querySelector('.hero-photo');
+  const reduceMo=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const heroEl=document.querySelector('.hero');
+  let heroTrigger=heroEl?heroEl.offsetHeight-100:400;
+  addEventListener('resize',()=>{heroTrigger=heroEl?heroEl.offsetHeight-100:400;},{passive:true});
+  addEventListener('scroll',()=>{
+    header.classList.toggle('scrolled',scrollY>heroTrigger);
+    if(heroPhoto&&!reduceMo&&scrollY<1100)heroPhoto.style.transform='translateY('+(scrollY*0.06)+'px) scale(1.02)';
+  },{passive:true});
+  /* mobile menu */
+  const burger=document.getElementById('burger'),mnav=document.getElementById('mobileNav');
+  function toggleMenu(o){burger.classList.toggle('on',o);mnav.classList.toggle('open',o);document.body.style.overflow=o?'hidden':''}
+  burger.addEventListener('click',()=>toggleMenu(!mnav.classList.contains('open')));
+  mnav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>toggleMenu(false)));
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.14});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const p=document.getElementById('particles');
+  for(let i=0;i<40;i++){const s=document.createElement('i');const size=Math.random()*3+1;
+    s.style.width=s.style.height=size+'px';s.style.left=Math.random()*100+'vw';
+    s.style.animationDuration=(Math.random()*14+10)+'s';s.style.animationDelay=(-Math.random()*16)+'s';
+    s.style.opacity=Math.random()*.6+.2;p.appendChild(s);}
+
+  /* ===== AI Sale chat ===== */
+  const fab=document.getElementById('chatFab'),panel=document.getElementById('chatPanel'),
+        body=document.getElementById('chatBody'),input=document.getElementById('chatInput'),
+        sendBtn=document.getElementById('chatSend');
+  function openChat(o){fab.classList.toggle('open',o);panel.classList.toggle('open',o);if(o)setTimeout(()=>input.focus(),300)}
+  fab.addEventListener('click',()=>openChat(true));
+  document.getElementById('chatClose').addEventListener('click',()=>openChat(false));
+  function addMsg(text,who){const d=document.createElement('div');d.className='msg '+who;d.textContent=text;
+    body.appendChild(d);body.scrollTop=body.scrollHeight;}
+  function curLang(){return document.documentElement.getAttribute('data-lang')||'th'}
+  /* ---- จุดต่อ AI จริง: แทน intent matching ด้านล่างด้วยการเรียก API (เช่น Dify/Neo-S) ---- */
+  function botReply(text,intent){
+    const L=CHAT_REPLIES[curLang()]; const t=(text||'').toLowerCase();
+    let key=intent;
+    if(!key){
+      if(/ราคา|กี่บาท|เท่าไหร่|price|cost|how much/.test(t))key='price';
+      else if(/กลิ่น|หอม|scent|smell|fragrance/.test(t))key='scent';
+      else if(/ส่ง|จัดส่ง|กี่วัน|ship|deliver/.test(t))key='ship';
+      else if(/สั่ง|ซื้อ|order|buy/.test(t))key='order';
+    }
+    const reply=(L[key]||L.def);
+    const typing=document.createElement('div');typing.className='msg bot';typing.textContent='…';
+    body.appendChild(typing);body.scrollTop=body.scrollHeight;
+    setTimeout(()=>{typing.remove();addMsg(reply,'bot')},650);
+  }
+  function userSend(text,intent){text=text.trim();if(!text)return;addMsg(text,'user');input.value='';botReply(text,intent)}
+  sendBtn.addEventListener('click',()=>userSend(input.value));
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')userSend(input.value)});
+  document.getElementById('chatQuick').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;userSend(b.textContent,b.dataset.q)});
+</script>
+</body>
+</html>
