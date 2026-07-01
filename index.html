@@ -373,11 +373,11 @@
     .brand-logo{height:38px}
     .brand-name{display:none}
     .hero-name{text-align:center;width:100%}
-    .hero{padding:56px 0 0;min-height:100vh;overflow:visible}
-    .hero-inner{display:flex;flex-direction:column;min-height:calc(100vh - 56px);font-size:0}
-    .hero-banner-img{position:relative;display:block;flex:none;width:100%;height:56vh;min-height:330px;object-fit:cover;object-position:center;opacity:1;background:radial-gradient(120% 100% at 60% 40%,#141109,#050505)}
+    .hero{padding:56px 0 0;overflow:visible}
+    .hero-inner{display:block;font-size:0}
+    .hero-banner-img{position:relative;display:block;width:100%;height:50vh;min-height:320px;object-fit:cover;object-position:center;opacity:1;background:radial-gradient(120% 100% at 60% 40%,#141109,#050505)}
     .hero-inner::before{display:none}
-    .hero .hero-brand{position:static;transform:none;left:auto;right:auto;top:auto;width:auto;max-width:none;margin:0;flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;padding:18px 22px;background:#050505}
+    .hero .hero-brand{position:static;transform:none;left:auto;right:auto;top:auto;width:auto;max-width:none;margin:0;text-align:center;padding:26px 22px 38px;background:#050505}
     .hero-crest{height:94px;margin:0 auto 10px}
     .hero-name{font-size:1.5rem;letter-spacing:.5px}
     .hero-brand h1,.hero h1{font-size:2.3rem!important}
@@ -385,7 +385,11 @@
     .hero-div{margin:18px auto}
     .hero-tag1{font-size:1.35rem}
     .hero-tag2{font-size:1.12rem}
-    .hero-icons{display:none}
+    .hero-icons{display:flex;flex-wrap:nowrap;justify-content:center;gap:10px;margin:22px 0 0}
+    .ic-img{width:44px;height:44px}
+    .hero-ic{flex:1;min-width:0;max-width:108px;gap:8px}
+    .hero-ic span{display:block;width:100%;font-size:.66rem;line-height:1.28;word-break:break-word;overflow-wrap:anywhere}
+    .fbar{margin-top:0}
   }
   /* respect reduced motion */
   @media(prefers-reduced-motion:reduce){
