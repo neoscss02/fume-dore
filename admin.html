@@ -37,6 +37,9 @@
   .brand .crest{font-family:var(--serif);font-weight:700;font-size:1.25rem;color:var(--gold-bright);letter-spacing:.5px}
   .brand .tag{font-size:.68rem;color:var(--muted);letter-spacing:.22em;text-transform:uppercase;margin-top:3px}
   .navscroll{flex:1;overflow-y:auto;padding:12px 10px}
+  .ai-note{font-size:.68rem;color:var(--muted);padding:2px 12px 12px;letter-spacing:.02em}
+  .ai-tag{font-size:.56rem;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:20px;margin-right:8px;
+    background:rgba(212,175,55,.18);color:var(--gold-bright);border:1px solid var(--line2);font-family:var(--head)}
   .nav-group{margin-bottom:4px}
   .ngh{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;cursor:pointer;color:#e7e0d0;
     font-family:var(--head);font-size:.9rem;transition:.2s;user-select:none}
@@ -53,8 +56,9 @@
     font-size:.85rem;color:var(--muted);transition:.18s}
   .nav-tab:hover{color:var(--warm);background:rgba(255,255,255,.03)}
   .nav-tab.active{color:#0a0a0a;background:var(--gold-grad);font-weight:600;font-family:var(--head)}
-  .nav-tab.soon{opacity:.5;cursor:default}
-  .nav-tab.soon:hover{background:none;color:var(--muted)}
+  .nav-tab.soon{opacity:.62}
+  .nav-tab.soon:hover{opacity:1;color:var(--warm);background:rgba(255,255,255,.03)}
+  .nav-tab.soon.active{opacity:1;color:#0a0a0a;background:var(--gold-grad)}
   .nav-tab .pill{margin-left:auto;font-size:.6rem;padding:1px 7px;border-radius:20px;border:1px solid var(--line2);color:var(--muted)}
   .nav-tab.active .pill{border-color:rgba(0,0,0,.25);color:#0a0a0a}
   .navfoot{padding:12px;border-top:1px solid var(--line);display:flex;gap:8px}
@@ -228,25 +232,35 @@
       <div class="tag">Admin Console</div>
     </div>
     <div class="navscroll">
-      <div class="nav-group open" data-group="store">
-        <div class="ngh"><span class="ic">🛍️</span><span class="tx">ร้าน FAFIN</span><span class="arr">▼</span></div>
+      <div class="ai-note">พนักงาน AI ของร้าน · มี 2 ตำแหน่ง</div>
+      <div class="nav-group open" data-group="manager">
+        <div class="ngh"><span class="ic">👔</span><span class="tx">ผู้จัดการ</span><span class="ai-tag">AI</span><span class="arr">▼</span></div>
         <div class="ngitems">
           <div class="nav-tab active" data-tab="dashboard"><span>📊</span> ภาพรวม</div>
           <div class="nav-tab" data-tab="orders"><span>📦</span> ออเดอร์ <span class="pill" id="ordPill">0</span></div>
+          <div class="nav-tab soon" data-soon="finance" data-icon="📈" data-title="สรุปการเงิน"
+            data-desc="รายได้ตามช่วงเวลา กำไรต่อสินค้า และรายงานการเงินสำหรับเจ้าของ"><span>📈</span> การเงิน <span class="pill">เร็ว ๆ นี้</span></div>
+          <div class="nav-tab soon" data-soon="marketing" data-icon="📣" data-title="การตลาด"
+            data-desc="สร้างคอนเทนต์โฆษณาด้วย AI · เชื่อม LINE OA / Facebook เข้าเว็บ"><span>📣</span> การตลาด <span class="pill">เร็ว ๆ นี้</span></div>
+          <div class="nav-tab soon" data-soon="stock" data-icon="🧴" data-title="คลังสินค้า"
+            data-desc="จัดการสินค้า ต้นทุน จำนวนคงเหลือ และประวัติการเคลื่อนไหวสต็อก"><span>🧴</span> คลังสินค้า <span class="pill">เร็ว ๆ นี้</span></div>
+          <div class="nav-tab soon" data-soon="assistant" data-icon="🤖" data-title="คุยกับผู้จัดการ"
+            data-desc="คุยกับ AI ผู้จัดการโดยตรง · ถามยอดขาย ขอสรุป วิเคราะห์ออเดอร์ และสั่งรายงาน"><span>🤖</span> คุยกับผู้จัดการ <span class="pill">เร็ว ๆ นี้</span></div>
         </div>
       </div>
-      <div class="nav-group" data-group="grow">
-        <div class="ngh"><span class="ic">📈</span><span class="tx">ต่อยอด</span><span class="arr">▼</span></div>
+      <div class="nav-group" data-group="sales">
+        <div class="ngh"><span class="ic">💬</span><span class="tx">ฝ่ายขาย · ฟูเม่</span><span class="ai-tag">AI</span><span class="arr">▼</span></div>
         <div class="ngitems">
-          <div class="nav-tab soon"><span>💰</span> การเงิน <span class="pill">เร็ว ๆ นี้</span></div>
-          <div class="nav-tab soon"><span>🤖</span> AI ผู้ช่วย <span class="pill">เร็ว ๆ นี้</span></div>
-          <div class="nav-tab soon"><span>💬</span> LINE / FB <span class="pill">เร็ว ๆ นี้</span></div>
+          <div class="nav-tab soon" data-soon="chat" data-icon="🗨️" data-title="ประวัติแชตฟูเม่"
+            data-desc="บทสนทนาระหว่างลูกค้ากับบอทขาย “ฟูเม่/FUMÉ” บนหน้าเว็บ"><span>🗨️</span> ประวัติแชต <span class="pill">เร็ว ๆ นี้</span></div>
         </div>
       </div>
-      <div class="nav-group" data-group="sys">
-        <div class="ngh"><span class="ic">⚙️</span><span class="tx">ระบบ</span><span class="arr">▼</span></div>
+      <div class="nav-group" data-group="settings">
+        <div class="ngh"><span class="ic">⚙️</span><span class="tx">ตั้งค่า</span><span class="arr">▼</span></div>
         <div class="ngitems">
-          <div class="nav-tab" data-tab="settings"><span>🎛️</span> ตั้งค่า</div>
+          <div class="nav-tab soon" data-soon="users" data-icon="👥" data-title="ผู้ใช้ & สิทธิ์"
+            data-desc="เพิ่ม/ลบทีมงานที่เข้าระบบได้เอง และกำหนดสิทธิ์แต่ละส่วน (RBAC)"><span>👥</span> ผู้ใช้ & สิทธิ์ <span class="pill">เร็ว ๆ นี้</span></div>
+          <div class="nav-tab" data-tab="settings"><span>🎛️</span> ระบบ & ธีม</div>
         </div>
       </div>
     </div>
@@ -312,6 +326,16 @@
             <div>รหัส/เวลา</div><div>ผู้รับ</div><div>ที่อยู่</div><div>จำนวน</div><div>ยอด/ชำระ</div><div>สถานะ</div><div></div>
           </div>
           <div id="rows"></div>
+        </div>
+      </div>
+
+      <!-- COMING SOON (roadmap placeholder per department) -->
+      <div class="tabview" id="tab-soon">
+        <div class="panel" style="max-width:620px;margin:6vh auto 0;text-align:center;padding:46px 34px">
+          <div style="font-size:2.6rem" id="soonIcon">🚧</div>
+          <h3 id="soonTitle" style="justify-content:center;font-size:1.25rem;margin-top:12px">เร็ว ๆ นี้</h3>
+          <div class="ph-sub" id="soonDesc" style="margin:10px auto 0;max-width:420px;line-height:1.6"></div>
+          <div style="margin-top:20px"><span class="badge b-confirmed">🔜 อยู่ในแผนพัฒนา</span></div>
         </div>
       </div>
 
@@ -521,11 +545,13 @@
   }
 
   /* ===== nav / tabs ===== */
-  var TITLES = { dashboard:'ภาพรวม', orders:'ออเดอร์', settings:'ตั้งค่า' };
-  function selectTab(tab){
-    Array.prototype.forEach.call(document.querySelectorAll('.nav-tab'), function(t){ t.classList.toggle('active', t.dataset.tab===tab); });
+  var TITLES = { dashboard:'ภาพรวม', orders:'ออเดอร์', settings:'ระบบ & ธีม' };
+  function selectTab(tab, el, title){
+    Array.prototype.forEach.call(document.querySelectorAll('.nav-tab'), function(t){ t.classList.remove('active'); });
+    if(el){ el.classList.add('active'); }
+    else { var m=document.querySelector('.nav-tab[data-tab="'+tab+'"]'); if(m) m.classList.add('active'); }
     Array.prototype.forEach.call(document.querySelectorAll('.tabview'), function(v){ v.classList.toggle('active', v.id==='tab-'+tab); });
-    $('pageTitle').innerHTML = 'FAFIN <span>'+(TITLES[tab]||'')+'</span>';
+    $('pageTitle').innerHTML = 'FAFIN <span>'+(title||TITLES[tab]||'')+'</span>';
     // mark parent group active
     Array.prototype.forEach.call(document.querySelectorAll('.nav-group'), function(g){
       g.classList.toggle('has-active', !!g.querySelector('.nav-tab.active'));
@@ -533,13 +559,21 @@
     document.body.classList.remove('nav-open');
     if(tab==='dashboard') renderCharts();
   }
+  function showSoon(el){
+    $('soonIcon').textContent = el.dataset.icon || '🚧';
+    $('soonTitle').textContent = el.dataset.title || 'เร็ว ๆ นี้';
+    $('soonDesc').textContent = el.dataset.desc || '';
+    selectTab('soon', el, el.dataset.title);
+  }
   function bindNav(){
     Array.prototype.forEach.call(document.querySelectorAll('.ngh'), function(h){
       h.addEventListener('click', function(){ h.parentElement.classList.toggle('open'); });
     });
     Array.prototype.forEach.call(document.querySelectorAll('.nav-tab'), function(t){
-      if(t.classList.contains('soon')) return;
-      t.addEventListener('click', function(){ if(t.dataset.tab) selectTab(t.dataset.tab); });
+      t.addEventListener('click', function(){
+        if(t.classList.contains('soon')){ showSoon(t); return; }
+        if(t.dataset.tab) selectTab(t.dataset.tab);
+      });
     });
     $('hamBtn').addEventListener('click', function(){ document.body.classList.toggle('nav-open'); });
     $('backdrop').addEventListener('click', function(){ document.body.classList.remove('nav-open'); });
