@@ -5,6 +5,12 @@ AI_SALE_PROMPT.md
 cutout.py
 index1.html
 
+# secrets — NEVER push
+secrets*.ps1
+*.local.ps1
+.env
+.env.*
+
 # OS / editor junk
 Thumbs.db
 .DS_Store
