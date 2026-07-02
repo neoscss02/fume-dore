@@ -366,6 +366,14 @@
   .ord-submit:hover{background-position:right center;transform:translateY(-2px)}
   .ord-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
   .ord-note{text-align:center;font-family:var(--sans-th);font-size:.78rem;color:var(--muted);margin-top:10px}
+  .ord-promo{display:flex;gap:8px;background:rgba(212,175,55,.05);border:1px solid var(--line);border-radius:14px;padding:12px 10px}
+  .ord-promo .tier{flex:1;text-align:center;font-family:var(--sans-th);font-size:.78rem;color:var(--muted);padding:6px 4px;border-radius:10px;transition:.3s}
+  .ord-promo .tier b{display:block;font-family:var(--serif);font-size:1.05rem;color:#cbc4b5;margin-bottom:2px}
+  .ord-promo .tier.on{background:rgba(212,175,55,.12);color:var(--warm)}
+  .ord-promo .tier.on b{color:var(--gold-bright)}
+  .ord-wholesale{border-top:1px solid var(--line);padding-top:16px;text-align:center}
+  .ord-wholesale .big{font-family:var(--serif-th);font-size:1.18rem;color:var(--gold-bright);margin-bottom:6px}
+  .ord-wholesale p{font-family:var(--sans-th);font-size:.9rem;color:#cbc4b5;line-height:1.55}
   .ord-err{color:#e5a0a0;font-family:var(--sans-th);font-size:.85rem;text-align:center;min-height:1em}
   .ord-done{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:40px 10px;flex:1;justify-content:center}
   .ord-done .ok{width:74px;height:74px;border-radius:50%;background:var(--gold-grad);display:flex;align-items:center;justify-content:center}
@@ -746,11 +754,16 @@
         <button type="button" id="qtyPlus" aria-label="เพิ่ม">+</button>
       </div>
     </div>
+    <div class="ord-promo" id="ordPromo">
+      <div class="tier" data-tier="1"><b>฿99</b><span data-i18n="ord.t1">1 ขวด</span></div>
+      <div class="tier" data-tier="2"><b>฿169</b><span data-i18n="ord.t2">2 ขวด</span></div>
+      <div class="tier" data-tier="3"><b data-i18n="ord.t3b">ราคาส่ง</b><span data-i18n="ord.t3">3 ขวด+</span></div>
+    </div>
     <div class="ord-form">
       <div class="ord-field"><label data-i18n="ord.name">ชื่อ-นามสกุลผู้รับ</label><input id="ordName" type="text" autocomplete="name" /></div>
       <div class="ord-field"><label data-i18n="ord.phone">เบอร์โทร</label><input id="ordPhone" type="tel" inputmode="tel" autocomplete="tel" /></div>
       <div class="ord-field"><label data-i18n="ord.addr">ที่อยู่จัดส่ง (พร้อมรหัสไปรษณีย์)</label><textarea id="ordAddr" rows="3" autocomplete="street-address"></textarea></div>
-      <div class="ord-field">
+      <div class="ord-field" id="payField">
         <label data-i18n="ord.pay">วิธีชำระเงิน</label>
         <div class="pay-opts">
           <div class="pay-opt"><input type="radio" name="pay" id="payCod" value="cod" checked /><label for="payCod" data-i18n="ord.cod">เก็บเงินปลายทาง</label></div>
@@ -759,10 +772,14 @@
       </div>
       <div class="ord-field"><label data-i18n="ord.noteL">หมายเหตุ (ถ้ามี)</label><input id="ordNote" type="text" /></div>
     </div>
-    <div class="ord-sum">
+    <div class="ord-sum" id="ordSum">
       <div class="row"><span data-i18n="ord.subtotal">ยอดสินค้า</span><span id="sumSub">฿99</span></div>
       <div class="row"><span data-i18n="ord.ship">ค่าจัดส่ง</span><span style="color:var(--gold-bright)" data-i18n="ord.free">ฟรี</span></div>
       <div class="row total"><span data-i18n="ord.total">รวมทั้งหมด</span><b id="sumTotal">฿99</b></div>
+    </div>
+    <div class="ord-wholesale" id="ordWholesale" style="display:none">
+      <div class="big" data-i18n="ord.wsTitle">ราคาส่ง · 3 ขวดขึ้นไป</div>
+      <p data-i18n="ord.wsMsg">กรอกชื่อ + เบอร์ แล้วกด “ขอราคาส่ง” — ทีมงานจะติดต่อกลับแจ้งราคาส่งพิเศษให้ค่ะ 🌹 (ที่อยู่ใส่ทีหลังตอนยืนยันได้)</p>
     </div>
   </div>
   <!-- done view -->
@@ -775,7 +792,7 @@
   </div>
   <div class="ord-foot" id="ordFoot">
     <div class="ord-err" id="ordErr"></div>
-    <button class="ord-submit" id="ordSubmit"><span data-i18n="ord.confirm">ยืนยันสั่งซื้อ</span> · <span id="ordBtnTotal">฿99</span></button>
+    <button class="ord-submit" id="ordSubmit"><span id="ordBtnLabel">ยืนยันสั่งซื้อ</span><span id="ordBtnTotalWrap"> · <span id="ordBtnTotal">฿99</span></span></button>
     <div class="ord-note" data-i18n="ord.foot">ส่งฟรี · เก็บเงินปลายทาง · ของแท้ 100%</div>
   </div>
 </aside>
@@ -868,6 +885,7 @@
       "ord.fab":"สั่งซื้อ","ord.title":"สั่งซื้อ FAFIN FUME","ord.scent":"Fruity","ord.size":"น้ำหอมรถยนต์ · สุทธิ 8 มล.","ord.each":"/ ขวด",
       "ord.name":"ชื่อ-นามสกุลผู้รับ","ord.phone":"เบอร์โทร","ord.addr":"ที่อยู่จัดส่ง (พร้อมรหัสไปรษณีย์)","ord.pay":"วิธีชำระเงิน","ord.cod":"เก็บเงินปลายทาง","ord.transfer":"โอนเงิน","ord.noteL":"หมายเหตุ (ถ้ามี)",
       "ord.subtotal":"ยอดสินค้า","ord.ship":"ค่าจัดส่ง","ord.free":"ฟรี","ord.total":"รวมทั้งหมด","ord.confirm":"ยืนยันสั่งซื้อ","ord.foot":"ส่งฟรี · เก็บเงินปลายทาง · ของแท้ 100%",
+      "ord.t1":"1 ขวด","ord.t2":"2 ขวด","ord.t3":"3 ขวด+","ord.t3b":"ราคาส่ง","ord.wsTitle":"ราคาส่ง · 3 ขวดขึ้นไป","ord.wsMsg":"กรอกชื่อ + เบอร์ แล้วกด “ขอราคาส่ง” — ทีมงานจะติดต่อกลับแจ้งราคาส่งพิเศษให้ค่ะ 🌹 (ที่อยู่ใส่ทีหลังตอนยืนยันได้)",
       "ord.thanks":"ขอบคุณค่ะ 🌹","ord.doneMsg":"รับออเดอร์เรียบร้อยแล้วค่ะ ทีมงานจะติดต่อกลับเพื่อยืนยันการจัดส่งโดยเร็วที่สุดนะคะ","ord.close2":"ปิดหน้าต่าง"
     },
     /* ---------- English ---------- */
@@ -928,6 +946,7 @@
       "ord.fab":"Order","ord.title":"Order FAFIN FUME","ord.scent":"Fruity","ord.size":"Car Perfume · Net 8 ml","ord.each":"/ bottle",
       "ord.name":"Recipient full name","ord.phone":"Phone number","ord.addr":"Shipping address (with postal code)","ord.pay":"Payment method","ord.cod":"Cash on Delivery","ord.transfer":"Bank Transfer","ord.noteL":"Note (optional)",
       "ord.subtotal":"Subtotal","ord.ship":"Shipping","ord.free":"Free","ord.total":"Total","ord.confirm":"Confirm Order","ord.foot":"Free Shipping · Cash on Delivery · 100% Authentic",
+      "ord.t1":"1 bottle","ord.t2":"2 bottles","ord.t3":"3 bottles+","ord.t3b":"Wholesale","ord.wsTitle":"Wholesale · 3 bottles or more","ord.wsMsg":"Enter your name + phone and tap “Request wholesale price” — our team will contact you with a special wholesale rate 🌹 (address can be added later).",
       "ord.thanks":"Thank you 🌹","ord.doneMsg":"Your order has been received. Our team will contact you shortly to confirm delivery.","ord.close2":"Close"
     }
   };
@@ -1070,16 +1089,34 @@
 
   /* ===== Cart / Order (ตะกร้าเดียว · สั่งได้แม้ AI ล่ม) ===== */
   const FAFIN_ORDER = { endpoint:"https://fafin-proxy.neoscss02.workers.dev/order" };
-  const PRICE = 99;
   const ordPanel=document.getElementById('ordPanel'), ordOverlay=document.getElementById('ordOverlay');
   let qty=1;
-  function money(n){return '฿'+n.toLocaleString('en-US');}
+  function money(n){return '฿'+Number(n).toLocaleString('en-US');}
+  function priceFor(q){ return q===1?99 : q===2?169 : 0; }   /* 0 = ราคาส่ง (3 ขวดขึ้นไป) */
   function renderQty(){
+    var L=curLang(), ws=qty>=3;
     document.getElementById('qtyVal').textContent=qty;
-    var t=qty*PRICE;
-    document.getElementById('sumSub').textContent=money(t);
-    document.getElementById('sumTotal').textContent=money(t);
-    document.getElementById('ordBtnTotal').textContent=money(t);
+    Array.prototype.forEach.call(document.querySelectorAll('#ordPromo .tier'),function(el){
+      var t=+el.dataset.tier; el.classList.toggle('on',(t===qty)||(t===3&&qty>=3));
+    });
+    var lbl=document.getElementById('ordBtnLabel'), wrap=document.getElementById('ordBtnTotalWrap');
+    if(ws){
+      document.getElementById('ordSum').style.display='none';
+      document.getElementById('ordWholesale').style.display='';
+      document.getElementById('payField').style.display='none';
+      lbl.textContent=(L==='en'?'Request wholesale price':'ขอราคาส่ง');
+      wrap.style.display='none';
+    }else{
+      var t=priceFor(qty);
+      document.getElementById('sumSub').textContent=money(t);
+      document.getElementById('sumTotal').textContent=money(t);
+      document.getElementById('ordBtnTotal').textContent=money(t);
+      document.getElementById('ordSum').style.display='';
+      document.getElementById('ordWholesale').style.display='none';
+      document.getElementById('payField').style.display='';
+      lbl.textContent=(L==='en'?'Confirm Order':'ยืนยันสั่งซื้อ');
+      wrap.style.display='';
+    }
   }
   function openOrder(){
     ordOverlay.classList.add('open');ordPanel.classList.add('open');document.body.style.overflow='hidden';
@@ -1110,7 +1147,8 @@
     var pay=(document.querySelector('input[name="pay"]:checked')||{}).value||'cod';
     var note=document.getElementById('ordNote').value.trim();
     var err=document.getElementById('ordErr'); err.textContent='';
-    if(!name||!phone||!addr){ err.textContent=(L==='en'?'Please fill name, phone and address.':'กรุณากรอกชื่อ เบอร์ และที่อยู่ให้ครบค่ะ'); return; }
+    if(!name||!phone){ err.textContent=(L==='en'?'Please fill name and phone.':'กรุณากรอกชื่อ และเบอร์โทรค่ะ'); return; }
+    if(qty<3 && !addr){ err.textContent=(L==='en'?'Please fill the shipping address.':'กรุณากรอกที่อยู่จัดส่งค่ะ'); return; }
     if(!/^[0-9+\-\s]{8,}$/.test(phone)){ err.textContent=(L==='en'?'Please enter a valid phone number.':'กรุณากรอกเบอร์โทรให้ถูกต้องค่ะ'); return; }
     var btn=document.getElementById('ordSubmit'); var oldHtml=btn.innerHTML; btn.disabled=true;
     btn.textContent=(L==='en'?'Submitting…':'กำลังส่ง…');
@@ -1136,6 +1174,7 @@
     ['ordName','ordPhone','ordAddr','ordNote'].forEach(function(id){document.getElementById(id).value='';});
   }
   document.getElementById('ordSubmit').addEventListener('click',submitOrder);
+  document.querySelectorAll('.lang-btn').forEach(function(b){ b.addEventListener('click', function(){ renderQty(); }); });
   renderQty();
 </script>
 </body>

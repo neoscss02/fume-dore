@@ -101,7 +101,7 @@
   const WORKER = "https://fafin-proxy.neoscss02.workers.dev";
   const KEY = "fafin_admin_token";
   const S_LABEL = { new:"🆕 ใหม่", confirmed:"✅ ยืนยันแล้ว", shipped:"🚚 จัดส่งแล้ว", done:"🎉 เสร็จสิ้น", cancelled:"✖ ยกเลิก" };
-  const PAY_LABEL = { cod:"ปลายทาง", transfer:"โอนเงิน" };
+  const PAY_LABEL = { cod:"ปลายทาง", transfer:"โอนเงิน", wholesale:"ราคาส่ง · ติดต่อกลับ" };
   let token = "";
 
   const $ = function(id){ return document.getElementById(id); };
@@ -168,7 +168,7 @@
       + '<div><div>'+esc(o.customer_name)+'</div><div class="dim">'+esc(o.phone)+'</div>'+(o.note?'<div class="note">“'+esc(o.note)+'”</div>':'')+'</div>'
       + '<div class="addr">'+esc(o.address)+'</div>'
       + '<div>'+esc(o.qty)+' ขวด</div>'
-      + '<div><div class="total">'+money(o.total)+'</div><span class="pay">'+(PAY_LABEL[o.payment_method]||esc(o.payment_method))+'</span></div>'
+      + '<div><div class="total">'+(o.payment_method==='wholesale'?'<span style="font-size:.82rem;color:#c8a2ff">รอตกลงราคา</span>':money(o.total))+'</div><span class="pay">'+(PAY_LABEL[o.payment_method]||esc(o.payment_method))+'</span></div>'
       + '<div><select class="status" data-id="'+o.id+'">'+opts+'</select></div>'
       + '<div class="actcol"><button class="btn del sm" data-id="'+o.id+'" data-code="'+code(o.id)+'" title="ลบ">✕</button></div>'
       + '</div>';
