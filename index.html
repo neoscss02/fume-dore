@@ -665,7 +665,7 @@
 <div class="chat-panel" id="chatPanel" role="dialog" aria-label="AI Sale">
   <div class="chat-head">
     <div class="ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l1.6 4.2L18 8.5l-3.4 2.7L15.5 16 12 13.4 8.5 16l.9-4.8L6 8.5l4.4-1.3L12 3Z"/></svg></div>
-    <div><b>FAFIN&nbsp;FUME</b><span class="stat" data-i18n="chat.status">ผู้ช่วย AI · ออนไลน์</span></div>
+    <div><b data-i18n="chat.name">ฟูเม่</b><span class="stat" data-i18n="chat.status">ผู้ช่วย AI · ออนไลน์</span></div>
     <button class="chat-close" id="chatClose" aria-label="Close">&times;</button>
   </div>
   <div class="chat-body" id="chatBody">
@@ -739,7 +739,7 @@
       "foot.company":"บริษัท","foot.comp1":"เกี่ยวกับเรา","foot.comp2":"เรื่องราวของเรา","foot.comp3":"ติดต่อเรา","foot.comp4":"ร้านค้า",
       "foot.support":"ช่วยเหลือ","foot.sup1":"การจัดส่ง","foot.sup2":"การคืนสินค้า","foot.sup3":"คำถามที่พบบ่อย","foot.sup4":"นโยบายความเป็นส่วนตัว",
       "foot.copy":"© 2026 FAFIN FUME : ผู้พัฒนาระบบ neos-css.com by Comtech Solution System Co., Ltd. · สงวนลิขสิทธิ์ทุกประการ",
-      "chat.status":"ผู้ช่วย AI · ออนไลน์","chat.greet":"สวัสดีค่ะ 🌹 ยินดีต้อนรับสู่ FAFIN FUME มีอะไรให้ช่วยดูแลไหมคะ? สอบถามราคา กลิ่น หรือวิธีสั่งซื้อได้เลยค่ะ",
+      "chat.name":"ฟูเม่","chat.status":"ผู้ช่วย AI · ออนไลน์","chat.greet":"สวัสดีค่ะ ฟูเม่เองนะคะ 🌹 ยินดีต้อนรับสู่ FAFIN FUME มีอะไรให้ช่วยดูแลไหมคะ? สอบถามราคา กลิ่น หรือวิธีสั่งซื้อได้เลยค่ะ",
       "chat.q1":"ราคาเท่าไหร่?","chat.q2":"มีกลิ่นอะไรบ้าง?","chat.q3":"ส่งกี่วัน?","chat.q4":"สั่งซื้อยังไง?","chat.ph":"พิมพ์ข้อความ..."
     },
     /* ---------- English ---------- */
@@ -795,7 +795,7 @@
       "foot.company":"Company","foot.comp1":"About Us","foot.comp2":"Our Story","foot.comp3":"Contact","foot.comp4":"Stores",
       "foot.support":"Support","foot.sup1":"Shipping","foot.sup2":"Returns","foot.sup3":"FAQ","foot.sup4":"Privacy",
       "foot.copy":"© 2026 FAFIN FUME : System developed by neos-css.com by Comtech Solution System Co., Ltd. · All rights reserved.",
-      "chat.status":"AI Assistant · Online","chat.greet":"Hello 🌹 Welcome to FAFIN FUME! How can I help you today? Feel free to ask about price, scents, or how to order.",
+      "chat.name":"FUMÉ","chat.status":"AI Assistant · Online","chat.greet":"Hi, I'm FUMÉ 🌹 Welcome to FAFIN FUME! How can I help you today? Feel free to ask about price, scents, or how to order.",
       "chat.q1":"How much is it?","chat.q2":"What scents?","chat.q3":"Delivery time?","chat.q4":"How to order?","chat.ph":"Type a message..."
     }
   };
@@ -860,18 +860,25 @@
     s.style.animationDuration=(Math.random()*14+10)+'s';s.style.animationDelay=(-Math.random()*16)+'s';
     s.style.opacity=Math.random()*.6+.2;p.appendChild(s);}
 
-  /* ===== AI Sale chat ===== */
+  /* ===== AI Sale chat — บอทฟูเม่ / FUMÉ ===== */
+  /* 🔌 ปลั๊ก: วาง URL worker เมื่อ deploy แล้ว (ว่าง = ใช้คำตอบสำรอง อัตโนมัติ) */
+  const FAFIN_AI = { endpoint:"https://fafin-proxy.neoscss02.workers.dev/chat" };
+  const FAFIN_CONTACT = { lineLink:"", phone:"" }; // 🔌 รอเจ้าของแบรนด์ (LINE OA / เบอร์)
+
   const fab=document.getElementById('chatFab'),panel=document.getElementById('chatPanel'),
         body=document.getElementById('chatBody'),input=document.getElementById('chatInput'),
         sendBtn=document.getElementById('chatSend');
+  const chatHistory=[];   // {role:'user'|'assistant', content}
+  let chatBusy=false;
   function openChat(o){fab.classList.toggle('open',o);panel.classList.toggle('open',o);if(o)setTimeout(()=>input.focus(),300)}
   fab.addEventListener('click',()=>openChat(true));
   document.getElementById('chatClose').addEventListener('click',()=>openChat(false));
   function addMsg(text,who){const d=document.createElement('div');d.className='msg '+who;d.textContent=text;
-    body.appendChild(d);body.scrollTop=body.scrollHeight;}
+    body.appendChild(d);body.scrollTop=body.scrollHeight;return d;}
   function curLang(){return document.documentElement.getAttribute('data-lang')||'th'}
-  /* ---- จุดต่อ AI จริง: แทน intent matching ด้านล่างด้วยการเรียก API (เช่น Dify/Neo-S) ---- */
-  function botReply(text,intent){
+
+  /* คำตอบสำรอง — ใช้เมื่อยังไม่ deploy worker หรือ AI ล่ม (เว็บไม่มีทางเงียบ) */
+  function fallbackReply(text,intent){
     const L=CHAT_REPLIES[curLang()]; const t=(text||'').toLowerCase();
     let key=intent;
     if(!key){
@@ -880,12 +887,50 @@
       else if(/ส่ง|จัดส่ง|กี่วัน|ship|deliver/.test(t))key='ship';
       else if(/สั่ง|ซื้อ|order|buy/.test(t))key='order';
     }
-    const reply=(L[key]||L.def);
-    const typing=document.createElement('div');typing.className='msg bot';typing.textContent='…';
-    body.appendChild(typing);body.scrollTop=body.scrollHeight;
-    setTimeout(()=>{typing.remove();addMsg(reply,'bot')},650);
+    return (L[key]||L.def);
   }
-  function userSend(text,intent){text=text.trim();if(!text)return;addMsg(text,'user');input.value='';botReply(text,intent)}
+
+  /* สตรีมคำตอบจาก worker (บอทฟูเม่ตอบทีละคำ) */
+  async function streamReply(bubble){
+    const res=await fetch(FAFIN_AI.endpoint,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:chatHistory.slice(-12),lang:curLang()})
+    });
+    if(!res.ok||!res.body) throw new Error('bad_response_'+res.status);
+    const reader=res.body.getReader(),dec=new TextDecoder(); let acc='';
+    while(true){
+      const {done,value}=await reader.read(); if(done)break;
+      acc+=dec.decode(value,{stream:true});
+      bubble.textContent=acc; body.scrollTop=body.scrollHeight;
+    }
+    return acc.trim();
+  }
+
+  async function botReply(text,intent){
+    const typing=addMsg('…','bot');
+    if(!FAFIN_AI.endpoint){                    // ยังไม่ deploy → คำตอบสำรอง
+      await new Promise(r=>setTimeout(r,550));
+      const reply=fallbackReply(text,intent);
+      typing.textContent=reply; body.scrollTop=body.scrollHeight;
+      chatHistory.push({role:'assistant',content:reply}); return;
+    }
+    try{
+      const reply=await streamReply(typing);
+      if(!reply) throw new Error('empty');
+      chatHistory.push({role:'assistant',content:reply});
+    }catch(e){
+      const reply=fallbackReply(text,intent);
+      typing.textContent=reply; body.scrollTop=body.scrollHeight;
+      chatHistory.push({role:'assistant',content:reply});
+    }
+  }
+
+  async function userSend(text,intent){
+    text=(text||'').trim(); if(!text||chatBusy)return;
+    chatBusy=true; addMsg(text,'user'); input.value='';
+    chatHistory.push({role:'user',content:text});
+    try{ await botReply(text,intent); } finally{ chatBusy=false; input.focus(); }
+  }
   sendBtn.addEventListener('click',()=>userSend(input.value));
   input.addEventListener('keydown',e=>{if(e.key==='Enter')userSend(input.value)});
   document.getElementById('chatQuick').addEventListener('click',e=>{
