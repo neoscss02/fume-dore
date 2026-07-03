@@ -843,7 +843,7 @@
   }
 
   /* ===== ถังพลัง AI (buckets + เติม) ===== */
-  var AGENT_META = { sales:{ic:'💬',name:'ฝ่ายขาย (ฟูเม่)'}, manager:{ic:'👔',name:'ผู้จัดการ'}, marketing:{ic:'📣',name:'การตลาด'} };
+  var AGENT_META = { sales:{ic:'💬',name:'ฝ่ายขาย (ฟูเม่)'}, manager:{ic:'👔',name:'ผู้จัดการ (หลังบ้าน + การตลาด)'} };
   function powerColor(pct){ return pct>50 ? '#5fce8b' : (pct>=20 ? '#e0b64a' : '#e0466b'); }
   async function loadPower(){
     try{ var d=await api('/admin/power'); renderBuckets(d.buckets||[], d.topups||[], myRole==='admin'); }
