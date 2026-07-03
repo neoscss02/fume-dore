@@ -185,6 +185,12 @@
   body.light .pi{background:#fff}
   .pi:focus{border-color:var(--gold)}
   @media(max-width:820px){ .prow{grid-template-columns:1fr 1fr;gap:8px} .prow>div:first-child{grid-column:1/3} }
+  /* kb */
+  #kbInput{width:100%;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--warm);font-family:var(--sans);font-size:.9rem;outline:none;resize:vertical;margin:14px 0 10px}
+  #kbInput:focus{border-color:var(--gold)}
+  .kbitem{display:flex;gap:12px;align-items:flex-start;padding:13px 2px;border-bottom:1px solid var(--line);font-size:.9rem;line-height:1.55}
+  .kbitem:last-child{border-bottom:none}
+  .kbitem .kbc{flex:1;white-space:pre-wrap;word-break:break-word}
   @media(max-width:820px){ .uform{grid-template-columns:1fr 1fr} .uhead{display:none} .urow{grid-template-columns:1fr 1fr;gap:4px 10px} .urow>div:nth-child(1){grid-column:1/3} }
   .badge{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;padding:3px 10px;border-radius:20px;font-family:var(--head)}
   .b-new{background:rgba(224,70,107,.14);color:#f090aa}
@@ -293,8 +299,7 @@
           <div class="nav-tab" data-tab="finance"><span>📈</span> การเงิน</div>
           <div class="nav-tab" data-tab="marketing"><span>📣</span> การตลาด</div>
           <div class="nav-tab" data-tab="stock"><span>🧴</span> คลังสินค้า</div>
-          <div class="nav-tab soon" data-soon="kb" data-icon="📚" data-title="คลังความรู้ (RAG)"
-            data-desc="ฐานความรู้ให้ AI ตอบแม่นขึ้น · วางข้อมูลสินค้า/นโยบาย/คำถามที่พบบ่อย + sync อัตโนมัติ (bge-m3 เหมือนโปรเจกต์อื่น)"><span>📚</span> คลังความรู้ <span class="pill">เร็ว ๆ นี้</span></div>
+          <div class="nav-tab" data-tab="kb"><span>📚</span> คลังความรู้</div>
           <div class="nav-tab" data-tab="assistant"><span>🤖</span> คุยกับผู้จัดการ</div>
         </div>
       </div>
@@ -387,6 +392,18 @@
           <div class="card-head"><h3>👤 ลูกค้า</h3><span class="dim" style="margin-left:auto">สรุปจากออเดอร์จริง · เรียงตามยอดซื้อ</span></div>
           <div class="chead"><div>ลูกค้า</div><div>เบอร์</div><div>ออเดอร์</div><div>ขวดรวม</div><div>ยอดซื้อ</div><div>ล่าสุด</div></div>
           <div id="custRows"></div>
+        </div>
+      </div>
+
+      <!-- KB / คลังความรู้ (RAG) -->
+      <div class="tabview" id="tab-kb">
+        <div class="panel" style="max-width:820px">
+          <h3>📚 คลังความรู้ (RAG)</h3>
+          <div class="ph-sub">วางข้อมูล/นโยบาย/คำถามที่พบบ่อย → บอทฟูเม่ดึงไปตอบลูกค้าให้แม่นขึ้น (embed bge-m3)</div>
+          <textarea id="kbInput" placeholder="เช่น: นโยบายคืนสินค้า 7 วัน / วิธีใช้แขวนกระจก / โปรพิเศษ / คำถามที่ลูกค้าถามบ่อย" rows="3"></textarea>
+          <button class="btn sm" id="kbAdd">+ เพิ่มเข้าคลัง</button>
+          <div class="err" id="kbErr" style="text-align:left"></div>
+          <div id="kbList" style="margin-top:10px"></div>
         </div>
       </div>
 
@@ -850,6 +867,35 @@
     finally{ $('mgrSend').disabled=false; }
   }
 
+  /* ===== คลังความรู้ (RAG) ===== */
+  async function loadKB(){
+    $('kbList').innerHTML='<div class="empty">กำลังโหลด…</div>'; $('kbErr').textContent='';
+    try{ var d=await api('/admin/kb'); if(d.ai===false) $('kbErr').textContent='⚠️ Workers AI ยังไม่พร้อม — embedding อาจไม่ทำงาน'; renderKB(d.items||[]); }
+    catch(e){ $('kbList').innerHTML='<div class="empty">'+(e.message==='db_error'?'ระบบคลังความรู้ยังไม่พร้อม (ตาราง fafin_kb ยังไม่ได้สร้าง)':esc(e.message))+'</div>'; }
+  }
+  function renderKB(list){
+    var ro=(myRole==='viewer');
+    if(!list.length){ $('kbList').innerHTML='<div class="empty">ยังไม่มีข้อมูลในคลัง — เพิ่มด้านบนได้เลยค่ะ 🌹</div>'; return; }
+    $('kbList').innerHTML=list.map(function(k){
+      return '<div class="kbitem"><div class="kbc">'+esc(k.content)+'</div>'+(ro?'':'<button class="btn del sm kbdel" data-id="'+k.id+'">ลบ</button>')+'</div>';
+    }).join('');
+    if(ro) return;
+    Array.prototype.forEach.call(document.querySelectorAll('#kbList .kbdel'), function(b){ b.addEventListener('click', function(){ delKB(b.dataset.id); }); });
+  }
+  async function addKB(){
+    var content=$('kbInput').value.trim(); var err=$('kbErr'); err.textContent='';
+    if(!content){ err.textContent='พิมพ์ข้อมูลก่อนค่ะ'; return; }
+    $('kbAdd').disabled=true; $('kbAdd').textContent='กำลังเพิ่ม…';
+    try{ await api('/admin/kb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:content})}); $('kbInput').value=''; toast('เพิ่มเข้าคลังแล้ว'); loadKB(); }
+    catch(e){ err.textContent='เพิ่มไม่ได้: '+(e.message==='embed_failed'?'ระบบ embedding ไม่พร้อม (เช็ค Workers AI)':e.message); }
+    finally{ $('kbAdd').disabled=false; $('kbAdd').textContent='+ เพิ่มเข้าคลัง'; }
+  }
+  async function delKB(id){
+    if(!confirm('ลบข้อมูลนี้ออกจากคลัง?')) return;
+    try{ await api('/admin/kb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'remove',id:Number(id)})}); toast('ลบแล้ว'); loadKB(); }
+    catch(e){ toast('ลบไม่ได้: '+e.message); }
+  }
+
   /* ===== คลังสินค้า ===== */
   async function loadStock(){
     $('stockList').innerHTML='<div class="empty">กำลังโหลด…</div>';
@@ -947,7 +993,7 @@
   }
 
   /* ===== nav / tabs ===== */
-  var TITLES = { dashboard:'ภาพรวม', orders:'ออเดอร์', customers:'ลูกค้า', stock:'คลังสินค้า', finance:'การเงิน', marketing:'การตลาด', assistant:'คุยกับผู้จัดการ', chat:'แชทลูกค้า', power:'พลัง AI', users:'ผู้ใช้ & สิทธิ์', settings:'ระบบ & ธีม' };
+  var TITLES = { dashboard:'ภาพรวม', orders:'ออเดอร์', customers:'ลูกค้า', kb:'คลังความรู้', stock:'คลังสินค้า', finance:'การเงิน', marketing:'การตลาด', assistant:'คุยกับผู้จัดการ', chat:'แชทลูกค้า', power:'พลัง AI', users:'ผู้ใช้ & สิทธิ์', settings:'ระบบ & ธีม' };
   function selectTab(tab, el, title){
     Array.prototype.forEach.call(document.querySelectorAll('.nav-tab'), function(t){ t.classList.remove('active'); });
     if(el){ el.classList.add('active'); }
@@ -962,6 +1008,7 @@
     if(tab==='dashboard') renderCharts();
     if(tab==='finance') renderFinance();
     if(tab==='stock') loadStock();
+    if(tab==='kb') loadKB();
     if(tab==='assistant') mgrGreet();
     if(tab==='users') loadUsers();
     if(tab==='power' || tab==='chat') loadUsage();
@@ -1086,6 +1133,7 @@
     Array.prototype.forEach.call(document.querySelectorAll('.mkt'), function(b){
       b.addEventListener('click', function(){ mktGen(b.dataset.kind, b); });
     });
+    $('kbAdd').addEventListener('click', addKB);
     $('googleBtn').addEventListener('click', function(){
       if(!supa){ toast('Google ยังไม่พร้อม — ใช้ชื่อผู้ใช้/รหัสผ่านไปก่อนค่ะ'); return; }
       supa.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: location.origin + location.pathname } });
