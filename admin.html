@@ -192,6 +192,8 @@
   .kbitem:last-child{border-bottom:none}
   .kbitem .kbc{flex:1;white-space:pre-wrap;word-break:break-word}
   /* power buckets */
+  .fxbanner{display:inline-block;font-size:.82rem;color:var(--gold-bright);background:rgba(212,175,55,.08);border:1px solid var(--line);border-radius:20px;padding:8px 16px;margin-bottom:14px}
+  .fxbanner:empty{display:none}
   .bucketwrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
   .bcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
   .bcard.off{opacity:.55}
@@ -494,7 +496,8 @@
       <!-- POWER AI (ถังพลัง + การใช้งาน) -->
       <div class="tabview" id="tab-power">
         <h3 style="margin-bottom:3px">⚡ ถังพลัง AI</h3>
-        <div class="ph-sub" style="margin-bottom:14px">โควตาพลังต่อฝ่าย · ถังหมด = ฝ่ายนั้นพักชั่วคราว (fail-open) · เติมได้ (เฉพาะ admin)</div>
+        <div class="ph-sub" style="margin-bottom:12px">โควตาพลังต่อฝ่าย · ถังหมด = ฝ่ายนั้นพักชั่วคราว (fail-open) · เติมได้ (เฉพาะ admin)</div>
+        <div id="fxBanner" class="fxbanner"></div>
         <div id="bucketWrap" class="bucketwrap"></div>
         <div class="panel" style="margin:16px 0"><h3>🧾 ประวัติการเติมพลัง</h3><div id="topupHist" style="margin-top:8px"></div></div>
         <h3 style="margin:6px 0 3px">📊 การใช้งานจริง (จาก log)</h3>
@@ -846,7 +849,9 @@
   var AGENT_META = { sales:{ic:'💬',name:'ฝ่ายขาย (ฟูเม่)'}, manager:{ic:'👔',name:'ผู้จัดการ (หลังบ้าน + การตลาด)'} };
   function powerColor(pct){ return pct>50 ? '#5fce8b' : (pct>=20 ? '#e0b64a' : '#e0466b'); }
   async function loadPower(){
-    try{ var d=await api('/admin/power'); renderBuckets(d.buckets||[], d.topups||[], myRole==='admin'); }
+    try{ var d=await api('/admin/power');
+      if(d.fx && d.fx.rate){ $('fxBanner').innerHTML = '💱 เรตวันนี้ '+Number(d.fx.rate).toFixed(2)+' บาท/$ · รวม VAT '+(d.fx.fee_pct||7)+'% (vendor LLM เก็บจากต้นทาง) แล้ว'; } else { $('fxBanner').innerHTML=''; }
+      renderBuckets(d.buckets||[], d.topups||[], myRole==='admin'); }
     catch(e){ var m=(e.message==='db_error')?'ระบบถังพลังยังไม่พร้อม (ตาราง fafin_ai_buckets ยังไม่ได้สร้าง)':esc(e.message);
       if($('bucketWrap')) $('bucketWrap').innerHTML='<div class="empty">'+m+'</div>'; if($('topupHist')) $('topupHist').innerHTML=''; }
   }
