@@ -1025,7 +1025,26 @@
   /* ===== คุยกับผู้จัดการ AI ===== */
   var MGR_HISTORY = [];
   function mgrRender(cls, text){ var d=document.createElement('div'); d.className='mbub '+cls; d.textContent=text; $('mgrChat').appendChild(d); $('mgrChat').scrollTop=$('mgrChat').scrollHeight; return d; }
-  function mgrGreet(){ if(!MGR_HISTORY.length && !$('mgrChat').children.length) mgrRender('ai','สวัสดีค่ะ ดิฉันผู้จัดการ AI ของ FAFIN FUME 📊 ถามยอดขาย ขอสรุป หรือให้ช่วยวิเคราะห์ออเดอร์ได้เลยค่ะ'); }
+  function mgrGreet(){ if(!MGR_HISTORY.length && !$('mgrChat').children.length) mgrRender('ai','สวัสดีค่ะ ดิฉันผู้จัดการ AI ของ FAFIN FUME 📊 ถามยอดขาย ขอสรุป วิเคราะห์ หรือสั่งงานได้เลยค่ะ (เช่น "ตั้งทุน 35", "จดค่าโฆษณา 500", "ปรับสต็อกเป็น 80")'); }
+  /* ยืนยันก่อนเขียนจริง (write-tool) → กด ✅ = ยิง /admin/exec-tool ด้วย HMAC token */
+  function mgrConfirm(c){
+    var box=document.createElement('div'); box.className='mbub ai';
+    box.style.cssText='border:1px solid var(--gold-bright);background:rgba(212,175,55,.06)';
+    box.innerHTML='<div style="font-weight:600;margin-bottom:6px">⚠️ ยืนยันการทำรายการ</div><div style="margin-bottom:10px">'+esc(c.preview)+'</div><div style="display:flex;gap:8px"><button class="btn sm cfmY">✅ ยืนยัน</button><button class="btn ghost sm cfmN">ยกเลิก</button></div>';
+    $('mgrChat').appendChild(box); $('mgrChat').scrollTop=$('mgrChat').scrollHeight;
+    box.querySelector('.cfmY').addEventListener('click', async function(){
+      box.querySelector('.cfmY').disabled=true; box.querySelector('.cfmN').disabled=true;
+      try{
+        var hdr=Object.assign({'Content-Type':'application/json'}, await authHeaders());
+        var r=await fetch(WORKER+'/admin/exec-tool',{method:'POST',headers:hdr,body:JSON.stringify({token:c.token})});
+        var jj; try{jj=await r.json();}catch(e){jj={};}
+        box.remove();
+        mgrRender('ai',(jj.ok?'✅ ':'❌ ')+(jj.msg||(jj.ok?'ทำรายการแล้วค่ะ':'ทำไม่สำเร็จค่ะ')));
+        if(jj.ok){ loadSnapshot(); if(typeof loadStock==='function') loadStock(); loadOrders(false); }
+      }catch(e){ box.remove(); mgrRender('ai','❌ ทำรายการไม่ได้: '+e.message); }
+    });
+    box.querySelector('.cfmN').addEventListener('click', function(){ box.remove(); mgrRender('ai','ยกเลิกแล้วค่ะ'); });
+  }
   async function mgrSend(){
     var msg=$('mgrMsg').value.trim(); if(!msg) return;
     $('mgrMsg').value='';
@@ -1034,9 +1053,11 @@
     try{
       var hdr=Object.assign({'Content-Type':'application/json'}, await authHeaders());
       var res=await fetch(WORKER+'/admin/manager-chat',{method:'POST',headers:hdr,body:JSON.stringify({messages:MGR_HISTORY})});
-      var text=await res.text(); t.remove();
-      if(!res.ok){ var er; try{er=JSON.parse(text).error;}catch(e){} mgrRender('ai','ขออภัยค่ะ ตอบไม่ได้ ('+(er||('http_'+res.status))+')'); return; }
-      MGR_HISTORY.push({role:'assistant', content:text}); mgrRender('ai', text);
+      var j; try{ j=await res.json(); }catch(e){ j={}; } t.remove();
+      if(!res.ok){ mgrRender('ai','ขออภัยค่ะ ตอบไม่ได้ ('+(j.error||('http_'+res.status))+')'); return; }
+      var reply=j.reply||'(ไม่มีคำตอบค่ะ)';
+      MGR_HISTORY.push({role:'assistant', content:reply}); mgrRender('ai', reply);
+      if(j.confirm && j.confirm.token) mgrConfirm(j.confirm);
     }catch(e){ t.remove(); mgrRender('ai','เชื่อมต่อไม่ได้: '+e.message); }
     finally{ $('mgrSend').disabled=false; }
   }
