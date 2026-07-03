@@ -1177,5 +1177,29 @@
   document.querySelectorAll('.lang-btn').forEach(function(b){ b.addEventListener('click', function(){ renderQty(); }); });
   renderQty();
 </script>
+<!-- เก็บช่องทางที่มา (referrer/utm) → dashboard · fail-silent ครั้งเดียวต่อ session -->
+<script>
+(function(){
+  try{
+    var K='fafin_vid', vid=localStorage.getItem(K);
+    if(!vid){ vid='v'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); localStorage.setItem(K,vid); }
+    if(sessionStorage.getItem('fafin_visited')) return;
+    sessionStorage.setItem('fafin_visited','1');
+    var ref=document.referrer||'', utm=new URLSearchParams(location.search).get('utm_source'), src='direct';
+    if(utm){ src=String(utm).toLowerCase().slice(0,20); }
+    else if(ref){
+      var h=ref.toLowerCase();
+      if(/facebook|fb\.|fb\.me/.test(h)) src='facebook';
+      else if(/instagram/.test(h)) src='instagram';
+      else if(/line\.|liff/.test(h)) src='line';
+      else if(/google/.test(h)) src='google';
+      else if(/tiktok/.test(h)) src='tiktok';
+      else if(h.indexOf(location.host)>=0) src='direct';
+      else src='referral';
+    }
+    fetch('https://fafin-proxy.neoscss02.workers.dev/visit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vid:vid,source:src,ref:ref.slice(0,200),path:location.pathname})}).catch(function(){});
+  }catch(e){}
+})();
+</script>
 </body>
 </html>

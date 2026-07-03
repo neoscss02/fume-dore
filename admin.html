@@ -192,6 +192,11 @@
   .kbitem:last-child{border-bottom:none}
   .kbitem .kbc{flex:1;white-space:pre-wrap;word-break:break-word}
   /* power buckets */
+  .srcrow{margin-bottom:13px}
+  .srchead{display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:5px}
+  .srchead .sn{color:var(--warm)}.srchead .sv{color:var(--muted);font-size:.8rem}
+  .srcbar{height:9px;border-radius:6px;background:var(--surface2);overflow:hidden}
+  .srcfill{height:100%;border-radius:6px;background:var(--gold-grad);transition:width .4s}
   .fxbanner{display:inline-block;font-size:.82rem;color:var(--gold-bright);background:rgba(212,175,55,.08);border:1px solid var(--line);border-radius:20px;padding:8px 16px;margin-bottom:14px}
   .fxbanner:empty{display:none}
   .bucketwrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
@@ -365,22 +370,35 @@
     <div class="page">
       <!-- DASHBOARD -->
       <div class="tabview active" id="tab-dashboard">
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+          <button class="btn ghost sm dashp" data-days="1">วันนี้</button>
+          <button class="btn ghost sm dashp active" data-days="7">7 วัน</button>
+          <button class="btn ghost sm dashp" data-days="30">30 วัน</button>
+          <button class="btn ghost sm dashp" data-days="0">ทั้งหมด</button>
+        </div>
         <div class="stats" id="stats"></div>
         <div class="grid2">
           <div class="panel">
-            <h3>📈 ยอดขาย 14 วันล่าสุด</h3>
-            <div class="ph-sub">รวมทุกออเดอร์ที่ไม่ถูกยกเลิก (บาท/วัน)</div>
+            <h3>📈 ยอดขายรายวัน</h3>
+            <div class="ph-sub" id="revSub">รวมออเดอร์ที่ไม่ยกเลิก (บาท/วัน)</div>
             <div class="chartbox"><canvas id="revChart"></canvas></div>
           </div>
           <div class="panel">
-            <h3>🎯 สัดส่วนสถานะ</h3>
-            <div class="ph-sub">ออเดอร์แยกตามสถานะปัจจุบัน</div>
-            <div class="chartbox sm"><canvas id="statusChart"></canvas></div>
+            <h3>📲 ช่องทางที่มา</h3>
+            <div class="ph-sub">ลูกค้าเข้าเว็บจากช่องทางไหน (ตามช่วงที่เลือก)</div>
+            <div id="sources"></div>
           </div>
         </div>
-        <div class="card">
-          <div class="card-head"><h3>🆕 ออเดอร์ล่าสุด</h3><span class="dim" style="margin-left:auto">5 รายการล่าสุด</span></div>
-          <div id="recent"></div>
+        <div class="grid2">
+          <div class="panel">
+            <h3>🎯 สัดส่วนสถานะ</h3>
+            <div class="ph-sub">ออเดอร์แยกตามสถานะ (ทั้งหมด)</div>
+            <div class="chartbox sm"><canvas id="statusChart"></canvas></div>
+          </div>
+          <div class="panel" style="padding:0;overflow:hidden">
+            <div class="card-head"><h3>🆕 ออเดอร์ล่าสุด</h3><span class="dim" style="margin-left:auto">5 รายการ</span></div>
+            <div id="recent"></div>
+          </div>
         </div>
       </div>
 
@@ -595,6 +613,9 @@
   var myName = "";
   var ORDERS = [];            // last loaded
   var AILOGS = [];            // ai usage / chat logs
+  var VISITS = [];            // ผู้เข้าชม (null = ตารางยังไม่มี)
+  var DASH_DAYS = 7;          // ช่วงเวลา dashboard
+  var SRC_META = { direct:{ic:'🔗',n:'เข้าตรง'}, facebook:{ic:'📘',n:'Facebook'}, instagram:{ic:'📸',n:'Instagram'}, line:{ic:'💬',n:'LINE'}, google:{ic:'🔍',n:'Google'}, tiktok:{ic:'🎵',n:'TikTok'}, referral:{ic:'🌐',n:'เว็บอื่น'} };
   var lastSeenCount = 0;
   var charts = {};
 
@@ -634,6 +655,7 @@
     $('setWho').textContent = label;
     $('setMode').textContent = authMode==='google' ? 'Google' : 'ชื่อผู้ใช้/รหัสผ่าน';
     applyRoleUI();
+    loadDashboard();
   }
   function applyRoleUI(){
     var isAdmin = (myRole==='admin');
@@ -663,11 +685,10 @@
     $('updatedAt').textContent = "อัปเดต "+ new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
     $('ordPill').textContent = ORDERS.length;
 
-    var s = stat(ORDERS.length,"ออเดอร์ทั้งหมด","วันนี้ +"+todayN)
+    $('stats2').innerHTML = stat(ORDERS.length,"ออเดอร์ทั้งหมด","วันนี้ +"+todayN)
           + stat(open,"ที่ต้องจัดการ","")
           + stat(qty,"จำนวนขวด","")
           + stat(money(rev),"ยอดขายรวม","");
-    $('stats').innerHTML = s; $('stats2').innerHTML = s;
 
     // bell = new orders
     var newN = ORDERS.filter(function(o){ return o.status==='new'; }).length;
@@ -676,7 +697,40 @@
     renderTable();
     renderRecent();
     renderCustomers();
+    renderDashboard();
+  }
+  /* ===== dashboard ภาพรวม (เลือกช่วง + ช่องทางที่มา + ผู้เข้าชม) ===== */
+  function dashFromISO(){ if(DASH_DAYS<=0) return null; var d=new Date(); if(DASH_DAYS===1){ d.setHours(0,0,0,0); } else { d.setDate(d.getDate()-DASH_DAYS); } return d.toISOString(); }
+  function dashOrders(){
+    if(DASH_DAYS<=0) return ORDERS;
+    if(DASH_DAYS===1){ var t=new Date(); t.setHours(0,0,0,0); var ts=t.getTime(); return ORDERS.filter(function(o){ try{return new Date(o.created_at).getTime()>=ts;}catch(e){return false;} }); }
+    var now=Date.now(); return ORDERS.filter(function(o){ try{return (now-new Date(o.created_at).getTime())<=DASH_DAYS*864e5;}catch(e){return false;} });
+  }
+  async function loadDashboard(){
+    try{ var from=dashFromISO(); var d=await api('/admin/visits'+(from?('?from='+encodeURIComponent(from)):'')); VISITS=d.visits||[]; }
+    catch(e){ VISITS = (e.message==='db_error') ? null : []; }
+    renderDashboard();
+  }
+  function renderDashboard(){
+    var list=dashOrders(), active=list.filter(function(o){ return o.status!=='cancelled'; });
+    var rev=active.reduce(function(a,o){ return a+(o.total||0); },0);
+    var qty=active.reduce(function(a,o){ return a+(o.qty||0); },0);
+    var visN=(VISITS && VISITS.length!=null) ? uniqVisitors(VISITS) : 0;
+    $('stats').innerHTML = stat(active.length,'ออเดอร์','') + stat(visN,'ผู้เข้าชม','') + stat(qty,'ขวดขาย','') + stat(money(rev),'รายได้','');
     renderCharts();
+    renderSources();
+  }
+  function uniqVisitors(list){ var s={}; list.forEach(function(v){ var k=v.visitor_id||('_'+Math.random()); s[k]=1; }); return Object.keys(s).length; }
+  function renderSources(){
+    var el=$('sources'); if(!el) return;
+    if(VISITS===null){ el.innerHTML='<div class="empty">ยังไม่ได้เก็บข้อมูล (ตาราง fafin_visits ยังไม่ได้สร้าง)</div>'; return; }
+    if(!VISITS.length){ el.innerHTML='<div class="empty">ยังไม่มีผู้เข้าชมในช่วงนี้</div>'; return; }
+    var by={}; VISITS.forEach(function(v){ var s=v.source||'direct'; by[s]=(by[s]||0)+1; });
+    var total=VISITS.length, keys=Object.keys(by).sort(function(a,b){ return by[b]-by[a]; });
+    el.innerHTML=keys.map(function(k){
+      var m=SRC_META[k]||{ic:'🌐',n:k}, pct=Math.round(by[k]/total*100);
+      return '<div class="srcrow"><div class="srchead"><span class="sn">'+m.ic+' '+esc(m.n)+'</span><span class="sv">'+by[k]+' ครั้ง · '+pct+'%</span></div><div class="srcbar"><div class="srcfill" style="width:'+pct+'%"></div></div></div>';
+    }).join('');
   }
   function stat(n,l,d){ return '<div class="stat"><div class="n">'+esc(n)+'</div><div class="l">'+esc(l)+'</div>'+(d?'<div class="d"><b>'+esc(d)+'</b></div>':'')+'</div>'; }
   function setBell(n){
@@ -1018,9 +1072,11 @@
   function renderCharts(){
     if(typeof Chart==='undefined') return;
     var th = chartTheme();
-    // revenue last 14 days
+    // revenue chart — span ตามช่วง dashboard ที่เลือก
+    var span = DASH_DAYS<=0 ? 14 : Math.min(Math.max(DASH_DAYS,7),30);
+    if($('revSub')) $('revSub').textContent = (DASH_DAYS<=0?'ทั้งหมด (แสดง 14 วันล่าสุด)':(DASH_DAYS===1?'วันนี้ (แสดง 7 วันล่าสุด)':'ช่วง '+span+' วันล่าสุด'));
     var days=[], labels=[], sums=[];
-    for(var i=13;i>=0;i--){ var d=new Date(); d.setDate(d.getDate()-i); days.push(d.toDateString());
+    for(var i=span-1;i>=0;i--){ var d=new Date(); d.setDate(d.getDate()-i); days.push(d.toDateString());
       labels.push(d.toLocaleDateString('th-TH',{day:'2-digit',month:'short'})); sums.push(0); }
     activeOrders().forEach(function(o){ try{ var k=new Date(o.created_at).toDateString(); var ix=days.indexOf(k); if(ix>=0) sums[ix]+=(o.total||0); }catch(e){} });
     drawChart('revChart','line',{ labels:labels, datasets:[{ data:sums, borderColor:'#d4af37', backgroundColor:'rgba(212,175,55,.14)',
@@ -1069,7 +1125,7 @@
       g.classList.toggle('has-active', !!g.querySelector('.nav-tab.active'));
     });
     document.body.classList.remove('nav-open');
-    if(tab==='dashboard') renderCharts();
+    if(tab==='dashboard') loadDashboard();
     if(tab==='finance') renderFinance();
     if(tab==='stock') loadStock();
     if(tab==='kb') loadKB();
@@ -1199,6 +1255,13 @@
       b.addEventListener('click', function(){ mktGen(b.dataset.kind, b); });
     });
     $('kbAdd').addEventListener('click', addKB);
+    Array.prototype.forEach.call(document.querySelectorAll('.dashp'), function(b){
+      b.addEventListener('click', function(){
+        DASH_DAYS = parseInt(b.dataset.days, 10);
+        Array.prototype.forEach.call(document.querySelectorAll('.dashp'), function(x){ x.classList.toggle('active', x===b); });
+        loadDashboard();
+      });
+    });
     $('googleBtn').addEventListener('click', function(){
       if(!supa){ toast('Google ยังไม่พร้อม — ใช้ชื่อผู้ใช้/รหัสผ่านไปก่อนค่ะ'); return; }
       supa.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: location.origin + location.pathname } });
