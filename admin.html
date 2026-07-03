@@ -150,6 +150,18 @@
   .urow{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;padding:13px 4px;border-bottom:1px solid var(--line);align-items:center;font-size:.9rem}
   .urow:last-child{border-bottom:none}
   .role-viewer .role-hide{display:none!important}
+  /* chat + power */
+  .chatitem{padding:15px 18px;border-bottom:1px solid var(--line)}
+  .chatitem:last-child{border-bottom:none}
+  .chatitem .meta{font-size:.72rem;color:var(--muted);margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap}
+  .bub{padding:9px 13px;border-radius:13px;font-size:.88rem;line-height:1.5;margin-bottom:6px;max-width:88%;word-break:break-word}
+  .bub.u{background:rgba(212,175,55,.10);border:1px solid var(--line);color:var(--warm);border-bottom-left-radius:4px}
+  .bub.b{background:var(--surface2);border:1px solid var(--line);color:#cbc4b5;margin-left:auto;border-bottom-right-radius:4px}
+  body.light .bub.b{color:#6d6350}
+  .costrow{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--line);font-size:.9rem}
+  .costrow:last-child{border-bottom:none;padding-top:14px}
+  .costrow .cv{font-family:var(--serif);color:var(--gold-bright);font-size:1.05rem}
+  .costrow.tot .cv{font-size:1.4rem}
   @media(max-width:820px){ .uform{grid-template-columns:1fr 1fr} .uhead{display:none} .urow{grid-template-columns:1fr 1fr;gap:4px 10px} .urow>div:nth-child(1){grid-column:1/3} }
   .badge{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;padding:3px 10px;border-radius:20px;font-family:var(--head)}
   .b-new{background:rgba(224,70,107,.14);color:#f090aa}
@@ -228,6 +240,11 @@
     <input id="loginId" placeholder="อีเมล หรือ ชื่อผู้ใช้" autocomplete="username" />
     <input id="pw" type="password" placeholder="รหัสผ่าน" autocomplete="current-password" />
     <button class="btn pwbtn" id="pwBtn">เข้าสู่ระบบ</button>
+    <div class="or" id="orDiv">หรือ</div>
+    <button class="gbtn" id="googleBtn" disabled>
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" />
+      เข้าสู่ระบบด้วย Google
+    </button>
     <div class="err" id="loginErr"></div>
     <div class="hint" id="loginHint">สำหรับเจ้าของร้านและทีมงานที่ได้รับสิทธิ์</div>
   </div>
@@ -266,16 +283,14 @@
         <div class="ngh"><span class="ic">💬</span><span class="tx">ฝ่ายขาย · ฟูเม่</span><span class="ai-tag">AI</span><span class="arr">▼</span></div>
         <div class="ngitems">
           <div class="nav-tab" data-tab="orders"><span>📦</span> ออเดอร์ <span class="pill" id="ordPill">0</span></div>
-          <div class="nav-tab soon" data-soon="chat" data-icon="🗨️" data-title="แชทลูกค้า"
-            data-desc="บทสนทนาระหว่างลูกค้ากับบอทขาย “ฟูเม่/FUMÉ” บนหน้าเว็บ · เก็บประวัติ + ดูย้อนหลัง"><span>🗨️</span> แชทลูกค้า <span class="pill">เร็ว ๆ นี้</span></div>
+          <div class="nav-tab" data-tab="chat"><span>🗨️</span> แชทลูกค้า</div>
           <div class="nav-tab" data-tab="customers"><span>👤</span> ลูกค้า <span class="pill" id="custPill">0</span></div>
         </div>
       </div>
       <div class="nav-group" data-group="settings">
         <div class="ngh"><span class="ic">⚙️</span><span class="tx">ตั้งค่า</span><span class="arr">▼</span></div>
         <div class="ngitems">
-          <div class="nav-tab soon" data-soon="power" data-icon="⚡" data-title="พลัง AI"
-            data-desc="ติดตามการใช้พลัง AI (โควตา/ใช้ไป/คงเหลือ) และค่าใช้จ่ายของบอท · เติมพลังได้ (pattern เดียวกับ NEOS Control Plane)"><span>⚡</span> พลัง AI <span class="pill">เร็ว ๆ นี้</span></div>
+          <div class="nav-tab" data-tab="power"><span>⚡</span> พลัง AI</div>
           <div class="nav-tab" data-tab="users"><span>👥</span> ผู้ใช้ & สิทธิ์</div>
           <div class="nav-tab" data-tab="settings"><span>🎛️</span> ระบบ & ธีม</div>
         </div>
@@ -356,6 +371,32 @@
         </div>
       </div>
 
+      <!-- CHAT (ประวัติแชทลูกค้ากับฟูเม่) -->
+      <div class="tabview" id="tab-chat">
+        <div class="stats" id="chatStats"></div>
+        <div class="card">
+          <div class="card-head"><h3>🗨️ แชทลูกค้ากับฟูเม่</h3><span class="dim" style="margin-left:auto">ล่าสุด 300 ข้อความ</span></div>
+          <div id="chatList"></div>
+        </div>
+      </div>
+
+      <!-- POWER AI (การใช้งาน AI + ค่าใช้จ่าย) -->
+      <div class="tabview" id="tab-power">
+        <div class="stats" id="powerStats"></div>
+        <div class="grid2">
+          <div class="panel">
+            <h3>⚡ การใช้งาน AI 14 วัน</h3>
+            <div class="ph-sub">จำนวน token ที่บอทฟูเม่ใช้ต่อวัน</div>
+            <div class="chartbox"><canvas id="powerChart"></canvas></div>
+          </div>
+          <div class="panel">
+            <h3>💵 ค่าใช้จ่ายโดยประมาณ</h3>
+            <div class="ph-sub">ประเมินจากอัตรา Claude Haiku (input $1 · output $5 ต่อ 1 ล้าน token)</div>
+            <div id="costBox"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- COMING SOON (roadmap placeholder per department) -->
       <div class="tabview" id="tab-soon">
         <div class="panel" style="max-width:620px;margin:6vh auto 0;text-align:center;padding:46px 34px">
@@ -433,6 +474,7 @@
   var myRole = "admin";       // admin | staff | viewer
   var myName = "";
   var ORDERS = [];            // last loaded
+  var AILOGS = [];            // ai usage / chat logs
   var lastSeenCount = 0;
   var charts = {};
 
@@ -635,6 +677,54 @@
     }catch(e){ toast('ลบไม่ได้: '+e.message); }
   }
 
+  /* ===== พลัง AI + แชทลูกค้า (จาก fafin_ai_logs · endpoint เดียว) ===== */
+  var IN_RATE = 1/1e6, OUT_RATE = 5/1e6;   // USD/token · Claude Haiku (ประมาณการ)
+  function fmtTok(n){ n=Number(n||0); if(n>=1e6) return (n/1e6).toFixed(2)+'M'; if(n>=1e3) return (n/1e3).toFixed(1)+'K'; return String(n); }
+  async function loadUsage(){
+    try{ var d = await api('/admin/usage'); AILOGS = d.logs || []; renderPower(); renderChat(); }
+    catch(e){
+      var msg = (e.message==='db_error') ? 'ระบบพลัง AI ยังไม่พร้อม (ตาราง fafin_ai_logs ยังไม่ได้สร้าง)' : ('โหลดไม่ได้: '+esc(e.message));
+      if($('costBox')) $('costBox').innerHTML='<div class="empty">'+msg+'</div>';
+      if($('powerStats')) $('powerStats').innerHTML='';
+      if($('chatList')) $('chatList').innerHTML='<div class="empty">'+msg+'</div>';
+      if($('chatStats')) $('chatStats').innerHTML='';
+    }
+  }
+  function renderPower(){
+    var calls=AILOGS.length;
+    var inTok=AILOGS.reduce(function(a,l){return a+(l.in_tokens||0);},0);
+    var outTok=AILOGS.reduce(function(a,l){return a+(l.out_tokens||0);},0);
+    var inCost=inTok*IN_RATE, outCost=outTok*OUT_RATE, total=inCost+outCost;
+    $('powerStats').innerHTML = stat(calls,'ครั้งที่คุย','') + stat(fmtTok(inTok),'token เข้า','') + stat(fmtTok(outTok),'token ออก','') + stat('$'+total.toFixed(2),'ค่าใช้จ่ายประมาณ','');
+    $('costBox').innerHTML =
+        '<div class="costrow"><span>Input · '+fmtTok(inTok)+' token</span><span class="cv">$'+inCost.toFixed(3)+'</span></div>'
+      + '<div class="costrow"><span>Output · '+fmtTok(outTok)+' token</span><span class="cv">$'+outCost.toFixed(3)+'</span></div>'
+      + '<div class="costrow tot"><span>รวมประมาณ</span><span class="cv">$'+total.toFixed(2)+'</span></div>'
+      + '<div class="dim" style="margin-top:12px;font-size:.76rem">* ประเมินจาก '+calls+' ครั้งล่าสุด · อัตราปรับได้ในโค้ด</div>';
+    // chart tokens/day 14d
+    var days=[], labels=[], sums=[];
+    for(var i=13;i>=0;i--){ var dt=new Date(); dt.setDate(dt.getDate()-i); days.push(dt.toDateString());
+      labels.push(dt.toLocaleDateString('th-TH',{day:'2-digit',month:'short'})); sums.push(0); }
+    AILOGS.forEach(function(l){ try{ var k=new Date(l.created_at).toDateString(); var ix=days.indexOf(k); if(ix>=0) sums[ix]+=(l.in_tokens||0)+(l.out_tokens||0); }catch(e){} });
+    var th=chartTheme();
+    drawChart('powerChart','bar',{ labels:labels, datasets:[{ data:sums, backgroundColor:'rgba(212,175,55,.5)', borderColor:'#d4af37', borderWidth:1, borderRadius:4 }] },
+      { scales:{ x:{grid:{color:th.grid},ticks:{color:th.tick,font:{size:10},maxRotation:0,autoSkip:true,maxTicksLimit:7}},
+        y:{grid:{color:th.grid},ticks:{color:th.tick,font:{size:10}},beginAtZero:true} }, plugins:{legend:{display:false}} });
+  }
+  function renderChat(){
+    var today=new Date().toDateString();
+    var todayN=AILOGS.filter(function(l){ try{return new Date(l.created_at).toDateString()===today;}catch(e){return false;} }).length;
+    $('chatStats').innerHTML = stat(AILOGS.length,'ข้อความทั้งหมด','') + stat(todayN,'วันนี้','') + stat(fmtTok(AILOGS.reduce(function(a,l){return a+(l.out_tokens||0);},0)),'token ตอบ','');
+    if(!AILOGS.length){ $('chatList').innerHTML='<div class="empty">ยังไม่มีบทสนทนาค่ะ 🌹</div>'; return; }
+    $('chatList').innerHTML = AILOGS.map(function(l){
+      return '<div class="chatitem">'
+        + '<div class="meta"><span>'+fmtTime(l.created_at)+'</span>'+(l.lang?'<span>· '+esc(l.lang)+'</span>':'')+'<span>· '+((l.in_tokens||0)+(l.out_tokens||0))+' token</span></div>'
+        + (l.user_msg?'<div class="bub u">'+esc(l.user_msg)+'</div>':'')
+        + (l.bot_reply?'<div class="bub b">'+esc(l.bot_reply)+'</div>':'')
+        + '</div>';
+    }).join('');
+  }
+
   /* ===== charts ===== */
   function chartTheme(){
     var light = document.body.classList.contains('light');
@@ -682,7 +772,7 @@
   }
 
   /* ===== nav / tabs ===== */
-  var TITLES = { dashboard:'ภาพรวม', orders:'ออเดอร์', customers:'ลูกค้า', users:'ผู้ใช้ & สิทธิ์', settings:'ระบบ & ธีม' };
+  var TITLES = { dashboard:'ภาพรวม', orders:'ออเดอร์', customers:'ลูกค้า', chat:'แชทลูกค้า', power:'พลัง AI', users:'ผู้ใช้ & สิทธิ์', settings:'ระบบ & ธีม' };
   function selectTab(tab, el, title){
     Array.prototype.forEach.call(document.querySelectorAll('.nav-tab'), function(t){ t.classList.remove('active'); });
     if(el){ el.classList.add('active'); }
@@ -696,6 +786,7 @@
     document.body.classList.remove('nav-open');
     if(tab==='dashboard') renderCharts();
     if(tab==='users') loadUsers();
+    if(tab==='power' || tab==='chat') loadUsage();
   }
   function showSoon(el){
     $('soonIcon').textContent = el.dataset.icon || '🚧';
@@ -787,6 +878,9 @@
     // theme
     var th='dark'; try{ th=localStorage.getItem(THEME_KEY)||'dark'; }catch(e){}
     applyTheme(th);
+    // Google login: ปุ่มเปิดใช้เมื่อฝัง publishable key แล้ว (นัทตั้งค่า OAuth ทีหลัง)
+    if(GOOGLE_READY){ $('googleBtn').disabled=false; }
+    else { $('googleBtn').disabled=true; $('googleBtn').title='รอตั้งค่า Google (OAuth)'; }
 
     bindNav();
     $('themeBtn').addEventListener('click', toggleTheme);
@@ -802,7 +896,10 @@
     $('loginId').addEventListener('keydown', function(e){ if(e.key==='Enter') loginSubmit(); });
     $('addUserBtn').addEventListener('click', addUser);
     $('u_pw').addEventListener('keydown', function(e){ if(e.key==='Enter') addUser(); });
-    // Google login = ปิดไว้ก่อน (ทำทีหลังตอน setup OAuth · reuse project LUMINA-Auth)
+    $('googleBtn').addEventListener('click', function(){
+      if(!supa){ toast('Google ยังไม่พร้อม — ใช้ชื่อผู้ใช้/รหัสผ่านไปก่อนค่ะ'); return; }
+      supa.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: location.origin + location.pathname } });
+    });
     if(supa){ supa.auth.onAuthStateChange(function(ev){ if(ev==='SIGNED_IN') tryGoogleSession(); }); }
 
     boot();
