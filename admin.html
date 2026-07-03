@@ -228,13 +228,8 @@
     <input id="loginId" placeholder="อีเมล หรือ ชื่อผู้ใช้" autocomplete="username" />
     <input id="pw" type="password" placeholder="รหัสผ่าน" autocomplete="current-password" />
     <button class="btn pwbtn" id="pwBtn">เข้าสู่ระบบ</button>
-    <div class="or" id="orDiv">หรือ</div>
-    <button class="gbtn" id="googleBtn" disabled>
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" />
-      เข้าสู่ระบบด้วย Google
-    </button>
     <div class="err" id="loginErr"></div>
-    <div class="hint" id="loginHint">เปิดในเบราว์เซอร์ Chrome/Safari จริงเท่านั้น</div>
+    <div class="hint" id="loginHint">สำหรับเจ้าของร้านและทีมงานที่ได้รับสิทธิ์</div>
   </div>
 </div>
 
@@ -792,9 +787,6 @@
     // theme
     var th='dark'; try{ th=localStorage.getItem(THEME_KEY)||'dark'; }catch(e){}
     applyTheme(th);
-    // google availability
-    if(GOOGLE_READY){ $('googleBtn').disabled=false; }
-    else { $('googleBtn').disabled=true; $('googleBtn').title='รอ setup OAuth'; $('loginHint').innerHTML='ยังไม่ได้ตั้งค่า Google login — เข้าด้วยรหัสผ่านไปก่อนได้ค่ะ<br>(เปิดใน Chrome/Safari จริงเท่านั้น)'; }
 
     bindNav();
     $('themeBtn').addEventListener('click', toggleTheme);
@@ -810,10 +802,7 @@
     $('loginId').addEventListener('keydown', function(e){ if(e.key==='Enter') loginSubmit(); });
     $('addUserBtn').addEventListener('click', addUser);
     $('u_pw').addEventListener('keydown', function(e){ if(e.key==='Enter') addUser(); });
-    $('googleBtn').addEventListener('click', function(){
-      if(!supa) return;
-      supa.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: location.origin + location.pathname } });
-    });
+    // Google login = ปิดไว้ก่อน (ทำทีหลังตอน setup OAuth · reuse project LUMINA-Auth)
     if(supa){ supa.auth.onAuthStateChange(function(ev){ if(ev==='SIGNED_IN') tryGoogleSession(); }); }
 
     boot();
