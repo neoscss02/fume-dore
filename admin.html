@@ -192,6 +192,12 @@
   .kbitem:last-child{border-bottom:none}
   .kbitem .kbc{flex:1;white-space:pre-wrap;word-break:break-word}
   /* power buckets */
+  .period-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+  .period-cust{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .period-cust .dash{color:var(--muted)}
+  .dateinp{background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:6px 9px;color:var(--warm);font-family:var(--sans);font-size:.82rem;outline:none;color-scheme:dark}
+  body.light .dateinp{color-scheme:light}
+  .dateinp:focus{border-color:var(--gold)}
   .srcrow{margin-bottom:13px}
   .srchead{display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:5px}
   .srchead .sn{color:var(--warm)}.srchead .sv{color:var(--muted);font-size:.8rem}
@@ -370,11 +376,14 @@
     <div class="page">
       <!-- DASHBOARD -->
       <div class="tabview active" id="tab-dashboard">
-        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-          <button class="btn ghost sm dashp" data-days="1">วันนี้</button>
-          <button class="btn ghost sm dashp active" data-days="7">7 วัน</button>
-          <button class="btn ghost sm dashp" data-days="30">30 วัน</button>
-          <button class="btn ghost sm dashp" data-days="0">ทั้งหมด</button>
+        <div class="period-bar">
+          <button class="btn ghost sm dashp active" data-m="today">วันนี้</button>
+          <button class="btn ghost sm dashp" data-m="3d">3 วัน</button>
+          <button class="btn ghost sm dashp" data-m="7d">7 วัน</button>
+          <button class="btn ghost sm dashp" data-m="30d">30 วัน</button>
+          <button class="btn ghost sm dashp" data-m="month">เดือนนี้</button>
+          <button class="btn ghost sm dashp" data-m="all">ทั้งหมด</button>
+          <span class="period-cust"><input type="date" id="dashFrom" class="dateinp"><span class="dash">–</span><input type="date" id="dashTo" class="dateinp"><button class="btn ghost sm" id="dashCustomBtn">📅 ดู</button></span>
         </div>
         <div class="stats" id="stats"></div>
         <div class="grid2">
@@ -482,10 +491,14 @@
 
       <!-- FINANCE (สรุปการเงินจากออเดอร์จริง) -->
       <div class="tabview" id="tab-finance">
-        <div style="display:flex;gap:8px;margin-bottom:16px">
-          <button class="btn ghost sm finp active" data-days="7">7 วัน</button>
-          <button class="btn ghost sm finp" data-days="30">30 วัน</button>
-          <button class="btn ghost sm finp" data-days="0">ทั้งหมด</button>
+        <div class="period-bar">
+          <button class="btn ghost sm finp" data-m="today">วันนี้</button>
+          <button class="btn ghost sm finp" data-m="3d">3 วัน</button>
+          <button class="btn ghost sm finp active" data-m="7d">7 วัน</button>
+          <button class="btn ghost sm finp" data-m="30d">30 วัน</button>
+          <button class="btn ghost sm finp" data-m="month">เดือนนี้</button>
+          <button class="btn ghost sm finp" data-m="all">ทั้งหมด</button>
+          <span class="period-cust"><input type="date" id="finFrom" class="dateinp"><span class="dash">–</span><input type="date" id="finTo" class="dateinp"><button class="btn ghost sm" id="finCustomBtn">📅 ดู</button></span>
         </div>
         <div class="stats" id="finStats"></div>
         <div class="grid2">
@@ -614,7 +627,7 @@
   var ORDERS = [];            // last loaded
   var AILOGS = [];            // ai usage / chat logs
   var VISITS = [];            // ผู้เข้าชม (null = ตารางยังไม่มี)
-  var DASH_DAYS = 7;          // ช่วงเวลา dashboard
+  var DASH = { mode:'today', from:null, to:null };   // ช่วงเวลา dashboard (today/3d/7d/30d/month/all/custom)
   var SRC_META = { direct:{ic:'🔗',n:'เข้าตรง'}, facebook:{ic:'📘',n:'Facebook'}, instagram:{ic:'📸',n:'Instagram'}, line:{ic:'💬',n:'LINE'}, google:{ic:'🔍',n:'Google'}, tiktok:{ic:'🎵',n:'TikTok'}, referral:{ic:'🌐',n:'เว็บอื่น'} };
   var lastSeenCount = 0;
   var charts = {};
@@ -700,12 +713,29 @@
     renderDashboard();
   }
   /* ===== dashboard ภาพรวม (เลือกช่วง + ช่องทางที่มา + ผู้เข้าชม) ===== */
-  function dashFromISO(){ if(DASH_DAYS<=0) return null; var d=new Date(); if(DASH_DAYS===1){ d.setHours(0,0,0,0); } else { d.setDate(d.getDate()-DASH_DAYS); } return d.toISOString(); }
-  function dashOrders(){
-    if(DASH_DAYS<=0) return ORDERS;
-    if(DASH_DAYS===1){ var t=new Date(); t.setHours(0,0,0,0); var ts=t.getTime(); return ORDERS.filter(function(o){ try{return new Date(o.created_at).getTime()>=ts;}catch(e){return false;} }); }
-    var now=Date.now(); return ORDERS.filter(function(o){ try{return (now-new Date(o.created_at).getTime())<=DASH_DAYS*864e5;}catch(e){return false;} });
+  function periodBounds(st){
+    var now=new Date(), to=now.getTime(), from=null;
+    function sod(d){ var x=new Date(d); x.setHours(0,0,0,0); return x.getTime(); }
+    var m=st.mode;
+    if(m==='today') from=sod(now);
+    else if(m==='3d'){ var a=new Date(now); a.setDate(a.getDate()-2); from=sod(a); }
+    else if(m==='7d'){ var b=new Date(now); b.setDate(b.getDate()-6); from=sod(b); }
+    else if(m==='30d'){ var c=new Date(now); c.setDate(c.getDate()-29); from=sod(c); }
+    else if(m==='month') from=new Date(now.getFullYear(),now.getMonth(),1).getTime();
+    else if(m==='custom'){ from = st.from ? new Date(st.from+'T00:00:00').getTime() : null; to = st.to ? new Date(st.to+'T23:59:59').getTime() : to; }
+    return { from:from, to:to };   // all → from=null
   }
+  function periodLabel(st){
+    var m=st.mode, L={today:'วันนี้','3d':'3 วันล่าสุด','7d':'7 วันล่าสุด','30d':'30 วันล่าสุด',month:'เดือนนี้',all:'ทั้งหมด'};
+    if(m==='custom') return (st.from||'?')+' – '+(st.to||'วันนี้');
+    return L[m]||'';
+  }
+  function dashBounds(){ return periodBounds(DASH); }
+  function dashLabel(){ return periodLabel(DASH); }
+  function dashFromISO(){ var b=dashBounds(); return b.from ? new Date(b.from).toISOString() : null; }
+  function inBounds(ts,b){ return (b.from==null || ts>=b.from) && ts<=b.to; }
+  function dashOrders(){ var b=dashBounds(); return ORDERS.filter(function(o){ try{ return inBounds(new Date(o.created_at).getTime(),b); }catch(e){return false;} }); }
+  function dashVisits(){ if(VISITS===null) return null; var b=dashBounds(); return VISITS.filter(function(v){ try{ return inBounds(new Date(v.created_at).getTime(),b); }catch(e){return true;} }); }
   async function loadDashboard(){
     try{ var from=dashFromISO(); var d=await api('/admin/visits'+(from?('?from='+encodeURIComponent(from)):'')); VISITS=d.visits||[]; }
     catch(e){ VISITS = (e.message==='db_error') ? null : []; }
@@ -715,18 +745,18 @@
     var list=dashOrders(), active=list.filter(function(o){ return o.status!=='cancelled'; });
     var rev=active.reduce(function(a,o){ return a+(o.total||0); },0);
     var qty=active.reduce(function(a,o){ return a+(o.qty||0); },0);
-    var visN=(VISITS && VISITS.length!=null) ? uniqVisitors(VISITS) : 0;
+    var dv=dashVisits(); var visN=dv?uniqVisitors(dv):0;
     $('stats').innerHTML = stat(active.length,'ออเดอร์','') + stat(visN,'ผู้เข้าชม','') + stat(qty,'ขวดขาย','') + stat(money(rev),'รายได้','');
     renderCharts();
-    renderSources();
+    renderSources(dv);
   }
   function uniqVisitors(list){ var s={}; list.forEach(function(v){ var k=v.visitor_id||('_'+Math.random()); s[k]=1; }); return Object.keys(s).length; }
-  function renderSources(){
+  function renderSources(dv){
     var el=$('sources'); if(!el) return;
-    if(VISITS===null){ el.innerHTML='<div class="empty">ยังไม่ได้เก็บข้อมูล (ตาราง fafin_visits ยังไม่ได้สร้าง)</div>'; return; }
-    if(!VISITS.length){ el.innerHTML='<div class="empty">ยังไม่มีผู้เข้าชมในช่วงนี้</div>'; return; }
-    var by={}; VISITS.forEach(function(v){ var s=v.source||'direct'; by[s]=(by[s]||0)+1; });
-    var total=VISITS.length, keys=Object.keys(by).sort(function(a,b){ return by[b]-by[a]; });
+    if(dv===null){ el.innerHTML='<div class="empty">ยังไม่ได้เก็บข้อมูล (ตาราง fafin_visits ยังไม่ได้สร้าง)</div>'; return; }
+    if(!dv.length){ el.innerHTML='<div class="empty">ยังไม่มีผู้เข้าชมในช่วงนี้</div>'; return; }
+    var by={}; dv.forEach(function(v){ var s=v.source||'direct'; by[s]=(by[s]||0)+1; });
+    var total=dv.length, keys=Object.keys(by).sort(function(a,b){ return by[b]-by[a]; });
     el.innerHTML=keys.map(function(k){
       var m=SRC_META[k]||{ic:'🌐',n:k}, pct=Math.round(by[k]/total*100);
       return '<div class="srcrow"><div class="srchead"><span class="sn">'+m.ic+' '+esc(m.n)+'</span><span class="sv">'+by[k]+' ครั้ง · '+pct+'%</span></div><div class="srcbar"><div class="srcfill" style="width:'+pct+'%"></div></div></div>';
@@ -940,10 +970,10 @@
   }
 
   /* ===== การเงิน (จากออเดอร์จริง) ===== */
-  var FIN_DAYS = 7;
+  var FIN = { mode:'7d', from:null, to:null };
   function renderFinance(){
-    var now=Date.now();
-    var inRange = FIN_DAYS>0 ? ORDERS.filter(function(o){ try{return (now-new Date(o.created_at).getTime())<=FIN_DAYS*864e5;}catch(e){return false;} }) : ORDERS;
+    var fb=periodBounds(FIN);
+    var inRange = ORDERS.filter(function(o){ try{return inBounds(new Date(o.created_at).getTime(),fb);}catch(e){return false;} });
     var active = inRange.filter(function(o){ return o.status!=='cancelled'; });
     var rev = active.reduce(function(a,o){return a+(o.total||0);},0);
     var qty = active.reduce(function(a,o){return a+(o.qty||0);},0);
@@ -956,14 +986,14 @@
     $('finPay').innerHTML = keys.length ? keys.map(function(k){
       return '<div class="costrow"><span>'+(PL[k]||esc(k))+' · '+pm[k].n+' ออเดอร์</span><span class="cv">'+money(pm[k].rev)+'</span></div>';
     }).join('') : '<div class="empty">ยังไม่มีข้อมูลในช่วงนี้</div>';
-    var span = FIN_DAYS>0?FIN_DAYS:14;
+    var span = (fb.from==null)?14:Math.min(Math.max(Math.ceil((fb.to-fb.from)/864e5)+1,7),60);
     var days=[],labels=[],sums=[];
     for(var i=span-1;i>=0;i--){ var dt=new Date(); dt.setDate(dt.getDate()-i); days.push(dt.toDateString()); labels.push(dt.toLocaleDateString('th-TH',{day:'2-digit',month:'short'})); sums.push(0); }
     ORDERS.filter(function(o){return o.status!=='cancelled';}).forEach(function(o){ try{ var k=new Date(o.created_at).toDateString(); var ix=days.indexOf(k); if(ix>=0) sums[ix]+=(o.total||0); }catch(e){} });
     var th=chartTheme();
     drawChart('finChart','line',{ labels:labels, datasets:[{ data:sums, borderColor:'#d4af37', backgroundColor:'rgba(212,175,55,.14)', fill:true, tension:.35, pointRadius:2, pointBackgroundColor:'#f4d77e', borderWidth:2 }] },
       { scales:{ x:{grid:{color:th.grid},ticks:{color:th.tick,font:{size:10},maxRotation:0,autoSkip:true,maxTicksLimit:7}}, y:{grid:{color:th.grid},ticks:{color:th.tick,font:{size:10}},beginAtZero:true} }, plugins:{legend:{display:false}} });
-    $('finChartSub').textContent = FIN_DAYS>0?('ช่วง '+FIN_DAYS+' วันล่าสุด'):'14 วันล่าสุด';
+    $('finChartSub').textContent = periodLabel(FIN)+' · กราฟ '+span+' วัน';
   }
 
   /* ===== คุยกับผู้จัดการ AI ===== */
@@ -1073,8 +1103,9 @@
     if(typeof Chart==='undefined') return;
     var th = chartTheme();
     // revenue chart — span ตามช่วง dashboard ที่เลือก
-    var span = DASH_DAYS<=0 ? 14 : Math.min(Math.max(DASH_DAYS,7),30);
-    if($('revSub')) $('revSub').textContent = (DASH_DAYS<=0?'ทั้งหมด (แสดง 14 วันล่าสุด)':(DASH_DAYS===1?'วันนี้ (แสดง 7 วันล่าสุด)':'ช่วง '+span+' วันล่าสุด'));
+    var _b = dashBounds();
+    var span = (_b.from==null) ? 14 : Math.min(Math.max(Math.ceil((_b.to-_b.from)/864e5)+1,7),60);
+    if($('revSub')) $('revSub').textContent = dashLabel() + ' · กราฟ '+span+' วัน';
     var days=[], labels=[], sums=[];
     for(var i=span-1;i>=0;i--){ var d=new Date(); d.setDate(d.getDate()-i); days.push(d.toDateString());
       labels.push(d.toLocaleDateString('th-TH',{day:'2-digit',month:'short'})); sums.push(0); }
@@ -1244,10 +1275,17 @@
     $('u_pw').addEventListener('keydown', function(e){ if(e.key==='Enter') addUser(); });
     Array.prototype.forEach.call(document.querySelectorAll('.finp'), function(b){
       b.addEventListener('click', function(){
-        FIN_DAYS = parseInt(b.dataset.days, 10);
+        FIN.mode = b.dataset.m;
         Array.prototype.forEach.call(document.querySelectorAll('.finp'), function(x){ x.classList.toggle('active', x===b); });
         renderFinance();
       });
+    });
+    $('finCustomBtn').addEventListener('click', function(){
+      var f=$('finFrom').value, t=$('finTo').value;
+      if(!f && !t){ toast('เลือกวันที่ก่อนค่ะ'); return; }
+      FIN.mode='custom'; FIN.from=f||null; FIN.to=t||null;
+      Array.prototype.forEach.call(document.querySelectorAll('.finp'), function(x){ x.classList.remove('active'); });
+      renderFinance();
     });
     $('mgrSend').addEventListener('click', mgrSend);
     $('mgrMsg').addEventListener('keydown', function(e){ if(e.key==='Enter') mgrSend(); });
@@ -1257,10 +1295,17 @@
     $('kbAdd').addEventListener('click', addKB);
     Array.prototype.forEach.call(document.querySelectorAll('.dashp'), function(b){
       b.addEventListener('click', function(){
-        DASH_DAYS = parseInt(b.dataset.days, 10);
+        DASH.mode = b.dataset.m;
         Array.prototype.forEach.call(document.querySelectorAll('.dashp'), function(x){ x.classList.toggle('active', x===b); });
         loadDashboard();
       });
+    });
+    $('dashCustomBtn').addEventListener('click', function(){
+      var f=$('dashFrom').value, t=$('dashTo').value;
+      if(!f && !t){ toast('เลือกวันที่ก่อนค่ะ'); return; }
+      DASH.mode='custom'; DASH.from=f||null; DASH.to=t||null;
+      Array.prototype.forEach.call(document.querySelectorAll('.dashp'), function(x){ x.classList.remove('active'); });
+      loadDashboard();
     });
     $('googleBtn').addEventListener('click', function(){
       if(!supa){ toast('Google ยังไม่พร้อม — ใช้ชื่อผู้ใช้/รหัสผ่านไปก่อนค่ะ'); return; }
