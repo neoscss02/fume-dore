@@ -385,6 +385,7 @@
           <button class="btn ghost sm dashp" data-m="all">ทั้งหมด</button>
           <span class="period-cust"><input type="date" id="dashFrom" class="dateinp"><span class="dash">–</span><input type="date" id="dashTo" class="dateinp"><button class="btn ghost sm" id="dashCustomBtn">📅 ดู</button></span>
         </div>
+        <div id="dashInsight"></div>
         <div class="stats" id="stats"></div>
         <div class="grid2">
           <div class="panel">
@@ -474,6 +475,7 @@
           </div>
           <div id="mktResult" class="mktresult"><div class="empty">เลือกประเภทด้านบนเพื่อให้ AI ร่างคอนเทนต์ค่ะ 🌹</div></div>
         </div>
+        <div class="panel" style="max-width:820px;margin-top:16px"><h3>👥 กลุ่มลูกค้า (ฐานยิงการตลาด)</h3><div class="ph-sub">สรุปจากออเดอร์จริง · ใช้เล็งกลุ่มซื้อซ้ำ / ดึงลูกค้าหาย</div><div id="mktSeg" style="margin-top:10px"></div></div>
       </div>
 
       <!-- MANAGER AI CHAT (คุยกับผู้จัดการ) -->
@@ -542,7 +544,7 @@
           </div>
           <div class="panel">
             <h3>💵 ค่าใช้จ่ายโดยประมาณ</h3>
-            <div class="ph-sub">Claude Haiku (input $1 · output $5 ต่อ 1 ล้าน token)</div>
+            <div class="ph-sub">Claude Sonnet 4.6 (input $3 · output $15 ต่อ 1 ล้าน token)</div>
             <div id="costBox"></div>
           </div>
         </div>
@@ -626,6 +628,8 @@
   var myName = "";
   var ORDERS = [];            // last loaded
   var AILOGS = [];            // ai usage / chat logs
+  var SNAP = null;            // snapshot ธุรกิจ grounded (กำไร/ต้นทุน/segment) จาก /admin/snapshot
+  async function loadSnapshot(){ try{ SNAP = await api('/admin/snapshot'); renderFinance(); renderMktSeg(); renderDashInsight(); }catch(e){} }
   var VISITS = [];            // ผู้เข้าชม (null = ตารางยังไม่มี)
   var DASH = { mode:'today', from:null, to:null };   // ช่วงเวลา dashboard (today/3d/7d/30d/month/all/custom)
   var SRC_META = { direct:{ic:'🔗',n:'เข้าตรง'}, facebook:{ic:'📘',n:'Facebook'}, instagram:{ic:'📸',n:'Instagram'}, line:{ic:'💬',n:'LINE'}, google:{ic:'🔍',n:'Google'}, tiktok:{ic:'🎵',n:'TikTok'}, referral:{ic:'🌐',n:'เว็บอื่น'} };
@@ -684,6 +688,7 @@
     applyRoleUI();
     renderAll();
     if(announce) toast("อัปเดตแล้ว");
+    loadSnapshot();
   }
 
   function activeOrders(){ return ORDERS.filter(function(o){ return o.status!=='cancelled'; }); }
@@ -882,7 +887,7 @@
   }
 
   /* ===== พลัง AI + แชทลูกค้า (จาก fafin_ai_logs · endpoint เดียว) ===== */
-  var IN_RATE = 1/1e6, OUT_RATE = 5/1e6;   // USD/token · Claude Haiku (ประมาณการ)
+  var IN_RATE = 3/1e6, OUT_RATE = 15/1e6;   // USD/token · Claude Sonnet 4.6 (ประมาณการ)
   function fmtTok(n){ n=Number(n||0); if(n>=1e6) return (n/1e6).toFixed(2)+'M'; if(n>=1e3) return (n/1e3).toFixed(1)+'K'; return String(n); }
   async function loadUsage(){
     try{ var d = await api('/admin/usage'); AILOGS = d.logs || []; renderPower(); renderChat(); }
@@ -979,13 +984,16 @@
     var qty = active.reduce(function(a,o){return a+(o.qty||0);},0);
     var n = active.length;
     var avg = n?Math.round(rev/n):0;
-    $('finStats').innerHTML = stat(money(rev),'รายได้รวม','') + stat(n,'ออเดอร์','') + stat(money(avg),'เฉลี่ย/ออเดอร์','') + stat(qty,'ขวดขาย','');
+    var mc=(SNAP&&SNAP.finance&&SNAP.finance.mainCost)||0, hasCost=!!(SNAP&&SNAP.finance&&SNAP.finance.hasCost);
+    var gross=rev-qty*mc, fmargin=rev>0?Math.round(gross/rev*100):0;
+    $('finStats').innerHTML = stat(money(rev),'รายได้รวม','') + (hasCost?stat(money(gross),'กำไรขั้นต้น','margin '+fmargin+'%'):'') + stat(n,'ออเดอร์','') + stat(money(avg),'เฉลี่ย/ออเดอร์','') + stat(qty,'ขวดขาย','');
     var pm={}; active.forEach(function(o){ var k=o.payment_method||'-'; if(!pm[k])pm[k]={n:0,rev:0}; pm[k].n++; pm[k].rev+=(o.total||0); });
     var PL={cod:'ปลายทาง (COD)',transfer:'โอนเงิน',wholesale:'ราคาส่ง (รอตกลง)'};
     var keys=Object.keys(pm);
     $('finPay').innerHTML = keys.length ? keys.map(function(k){
       return '<div class="costrow"><span>'+(PL[k]||esc(k))+' · '+pm[k].n+' ออเดอร์</span><span class="cv">'+money(pm[k].rev)+'</span></div>';
     }).join('') : '<div class="empty">ยังไม่มีข้อมูลในช่วงนี้</div>';
+    if(hasCost && SNAP.finance){ $('finPay').innerHTML += '<div class="costrow tot"><span>💰 กำไรสุทธิเดือนนี้ (− ต้นทุน − ค่าใช้จ่าย)</span><span class="cv">'+money(SNAP.finance.netMon)+(SNAP.finance.netMon<0?' ⚠️':'')+'</span></div>'; }
     var span = (fb.from==null)?14:Math.min(Math.max(Math.ceil((fb.to-fb.from)/864e5)+1,7),60);
     var days=[],labels=[],sums=[];
     for(var i=span-1;i>=0;i--){ var dt=new Date(); dt.setDate(dt.getDate()-i); days.push(dt.toDateString()); labels.push(dt.toLocaleDateString('th-TH',{day:'2-digit',month:'short'})); sums.push(0); }
@@ -994,6 +1002,24 @@
     drawChart('finChart','line',{ labels:labels, datasets:[{ data:sums, borderColor:'#d4af37', backgroundColor:'rgba(212,175,55,.14)', fill:true, tension:.35, pointRadius:2, pointBackgroundColor:'#f4d77e', borderWidth:2 }] },
       { scales:{ x:{grid:{color:th.grid},ticks:{color:th.tick,font:{size:10},maxRotation:0,autoSkip:true,maxTicksLimit:7}}, y:{grid:{color:th.grid},ticks:{color:th.tick,font:{size:10}},beginAtZero:true} }, plugins:{legend:{display:false}} });
     $('finChartSub').textContent = periodLabel(FIN)+' · กราฟ '+span+' วัน';
+  }
+
+  /* ===== การตลาด: กลุ่มลูกค้า + ภาพรวม insight (จาก snapshot grounded) ===== */
+  function renderMktSeg(){
+    var el=$('mktSeg'); if(!el) return;
+    var s=(SNAP&&SNAP.segment)||{};
+    if(!s.buyers){ el.innerHTML='<div class="empty">ยังไม่มีลูกค้าที่ซื้อค่ะ</div>'; return; }
+    el.innerHTML='<div class="stats">'+stat(s.buyers,'ลูกค้าที่ซื้อ','')+stat(s.repeatC+' ('+(s.buyers?Math.round(s.repeatC/s.buyers*100):0)+'%)','ซื้อซ้ำ','')+stat(s.lapsedC,'หายไป >30วัน','')+stat(money(s.aov),'ยอดเฉลี่ย/บิล','')+'</div>';
+  }
+  function renderDashInsight(){
+    var el=$('dashInsight'); if(!el) return;
+    var f=(SNAP&&SNAP.finance)||{}, s=(SNAP&&SNAP.segment)||{}, low=(SNAP&&SNAP.lowStock)||[];
+    var chips=[];
+    if(f.hasCost){ chips.push('💰 กำไรสะสม '+money(f.gross)+' (margin '+f.margin+'%)'); chips.push((f.netMon<0?'🔴':'🟢')+' กำไรสุทธิเดือนนี้ '+money(f.netMon)); }
+    if(s.buyers) chips.push('👥 ลูกค้า '+s.buyers+' ราย · ซื้อซ้ำ '+s.repeatC);
+    if(low.length) chips.push('⚠️ ใกล้หมด: '+low.map(function(x){return x.name+' ('+x.stock+')';}).join(', '));
+    if(!chips.length){ el.innerHTML=''; return; }
+    el.innerHTML='<div class="panel" style="margin-bottom:14px"><h3>🧭 ผู้จัดการสรุปให้</h3><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">'+chips.map(function(c){return '<span style="background:rgba(212,175,55,.10);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:.85rem">'+esc(c)+'</span>';}).join('')+'</div></div>';
   }
 
   /* ===== คุยกับผู้จัดการ AI ===== */
