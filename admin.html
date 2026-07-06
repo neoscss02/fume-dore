@@ -398,7 +398,7 @@
         <div class="stats" id="stats"></div>
         <div class="grid2">
           <div class="panel">
-            <h3>📈 ยอดขายรายวัน</h3>
+            <div class="card-head"><h3>📈 ยอดขายรายวัน</h3><span style="margin-left:auto;display:flex;gap:4px"><button class="btn ghost sm ctog active" data-t="line">เส้น</button><button class="btn ghost sm ctog" data-t="bar">แท่ง</button></span></div>
             <div class="ph-sub" id="revSub">รวมออเดอร์ที่ไม่ยกเลิก (บาท/วัน)</div>
             <div class="chartbox"><canvas id="revChart"></canvas></div>
           </div>
@@ -417,6 +417,18 @@
           <div class="panel" style="padding:0;overflow:hidden">
             <div class="card-head"><h3>🆕 ออเดอร์ล่าสุด</h3><span class="dim" style="margin-left:auto">5 รายการ</span></div>
             <div id="recent"></div>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="panel">
+            <h3>📲 คนเข้าชมเว็บรายวัน</h3>
+            <div class="ph-sub">ผู้เข้าชมไม่ซ้ำต่อวัน (ตามช่วงที่เลือก)</div>
+            <div class="chartbox"><canvas id="visitsChart"></canvas></div>
+          </div>
+          <div class="panel">
+            <h3>👥 กลุ่มลูกค้า</h3>
+            <div class="ph-sub">ซื้อซ้ำ / หายไป / ยอดเฉลี่ยต่อบิล (จากออเดอร์จริง)</div>
+            <div id="dashSeg" style="margin-top:6px"></div>
           </div>
         </div>
       </div>
@@ -785,6 +797,7 @@
   var SRC_META = { direct:{ic:'🔗',n:'เข้าตรง'}, facebook:{ic:'📘',n:'Facebook'}, instagram:{ic:'📸',n:'Instagram'}, line:{ic:'💬',n:'LINE'}, google:{ic:'🔍',n:'Google'}, tiktok:{ic:'🎵',n:'TikTok'}, referral:{ic:'🌐',n:'เว็บอื่น'} };
   var lastSeenCount = 0;
   var charts = {};
+  var revChartType = 'line';
 
   var $ = function(id){ return document.getElementById(id); };
   function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2200); }
@@ -910,6 +923,13 @@
     $('stats').innerHTML = cards;
     renderCharts();
     renderSources(dv);
+    renderDashSeg();
+  }
+  function renderDashSeg(){
+    var el=$('dashSeg'); if(!el) return;
+    var s=(SNAP&&SNAP.segment)||{};
+    if(!s.buyers){ el.innerHTML='<div class="empty">ยังไม่มีลูกค้าที่ซื้อค่ะ</div>'; return; }
+    el.innerHTML='<div class="stats">'+stat(s.buyers,'ลูกค้าที่ซื้อ','')+stat(s.repeatC+' ('+(s.buyers?Math.round(s.repeatC/s.buyers*100):0)+'%)','ซื้อซ้ำ','')+stat(s.lapsedC,'หายไป >30วัน','')+stat(money(s.aov),'ยอดเฉลี่ย/บิล','')+'</div>';
   }
   function uniqVisitors(list){ var s={}; list.forEach(function(v){ var k=v.visitor_id||('_'+Math.random()); s[k]=1; }); return Object.keys(s).length; }
   function renderSources(dv){
@@ -1537,10 +1557,20 @@
     for(var i=span-1;i>=0;i--){ var d=new Date(); d.setDate(d.getDate()-i); days.push(d.toDateString());
       labels.push(d.toLocaleDateString('th-TH',{day:'2-digit',month:'short'})); sums.push(0); }
     activeOrders().forEach(function(o){ try{ var k=new Date(o.created_at).toDateString(); var ix=days.indexOf(k); if(ix>=0) sums[ix]+=(o.total||0); }catch(e){} });
-    drawChart('revChart','line',{ labels:labels, datasets:[{ data:sums, borderColor:'#d4af37', backgroundColor:'rgba(212,175,55,.14)',
-      fill:true, tension:.35, pointRadius:2, pointBackgroundColor:'#f4d77e', borderWidth:2 }] },
-      { scales:{ x:{grid:{color:th.grid},ticks:{color:th.tick,font:{size:10},maxRotation:0,autoSkip:true,maxTicksLimit:7}},
-        y:{grid:{color:th.grid},ticks:{color:th.tick,font:{size:10}},beginAtZero:true} }, plugins:{legend:{display:false}} });
+    var axisOpts = { scales:{ x:{grid:{color:th.grid},ticks:{color:th.tick,font:{size:10},maxRotation:0,autoSkip:true,maxTicksLimit:7}},
+      y:{grid:{color:th.grid},ticks:{color:th.tick,font:{size:10}},beginAtZero:true} }, plugins:{legend:{display:false}} };
+    drawChart('revChart',revChartType,{ labels:labels, datasets:[{ data:sums, borderColor:'#d4af37', backgroundColor:(revChartType==='bar'?'rgba(212,175,55,.55)':'rgba(212,175,55,.14)'),
+      fill:true, tension:.35, pointRadius:2, pointBackgroundColor:'#f4d77e', borderWidth:2 }] }, axisOpts);
+
+    // 📲 คนเข้าชมเว็บรายวัน (unique visitor_id ต่อวัน · ตามช่วง)
+    var dv2 = dashVisits();
+    if(dv2!==null && $('visitsChart')){
+      var vmap=days.map(function(){return {};});
+      dv2.forEach(function(v){ try{ var k=new Date(v.created_at).toDateString(); var ix=days.indexOf(k); if(ix>=0) vmap[ix][v.visitor_id||('_'+Math.random())]=1; }catch(e){} });
+      var vsums=vmap.map(function(o){ return Object.keys(o).length; });
+      drawChart('visitsChart',revChartType,{ labels:labels, datasets:[{ data:vsums, borderColor:'#6cb6ff', backgroundColor:(revChartType==='bar'?'rgba(108,182,255,.5)':'rgba(108,182,255,.16)'),
+        fill:true, tension:.35, pointRadius:2, pointBackgroundColor:'#9ecbff', borderWidth:2 }] }, axisOpts);
+    }
 
     // status doughnut
     var order=['new','confirmed','shipped','done','cancelled'];
@@ -1729,6 +1759,9 @@
     if($('advBtn')) $('advBtn').addEventListener('click', adviseCampaign);
     if($('anaBtn')) $('anaBtn').addEventListener('click', analyzeCampaignPerf);
     if($('chatReviewBtn')) $('chatReviewBtn').addEventListener('click', runChatReview);
+    Array.prototype.forEach.call(document.querySelectorAll('.ctog'), function(b){
+      b.addEventListener('click', function(){ Array.prototype.forEach.call(document.querySelectorAll('.ctog'), function(x){ x.classList.remove('active'); }); b.classList.add('active'); revChartType=b.dataset.t; renderCharts(); });
+    });
     $('kbAdd').addEventListener('click', addKB);
     if($('kbAddSrc')) $('kbAddSrc').addEventListener('click', addKBSource);
     if($('kbSyncBtn')) $('kbSyncBtn').addEventListener('click', syncKB);
