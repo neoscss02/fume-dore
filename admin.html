@@ -533,6 +533,45 @@
         </div>
         <div class="panel" style="max-width:820px;margin-top:16px"><h3>👥 กลุ่มลูกค้า (ฐานยิงการตลาด)</h3><div class="ph-sub">สรุปจากออเดอร์จริง · ใช้เล็งกลุ่มซื้อซ้ำ / ดึงลูกค้าหาย</div><div id="mktSeg" style="margin-top:10px"></div></div>
 
+        <div class="panel" style="max-width:820px;margin-top:16px">
+          <h3>💡 Campaign Advisor</h3>
+          <div class="ph-sub">AI วิเคราะห์ยอดขายจริง → แนะนำ 3 แคมเปญโปรที่เหมาะกับเป้าหมาย</div>
+          <div class="kbrow">
+            <label class="pf" style="flex:1;min-width:130px">ย้อนหลัง
+              <select id="advRange" class="status"><option value="7">7 วัน</option><option value="30" selected>30 วัน</option><option value="90">90 วัน</option><option value="365">1 ปี</option></select>
+            </label>
+            <label class="pf" style="flex:2;min-width:190px">เป้าหมาย
+              <select id="advGoal" class="status">
+                <option value="เพิ่มยอดขายโดยรวม">📈 เพิ่มยอดขายโดยรวม</option>
+                <option value="ระบายสต็อกสินค้าขายช้า">🏷️ ระบายสต็อก</option>
+                <option value="ดึงลูกค้าเก่ากลับมาซื้อซ้ำ">🔄 ดึงลูกค้าเก่า</option>
+                <option value="หาลูกค้าใหม่">🌟 หาลูกค้าใหม่</option>
+                <option value="เพิ่ม Average Order Value">💰 เพิ่ม AOV</option>
+              </select>
+            </label>
+            <button class="btn sm" id="advBtn" style="align-self:flex-end">🔍 วิเคราะห์แคมเปญ</button>
+          </div>
+          <div id="advResult" class="mktresult" style="margin-top:12px"><div class="empty">เลือกเป้าหมาย แล้วกดวิเคราะห์ค่ะ 💡</div></div>
+        </div>
+
+        <div class="panel" style="max-width:820px;margin-top:16px">
+          <h3>📊 Campaign Analytics</h3>
+          <div class="ph-sub">เทียบยอดก่อน–ระหว่างแคมเปญ → AI ประเมินผล + แนะนำปรับปรุง</div>
+          <div class="grid2" style="margin-top:6px">
+            <div>
+              <div class="ph-sub" style="margin-bottom:6px">📅 ก่อนแคมเปญ (Baseline)</div>
+              <div class="kbrow"><input type="date" id="anaBaseFrom" class="dateinp"><span class="dash">–</span><input type="date" id="anaBaseTo" class="dateinp"></div>
+            </div>
+            <div>
+              <div class="ph-sub" style="margin-bottom:6px">🚀 ช่วงแคมเปญ</div>
+              <div class="kbrow"><input type="date" id="anaCampFrom" class="dateinp"><span class="dash">–</span><input type="date" id="anaCampTo" class="dateinp"></div>
+            </div>
+          </div>
+          <input id="anaName" placeholder="ชื่อแคมเปญ (ไม่บังคับ · เช่น Flash Sale สิ้นเดือน)" autocomplete="off" style="margin-top:10px">
+          <button class="btn sm" id="anaBtn" style="margin-top:10px">📊 วิเคราะห์ผล Campaign</button>
+          <div id="anaResult" style="margin-top:12px"></div>
+        </div>
+
         <div class="lockgroup" style="max-width:820px;margin-top:22px">
           <div class="lockhead">🧰 ฟีเจอร์เสริม · พร้อมเปิดใช้งานภายหลัง <span class="dim">(ลูกค้าเปิดเองได้เมื่อพร้อม — ยังไม่มีค่าใช้จ่ายจนกว่าจะเปิด)</span></div>
           <div class="panel locked" style="margin-top:10px">
@@ -1388,6 +1427,35 @@
     finally{ Array.prototype.forEach.call(document.querySelectorAll('.mkt,.mktc'), function(x){ x.disabled=false; }); }
   }
 
+  /* ===== Campaign Advisor + Analytics (การตลาด · ผู้จัดการวิเคราะห์) ===== */
+  async function adviseCampaign(){
+    var btn=$('advBtn'); btn.disabled=true; var old=btn.textContent; btn.textContent='⏳ วิเคราะห์…';
+    $('advResult').innerHTML='<div class="empty">AI กำลังวิเคราะห์ยอดขาย… 💡</div>';
+    try{
+      var d=await api('/admin/campaign-advise',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({days:parseInt($('advRange').value,10),goal:$('advGoal').value})});
+      $('advResult').textContent=d.text||'(ไม่มีคำแนะนำ)';
+      var cp=document.createElement('button'); cp.className='btn ghost sm'; cp.textContent='📋 คัดลอก'; cp.style.marginTop='12px';
+      cp.addEventListener('click',function(){ try{navigator.clipboard.writeText(d.text);toast('คัดลอกแล้ว');}catch(e){} });
+      $('advResult').appendChild(document.createElement('br')); $('advResult').appendChild(cp);
+    }catch(e){ var m=(e.message==='power_out')?'ถังพลังผู้จัดการหมด 🪫 เติมที่แท็บพลัง AI':('วิเคราะห์ไม่ได้: '+e.message); $('advResult').innerHTML='<div class="empty">'+esc(m)+'</div>'; }
+    finally{ btn.disabled=false; btn.textContent=old; }
+  }
+  async function analyzeCampaignPerf(){
+    var bf=$('anaBaseFrom').value,bt=$('anaBaseTo').value,cf=$('anaCampFrom').value,ct=$('anaCampTo').value;
+    if(!bf||!bt||!cf||!ct){ $('anaResult').innerHTML='<div class="empty">เลือกช่วงวันให้ครบทั้ง 2 ช่วงก่อนค่ะ</div>'; return; }
+    var btn=$('anaBtn'); btn.disabled=true; var old=btn.textContent; btn.textContent='⏳ วิเคราะห์…';
+    $('anaResult').innerHTML='<div class="empty">AI กำลังวิเคราะห์ผลแคมเปญ… 📊</div>';
+    try{
+      var d=await api('/admin/campaign-analytics',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({baseFrom:bf,baseTo:bt,campFrom:cf,campTo:ct,name:$('anaName').value.trim()})});
+      var g=d.growth||{}, cc=d.camp||{};
+      function arrow(v){ return (v>=0?'🟢 +':'🔴 ')+v+'%'; }
+      var head='<div class="stats" style="margin-bottom:12px">'+stat(money(cc.rev),'ยอดขายแคมเปญ',arrow(g.rev))+stat(cc.n,'ออเดอร์',arrow(g.n))+stat(money(cc.aov),'เฉลี่ย/บิล',arrow(g.aov))+'</div>';
+      $('anaResult').innerHTML=head+'<div class="mktresult"></div>';
+      $('anaResult').querySelector('.mktresult').textContent=d.text||'';
+    }catch(e){ var m=(e.message==='power_out')?'ถังพลังผู้จัดการหมด 🪫':(e.message==='missing_dates'?'เลือกช่วงวันให้ครบ':'วิเคราะห์ไม่ได้: '+e.message); $('anaResult').innerHTML='<div class="empty">'+esc(m)+'</div>'; }
+    finally{ btn.disabled=false; btn.textContent=old; }
+  }
+
   /* ===== charts ===== */
   function chartTheme(){
     var light = document.body.classList.contains('light');
@@ -1592,6 +1660,8 @@
     Array.prototype.forEach.call(document.querySelectorAll('.lockbtn'), function(b){
       b.addEventListener('click', function(){ toast('🔒 ฟีเจอร์เสริม · เปิดใช้งานภายหลังค่ะ'); });
     });
+    if($('advBtn')) $('advBtn').addEventListener('click', adviseCampaign);
+    if($('anaBtn')) $('anaBtn').addEventListener('click', analyzeCampaignPerf);
     $('kbAdd').addEventListener('click', addKB);
     if($('kbAddSrc')) $('kbAddSrc').addEventListener('click', addKBSource);
     if($('kbSyncBtn')) $('kbSyncBtn').addEventListener('click', syncKB);
