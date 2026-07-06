@@ -1356,7 +1356,7 @@
     $('stockList').innerHTML=list.map(function(p){
       var lowb=(p.stock||0)<=5?'<span class="badge b-new" style="margin-left:8px">ใกล้หมด</span>':'';
       return '<div class="prow" data-id="'+p.id+'">'
-        +'<div><b>'+esc(p.name)+'</b>'+lowb+'<div class="dim">'+esc(p.sku||'')+'</div></div>'
+        +'<div><b>'+esc(p.name)+'</b>'+lowb+(p.active===false?' <span class="badge b-cancelled">ปิดขาย</span>':'')+'<div class="dim">'+esc(p.sku||'')+(p.category?(' · '+esc(p.category)):'')+'</div></div>'
         +'<label class="pf">ราคา<input type="number" class="pi" data-f="price" value="'+(p.price||0)+'"'+(ro?' disabled':'')+'></label>'
         +'<label class="pf">ต้นทุน<input type="number" class="pi" data-f="cost" value="'+(p.cost||0)+'"'+(ro?' disabled':'')+'></label>'
         +'<label class="pf">สต็อก<input type="number" class="pi" data-f="stock" value="'+(p.stock||0)+'"'+(ro?' disabled':'')+'></label>'
