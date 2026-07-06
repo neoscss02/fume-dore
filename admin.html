@@ -501,9 +501,9 @@
           <div class="card-head"><h3>🧴 สินค้า & สต็อก</h3><span class="dim" style="margin-left:auto">แก้ราคา/ต้นทุน/สต็อก แล้วกดบันทึก</span></div>
           <div id="stockList"></div>
         </div>
-        <div class="panel locked" style="margin-top:16px" id="stockAudit">
-          <div class="card-head"><h3>🧾 ประวัติสต็อก (audit log)</h3><span class="badge b-new" style="margin-left:auto">🔒 เปิดใช้งานภายหลัง</span></div>
-          <div class="ph-sub" style="margin-top:8px">บันทึกทุกการเคลื่อนไหวสต็อก (ตัดเมื่อจ่ายเงิน · คืนเมื่อยกเลิก · ปรับมือ) พร้อมกันตัดซ้ำ — พร้อมเปิดเมื่อร้านเริ่มมีสินค้าหลายรายการ</div>
+        <div class="panel" style="margin-top:16px" id="stockAudit">
+          <div class="card-head"><h3>🧾 ประวัติสต็อก (audit log)</h3><span class="dim" style="margin-left:auto">ตัดอัตโนมัติเมื่อจ่าย · คืนเมื่อยกเลิก · ปรับมือ · กันตัดซ้ำ</span></div>
+          <div id="stockMoves" style="margin-top:10px"></div>
         </div>
       </div>
 
@@ -1345,6 +1345,21 @@
     $('stockList').innerHTML='<div class="empty">กำลังโหลด…</div>';
     try{ var d=await api('/admin/products'); renderStock(d.products||[]); }
     catch(e){ var m=(e.message==='db_error')?'ระบบคลังยังไม่พร้อม (ตาราง fafin_products ยังไม่ได้สร้าง)':esc(e.message); $('stockList').innerHTML='<div class="empty">'+m+'</div>'; if($('stockStats'))$('stockStats').innerHTML=''; }
+    loadStockMoves();
+  }
+  async function loadStockMoves(){
+    var el=$('stockMoves'); if(!el) return;
+    try{
+      var d=await api('/admin/stock-movements');
+      if(d.missing){ el.innerHTML='<div class="empty">ยังไม่ได้สร้างตาราง (รัน fafin_stock_movements.sql ก่อนค่ะ)</div>'; return; }
+      var list=d.movements||[];
+      if(!list.length){ el.innerHTML='<div class="empty">ยังไม่มีการเคลื่อนไหวสต็อกค่ะ</div>'; return; }
+      var RS={order_paid:'🛒 ตัดขาย (จ่ายแล้ว)',order_cancelled:'↩️ คืน (ยกเลิก)',manual:'✋ ปรับมือ'};
+      el.innerHTML=list.map(function(m){
+        var pos=(m.delta>0);
+        return '<div class="costrow"><span>'+fmtTime(m.created_at)+' · '+(RS[m.reason]||esc(m.reason||'-'))+(m.ref_order?(' · '+code(m.ref_order)):'')+(m.product_name?(' · '+esc(m.product_name)):'')+'</span><span class="cv" style="color:'+(pos?'#5fce8b':'#e0466b')+'">'+(pos?'+':'')+m.delta+'</span></div>';
+      }).join('');
+    }catch(e){ el.innerHTML='<div class="empty">โหลดไม่ได้: '+esc(e.message)+'</div>'; }
   }
   function renderStock(list){
     var totalStock=list.reduce(function(a,p){return a+(p.stock||0);},0);
