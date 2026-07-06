@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex,nofollow" />
-<title>FAFIN FUME · Admin Console</title>
+<title>Fumé Doré · Admin Console</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Sarabun:wght@300;400;500;600&family=Kanit:wght@500;600&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -291,7 +291,7 @@
 <!-- ============ LOGIN ============ -->
 <div class="login-wrap" id="loginWrap" style="display:none">
   <div class="login">
-    <div class="crest">FAFIN&nbsp;FUME</div>
+    <div class="crest">Fumé&nbsp;Doré</div>
     <div class="tag">Admin Console</div>
     <p>ระบบจัดการร้าน · สำหรับเจ้าของแบรนด์</p>
     <input id="loginId" placeholder="อีเมล หรือ ชื่อผู้ใช้" autocomplete="username" />
@@ -315,7 +315,7 @@
   <div class="backdrop" id="backdrop"></div>
   <nav id="nav">
     <div class="brand">
-      <div class="crest">FAFIN&nbsp;FUME</div>
+      <div class="crest">Fumé&nbsp;Doré</div>
       <div class="tag">Admin Console</div>
     </div>
     <div class="navscroll">
@@ -357,12 +357,12 @@
   <main>
     <div class="mtopbar">
       <button class="ham" id="hamBtn">☰</button>
-      <div class="crest">FAFIN&nbsp;FUME</div>
+      <div class="crest">Fumé&nbsp;Doré</div>
       <button class="iconbtn" id="bellBtnM">🔔<span class="bell-badge" id="bellBadgeM"></span></button>
     </div>
     <div class="topbar">
       <div>
-        <h2 id="pageTitle">FAFIN <span>ภาพรวม</span></h2>
+        <h2 id="pageTitle">Fumé Doré <span>ภาพรวม</span></h2>
         <div class="sub" id="updatedAt"></div>
       </div>
       <div class="spacer"></div>
@@ -1025,7 +1025,7 @@
   /* ===== คุยกับผู้จัดการ AI ===== */
   var MGR_HISTORY = [];
   function mgrRender(cls, text){ var d=document.createElement('div'); d.className='mbub '+cls; d.textContent=text; $('mgrChat').appendChild(d); $('mgrChat').scrollTop=$('mgrChat').scrollHeight; return d; }
-  function mgrGreet(){ if(!MGR_HISTORY.length && !$('mgrChat').children.length) mgrRender('ai','สวัสดีค่ะ ดิฉันผู้จัดการ AI ของ FAFIN FUME 📊 ถามยอดขาย ขอสรุป วิเคราะห์ หรือสั่งงานได้เลยค่ะ (เช่น "ตั้งทุน 35", "จดค่าโฆษณา 500", "ปรับสต็อกเป็น 80")'); }
+  function mgrGreet(){ if(!MGR_HISTORY.length && !$('mgrChat').children.length) mgrRender('ai','สวัสดีค่ะ ดิฉันผู้จัดการ AI ของ Fumé Doré 📊 ถามยอดขาย ขอสรุป วิเคราะห์ หรือสั่งงานได้เลยค่ะ (เช่น "ตั้งทุน 35", "จดค่าโฆษณา 500", "ปรับสต็อกเป็น 80")'); }
   /* ยืนยันก่อนเขียนจริง (write-tool) → กด ✅ = ยิง /admin/exec-tool ด้วย HMAC token */
   function mgrConfirm(c){
     var box=document.createElement('div'); box.className='mbub ai';
@@ -1197,7 +1197,7 @@
     if(el){ el.classList.add('active'); }
     else { var m=document.querySelector('.nav-tab[data-tab="'+tab+'"]'); if(m) m.classList.add('active'); }
     Array.prototype.forEach.call(document.querySelectorAll('.tabview'), function(v){ v.classList.toggle('active', v.id==='tab-'+tab); });
-    $('pageTitle').innerHTML = 'FAFIN <span>'+(title||TITLES[tab]||'')+'</span>';
+    $('pageTitle').innerHTML = 'Fumé Doré <span>'+(title||TITLES[tab]||'')+'</span>';
     // mark parent group active
     Array.prototype.forEach.call(document.querySelectorAll('.nav-group'), function(g){
       g.classList.toggle('has-active', !!g.querySelector('.nav-tab.active'));
