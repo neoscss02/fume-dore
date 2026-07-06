@@ -341,6 +341,7 @@
           <div class="nav-tab" data-tab="stock"><span>🧴</span> คลังสินค้า</div>
           <div class="nav-tab" data-tab="kb"><span>📚</span> คลังความรู้</div>
           <div class="nav-tab" data-tab="assistant"><span>🤖</span> คุยกับผู้จัดการ</div>
+          <div class="nav-tab" data-tab="linereport"><span>📲</span> รายงาน LINE</div>
         </div>
       </div>
       <div class="nav-group" data-group="sales">
@@ -356,7 +357,6 @@
         <div class="ngitems">
           <div class="nav-tab" data-tab="power"><span>⚡</span> พลัง AI</div>
           <div class="nav-tab" data-tab="users"><span>👥</span> ผู้ใช้ & สิทธิ์</div>
-          <div class="nav-tab" data-tab="settings"><span>🎛️</span> ระบบ & ธีม</div>
         </div>
       </div>
     </div>
@@ -755,6 +755,12 @@
         <div class="panel" style="max-width:820px">
           <h3>👥 ผู้ใช้ & สิทธิ์</h3>
           <div class="ph-sub">เพิ่ม/ลบทีมงานที่เข้าระบบได้ · <b>Admin</b>=จัดการทุกอย่าง · <b>Staff</b>=แก้ออเดอร์/ดูลูกค้า · <b>Viewer</b>=ดูอย่างเดียว</div>
+          <div class="setrow">
+            <div class="si"><div class="t">บัญชีที่เข้าสู่ระบบ</div><div class="s" id="setWho">—</div></div>
+          </div>
+          <div class="setrow" style="margin-bottom:12px">
+            <div class="si"><div class="t">วิธีเข้าสู่ระบบ</div><div class="s" id="setMode">—</div></div>
+          </div>
           <div class="uform">
             <input id="u_username" placeholder="ชื่อผู้ใช้ (เช่น staff01)" autocomplete="off" />
             <input id="u_email" placeholder="อีเมล (ไม่บังคับ)" autocomplete="off" />
@@ -769,30 +775,11 @@
         </div>
       </div>
 
-      <!-- SETTINGS -->
-      <div class="tabview" id="tab-settings">
-        <div class="panel" style="max-width:640px">
-          <h3>🎛️ ตั้งค่าระบบ</h3>
-          <div class="ph-sub">การตั้งค่าคอนโซลและบัญชีผู้ดูแล</div>
-          <div class="setrow">
-            <div class="si"><div class="t">โหมดธีม</div><div class="s">สลับระหว่างธีมมืด (แบรนด์) กับธีมสว่าง</div></div>
-            <div class="switch" id="themeSwitch"></div>
-          </div>
-          <div class="setrow">
-            <div class="si"><div class="t">บัญชีที่เข้าสู่ระบบ</div><div class="s" id="setWho">—</div></div>
-          </div>
-          <div class="setrow">
-            <div class="si"><div class="t">วิธีเข้าสู่ระบบ</div><div class="s" id="setMode">—</div></div>
-          </div>
-          <div class="setrow">
-            <div class="si"><div class="t">ลิงก์ที่เกี่ยวข้อง</div>
-              <div class="s"><a href="index.html" target="_blank" style="color:var(--gold-bright)">🌐 หน้าร้าน</a> ·
-              <a href="https://neoscss02.github.io/fume-dore/" target="_blank" style="color:var(--gold-bright)">Live</a></div></div>
-          </div>
-        </div>
-        <div class="panel locked" style="max-width:640px;margin-top:16px">
-          <div class="card-head"><h3>📊 รายงานสรุปเข้า LINE</h3><span class="badge b-new" style="margin-left:auto">🔒 เปิดใช้งานภายหลัง</span></div>
-          <div class="ph-sub" style="margin-top:8px">ผู้จัดการสรุปยอดขาย/กำไร/ของใกล้หมด ส่งเข้า LINE เจ้าของ (และกลุ่มทีม) อัตโนมัติ รายวัน/รายสัปดาห์ — เปิดหลังเชื่อม LINE OA</div>
+      <!-- LINE REPORT (ผู้จัดการ) -->
+      <div class="tabview" id="tab-linereport">
+        <div class="panel locked" style="max-width:680px">
+          <div class="card-head"><h3>📲 รายงานสรุปเข้า LINE</h3><span class="badge b-new" style="margin-left:auto">🔒 เปิดใช้งานภายหลัง</span></div>
+          <div class="ph-sub" style="margin-top:8px">ผู้จัดการสรุปยอดขาย/กำไร/ของใกล้หมด/ค้างจ่าย ส่งเข้า LINE ของเจ้าของ (และกลุ่มทีม) อัตโนมัติ รายวัน/รายสัปดาห์ — เด้งเข้ามือถือไม่ต้องเปิด admin · เปิดหลังเชื่อม LINE OA</div>
           <button class="btn ghost sm lockbtn" style="margin-top:10px">🔔 ตั้งค่ารายงาน</button>
         </div>
       </div>
@@ -1693,7 +1680,7 @@
   }
 
   /* ===== nav / tabs ===== */
-  var TITLES = { dashboard:'ภาพรวม', orders:'ออเดอร์', customers:'ลูกค้า', kb:'คลังความรู้', stock:'คลังสินค้า', finance:'การเงิน', marketing:'การตลาด', assistant:'คุยกับผู้จัดการ', chat:'แชทลูกค้า', power:'พลัง AI', users:'ผู้ใช้ & สิทธิ์', settings:'ระบบ & ธีม' };
+  var TITLES = { dashboard:'ภาพรวม', orders:'ออเดอร์', customers:'ลูกค้า', kb:'คลังความรู้', stock:'คลังสินค้า', finance:'การเงิน', marketing:'การตลาด', assistant:'คุยกับผู้จัดการ', chat:'แชทลูกค้า', power:'พลัง AI', users:'ผู้ใช้ & สิทธิ์', linereport:'รายงาน LINE' };
   function selectTab(tab, el, title){
     Array.prototype.forEach.call(document.querySelectorAll('.nav-tab'), function(t){ t.classList.remove('active'); });
     if(el){ el.classList.add('active'); }
@@ -1811,7 +1798,7 @@
 
     bindNav();
     $('themeBtn').addEventListener('click', toggleTheme);
-    $('themeSwitch').addEventListener('click', toggleTheme);
+    if($('themeSwitch')) $('themeSwitch').addEventListener('click', toggleTheme);
     $('logoutBtn').addEventListener('click', async function(){
       if(authMode==='google' && supa){ try{ await supa.auth.signOut(); }catch(e){} }
       authMode=null; adminToken=''; myRole='admin'; try{ localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(ROLE_KEY); }catch(e){}
