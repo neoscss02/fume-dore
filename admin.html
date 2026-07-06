@@ -284,6 +284,11 @@
     .row .addr{grid-column:1/3}
     .row .actcol{grid-column:1/3;display:flex;justify-content:flex-end}
   }
+  .kbstats{display:flex;gap:22px;flex-wrap:wrap;font-size:.86rem;margin:8px 0 16px}
+  .kblabel{font-weight:600;margin:6px 0 8px}
+  .kblabel .dim{font-weight:400}
+  .kbrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+  .kbsrc{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-bottom:6px}
   .lockhead{font-family:var(--head);font-size:.9rem;font-weight:600;color:var(--muted);padding:0 2px}
   .lockhead .dim{font-weight:400;font-size:.76rem}
   .panel.locked{opacity:.62;filter:saturate(.7)}
@@ -446,13 +451,45 @@
 
       <!-- KB / คลังความรู้ (RAG) -->
       <div class="tabview" id="tab-kb">
-        <div class="panel" style="max-width:820px">
-          <h3>📚 คลังความรู้ (RAG)</h3>
-          <div class="ph-sub">วางข้อมูล/นโยบาย/คำถามที่พบบ่อย → บอทฟูเม่ดึงไปตอบลูกค้าให้แม่นขึ้น (embed bge-m3)</div>
+        <div class="panel" style="max-width:900px">
+          <h3>📚 คลังความรู้ AI (RAG)</h3>
+          <div class="ph-sub">ความรู้ที่ฟูเม่ (ฝ่ายขาย) + ผู้จัดการใช้ตอบ · สินค้าดึงจากระบบอัตโนมัติ · เพิ่มเว็บ/ข้อมูลเองได้ (embed bge-m3)</div>
+          <div class="kbstats" id="kbStats"></div>
+
+          <div class="kblabel">🌐 ① แหล่งข้อมูล (เว็บ/URL) <span class="dim">— เพิ่ม URL แล้วกด sync (ดึงเว็บ + สินค้าทั้งหมดเข้าถัง)</span></div>
+          <div class="kbrow">
+            <input id="kbUrl" placeholder="https://... URL แหล่งข้อมูล" autocomplete="off" style="flex:1;min-width:200px">
+            <select id="kbType" class="status" style="width:auto">
+              <option value="product">สินค้า/จุดขาย</option>
+              <option value="faq">แบรนด์/FAQ</option>
+              <option value="usage">วิธีใช้/ดูแล</option>
+              <option value="promo">โปรโมชั่น</option>
+              <option value="competitor">คู่แข่ง</option>
+            </select>
+            <input id="kbTitle" placeholder="ชื่อย่อ (ไม่บังคับ)" autocomplete="off" style="width:150px">
+            <button class="btn sm" id="kbAddSrc">+ เพิ่มแหล่ง</button>
+            <button class="btn ghost sm" id="kbSyncBtn">⚡ sync เดี๋ยวนี้</button>
+          </div>
+          <div class="err" id="kbMsg" style="text-align:left"></div>
+          <div id="kbSrcList" style="margin:8px 0 4px"></div>
+
+          <div class="kblabel" style="margin-top:20px">✍️ ② วางข้อมูลเอง <span class="dim">— สูตร/รีวิว/FAQ ที่ไม่ได้อยู่บนเว็บ · ระบบหั่นชิ้น + ให้ AI ค้นเอง</span></div>
           <textarea id="kbInput" placeholder="เช่น: นโยบายคืนสินค้า 7 วัน / วิธีใช้แขวนกระจก / โปรพิเศษ / คำถามที่ลูกค้าถามบ่อย" rows="3"></textarea>
-          <button class="btn sm" id="kbAdd">+ เพิ่มเข้าคลัง</button>
+          <div class="kbrow">
+            <input id="kbTextTitle" placeholder="ชื่อหัวข้อ (ไม่บังคับ)" autocomplete="off" style="flex:1;min-width:200px">
+            <select id="kbTextType" class="status" style="width:auto">
+              <option value="faq">แบรนด์/FAQ</option>
+              <option value="product">สินค้า/จุดขาย</option>
+              <option value="usage">วิธีใช้/ดูแล</option>
+              <option value="promo">โปรโมชั่น</option>
+              <option value="marketing">📊 การตลาด (ผู้จัดการ)</option>
+            </select>
+            <button class="btn sm" id="kbAdd">+ เก็บเข้าถัง</button>
+          </div>
           <div class="err" id="kbErr" style="text-align:left"></div>
-          <div id="kbList" style="margin-top:10px"></div>
+
+          <div class="kblabel" style="margin-top:20px">📚 ③ ความรู้ในถัง</div>
+          <div id="kbList"></div>
         </div>
       </div>
 
@@ -1195,16 +1232,38 @@
   }
 
   /* ===== คลังความรู้ (RAG) ===== */
+  var KB_TYPE_LABEL = { product:'🛍️ สินค้า', faq:'❓ FAQ', usage:'📖 วิธีใช้', promo:'🔥 โปร', competitor:'👀 คู่แข่ง', marketing:'📊 การตลาด' };
   async function loadKB(){
-    $('kbList').innerHTML='<div class="empty">กำลังโหลด…</div>'; $('kbErr').textContent='';
-    try{ var d=await api('/admin/kb'); if(d.ai===false) $('kbErr').textContent='⚠️ Workers AI ยังไม่พร้อม — embedding อาจไม่ทำงาน'; renderKB(d.items||[]); }
-    catch(e){ $('kbList').innerHTML='<div class="empty">'+(e.message==='db_error'?'ระบบคลังความรู้ยังไม่พร้อม (ตาราง fafin_kb ยังไม่ได้สร้าง)':esc(e.message))+'</div>'; }
+    $('kbList').innerHTML='<div class="empty">กำลังโหลด…</div>'; $('kbErr').textContent=''; $('kbMsg').textContent='';
+    try{
+      var d=await api('/admin/kb');
+      if(d.ai===false) $('kbErr').textContent='⚠️ Workers AI ยังไม่พร้อม — embedding อาจไม่ทำงาน';
+      renderKBStats(d.stats||{}); renderKBSources(d.sources||[]); renderKB(d.items||[]);
+    }
+    catch(e){ $('kbList').innerHTML='<div class="empty">'+(e.message==='db_error'?'ระบบคลังความรู้ยังไม่พร้อม (รัน fafin_kb_upgrade_sources.sql ก่อน)':esc(e.message))+'</div>'; }
+  }
+  function renderKBStats(s){
+    if(!$('kbStats')) return;
+    $('kbStats').innerHTML = '<div>📚 ความรู้ในถัง: <b>'+(s.total||0)+'</b></div>'
+      + '<div>🌐 แหล่งเว็บ: <b>'+(s.srcCount||0)+'</b></div>'
+      + '<div>⏰ sync ล่าสุด: <b>'+(s.lastSync?fmtTime(s.lastSync):'—')+'</b></div>';
+  }
+  function renderKBSources(list){
+    var el=$('kbSrcList'); if(!el) return; var ro=(myRole==='viewer');
+    if(!list.length){ el.innerHTML='<div class="dim" style="font-size:.82rem">ยังไม่มีแหล่ง — เพิ่ม URL แล้วกด sync (สินค้าดึงอัตโนมัติตอน sync)</div>'; return; }
+    el.innerHTML=list.map(function(s){
+      return '<div class="kbsrc"><div><b>'+esc(s.title||s.url)+'</b> <span class="badge b-confirmed">'+(KB_TYPE_LABEL[s.type]||esc(s.type))+'</span><div class="dim" style="font-size:.78rem;word-break:break-all">'+esc(s.url)+' · sync: '+(s.last_synced?fmtTime(s.last_synced):'ยังไม่เคย')+'</div></div>'+(ro?'':'<button class="btn del sm kbsdel" data-id="'+s.id+'">ลบ</button>')+'</div>';
+    }).join('');
+    if(ro) return;
+    Array.prototype.forEach.call(document.querySelectorAll('#kbSrcList .kbsdel'), function(b){ b.addEventListener('click', function(){ delKBSource(b.dataset.id); }); });
   }
   function renderKB(list){
     var ro=(myRole==='viewer');
     if(!list.length){ $('kbList').innerHTML='<div class="empty">ยังไม่มีข้อมูลในคลัง — เพิ่มด้านบนได้เลยค่ะ 🌹</div>'; return; }
     $('kbList').innerHTML=list.map(function(k){
-      return '<div class="kbitem"><div class="kbc">'+esc(k.content)+'</div>'+(ro?'':'<button class="btn del sm kbdel" data-id="'+k.id+'">ลบ</button>')+'</div>';
+      var tag=k.source_type?('<span class="badge b-confirmed" style="margin-right:6px">'+(KB_TYPE_LABEL[k.source_type]||esc(k.source_type))+'</span>'):'';
+      var ttl=k.title?('<b>'+esc(k.title)+'</b> '):'';
+      return '<div class="kbitem"><div class="kbc">'+tag+ttl+esc(k.content)+'</div>'+(ro?'':'<button class="btn del sm kbdel" data-id="'+k.id+'">ลบ</button>')+'</div>';
     }).join('');
     if(ro) return;
     Array.prototype.forEach.call(document.querySelectorAll('#kbList .kbdel'), function(b){ b.addEventListener('click', function(){ delKB(b.dataset.id); }); });
@@ -1213,9 +1272,28 @@
     var content=$('kbInput').value.trim(); var err=$('kbErr'); err.textContent='';
     if(!content){ err.textContent='พิมพ์ข้อมูลก่อนค่ะ'; return; }
     $('kbAdd').disabled=true; $('kbAdd').textContent='กำลังเพิ่ม…';
-    try{ await api('/admin/kb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:content})}); $('kbInput').value=''; toast('เพิ่มเข้าคลังแล้ว'); loadKB(); }
+    try{ await api('/admin/kb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:content, title:$('kbTextTitle').value.trim()||null, type:$('kbTextType').value})}); $('kbInput').value=''; $('kbTextTitle').value=''; toast('เก็บเข้าถังแล้ว'); loadKB(); }
     catch(e){ err.textContent='เพิ่มไม่ได้: '+(e.message==='embed_failed'?'ระบบ embedding ไม่พร้อม (เช็ค Workers AI)':e.message); }
-    finally{ $('kbAdd').disabled=false; $('kbAdd').textContent='+ เพิ่มเข้าคลัง'; }
+    finally{ $('kbAdd').disabled=false; $('kbAdd').textContent='+ เก็บเข้าถัง'; }
+  }
+  async function addKBSource(){
+    var url=$('kbUrl').value.trim(); var msg=$('kbMsg'); msg.textContent='';
+    if(!/^https?:\/\//i.test(url)){ msg.textContent='ใส่ URL ที่ขึ้นต้น http(s):// ก่อนค่ะ'; return; }
+    $('kbAddSrc').disabled=true;
+    try{ await api('/admin/kb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'addsource', url:url, type:$('kbType').value, title:$('kbTitle').value.trim()||null})}); $('kbUrl').value=''; $('kbTitle').value=''; toast('เพิ่มแหล่งแล้ว · กด sync เพื่อดึงเข้าถัง'); loadKB(); }
+    catch(e){ msg.textContent='เพิ่มแหล่งไม่ได้: '+esc(e.message); }
+    finally{ $('kbAddSrc').disabled=false; }
+  }
+  async function syncKB(){
+    var msg=$('kbMsg'); msg.textContent=''; $('kbSyncBtn').disabled=true; $('kbSyncBtn').textContent='⏳ กำลัง sync…';
+    try{ var d=await api('/admin/kb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'sync'})}); toast('sync แล้ว: เว็บ '+(d.chunks||0)+' ชิ้น · สินค้า '+(d.products||0)+' รายการ'); loadKB(); }
+    catch(e){ msg.textContent='sync ไม่ได้: '+esc(e.message); }
+    finally{ $('kbSyncBtn').disabled=false; $('kbSyncBtn').textContent='⚡ sync เดี๋ยวนี้'; }
+  }
+  async function delKBSource(id){
+    if(!confirm('ลบแหล่งนี้? (ความรู้ที่ sync มาแล้วยังอยู่ในถัง)')) return;
+    try{ await api('/admin/kb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'removesource',id:Number(id)})}); toast('ลบแหล่งแล้ว'); loadKB(); }
+    catch(e){ toast('ลบไม่ได้: '+e.message); }
   }
   async function delKB(id){
     if(!confirm('ลบข้อมูลนี้ออกจากคลัง?')) return;
@@ -1515,6 +1593,8 @@
       b.addEventListener('click', function(){ toast('🔒 ฟีเจอร์เสริม · เปิดใช้งานภายหลังค่ะ'); });
     });
     $('kbAdd').addEventListener('click', addKB);
+    if($('kbAddSrc')) $('kbAddSrc').addEventListener('click', addKBSource);
+    if($('kbSyncBtn')) $('kbSyncBtn').addEventListener('click', syncKB);
     Array.prototype.forEach.call(document.querySelectorAll('.dashp'), function(b){
       b.addEventListener('click', function(){
         DASH.mode = b.dataset.m;
