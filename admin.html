@@ -691,13 +691,27 @@
       <div class="tabview" id="tab-chat">
         <div class="stats" id="chatStats"></div>
         <div id="takeoverPanel"></div>
+        <div class="grid2">
+          <div class="panel">
+            <div class="card-head"><h3>🙋 แอดมินคุยเอง (หยุด AI)</h3></div>
+            <div class="ph-sub" style="margin-top:6px">ใส่ id ลูกค้า → หยุดบอท → คุยเองผ่าน LINE OA · คืนอัตโนมัติ 2 ชม. (เอา id จากแจ้งเตือน "ขอคุยคนจริง")</div>
+            <div class="kbrow"><input id="pauseKey" placeholder="เช่น line:U123... / web:1.2.3.4" autocomplete="off" style="flex:1;min-width:160px"><button class="btn sm" id="pauseBtn">🤫 หยุด AI</button></div>
+            <div id="pauseList" style="margin-top:8px"></div>
+          </div>
+          <div class="panel">
+            <div class="card-head"><h3>🛡️ บล็อก IP เว็บ</h3></div>
+            <div class="ph-sub" style="margin-top:6px">บล็อก IP กวน → บอทไม่ตอบ IP นั้น</div>
+            <div class="kbrow"><input id="blockIp" placeholder="เช่น 1.2.3.4" autocomplete="off" style="flex:1;min-width:110px"><input id="blockReason" placeholder="เหตุผล (ไม่บังคับ)" autocomplete="off" style="flex:1;min-width:110px"><button class="btn sm" id="blockBtn">🚫 บล็อก</button></div>
+            <div id="blockList" style="margin-top:8px"></div>
+          </div>
+        </div>
         <div class="panel" style="margin-bottom:14px">
           <div class="card-head"><h3>🧠 ผู้จัดการวิเคราะห์แชต</h3><button class="btn sm" id="chatReviewBtn" style="margin-left:auto">🔍 คัดลูกค้าน่าปิดการขาย</button></div>
           <div class="ph-sub" style="margin-top:6px">ผู้จัดการอ่านบทสนทนาล่าสุด → คัดคนใกล้ปิดการขาย + เสนอ next step</div>
           <div id="chatReviewResult" style="margin-top:10px"></div>
         </div>
         <div class="card">
-          <div class="card-head"><h3>🗨️ แชทลูกค้ากับฟูเม่</h3><span class="dim" style="margin-left:auto">ล่าสุด 300 ข้อความ</span></div>
+          <div class="card-head"><h3>🗨️ แชทลูกค้ากับฟูเม่</h3><input id="chatSearch" placeholder="🔍 ค้นหาข้อความ…" autocomplete="off" style="margin-left:auto;max-width:240px"></div>
           <div id="chatList"></div>
         </div>
       </div>
@@ -1528,9 +1542,10 @@
       var open=(d.takeovers||[]).filter(function(t){ return t.status!=='handled'; });
       if(!open.length){ el.innerHTML=''; return; }
       el.innerHTML='<div class="panel" style="margin-bottom:14px;border-left:3px solid #e8a33d"><div class="card-head"><h3>🙋 ลูกค้าขอคุยคนจริง ('+open.length+')</h3></div><div style="margin-top:8px">'+open.map(function(t){
-        return '<div class="costrow"><span>'+fmtTime(t.created_at)+' · '+(t.channel?('['+esc(t.channel)+'] '):'')+esc((t.last_message||'').slice(0,80))+'</span><button class="btn ghost sm tkdone" data-id="'+t.id+'">จัดการแล้ว</button></div>';
+        return '<div class="costrow"><span>'+fmtTime(t.created_at)+' · '+(t.channel?('['+esc(t.channel)+'] '):'')+esc((t.last_message||'').slice(0,70))+'</span><span style="display:flex;gap:6px">'+(t.session_id?'<button class="btn ghost sm tkpause" data-k="'+esc(t.session_id)+'">🤫 หยุด AI คุยเอง</button>':'')+'<button class="btn ghost sm tkdone" data-id="'+t.id+'">จัดการแล้ว</button></span></div>';
       }).join('')+'</div></div>';
       Array.prototype.forEach.call(document.querySelectorAll('#takeoverPanel .tkdone'), function(b){ b.addEventListener('click', function(){ markTakeover(b.dataset.id); }); });
+      Array.prototype.forEach.call(document.querySelectorAll('#takeoverPanel .tkpause'), function(b){ b.addEventListener('click', function(){ pauseCustomer(b.dataset.k,true); }); });
     }catch(e){ el.innerHTML=''; }
   }
   async function markTakeover(id){
@@ -1558,6 +1573,50 @@
         return '<div class="costrow"><span><b>'+esc(l.name||'ไม่ระบุชื่อ')+'</b> · '+esc(l.phone||'-')+' <span class="dim">· '+esc(l.source||'chat')+' · '+fmtTime(l.created_at)+'</span></span><span class="dim" style="max-width:42%;text-align:right">'+esc((l.note||'').slice(0,50))+'</span></div>';
       }).join('');
     }catch(e){ el.innerHTML='<div class="empty">โหลดไม่ได้: '+esc(e.message)+'</div>'; }
+  }
+
+  /* ===== หยุด AI (แอดมินคุยเอง) + บล็อก IP + ค้นหาแชท ===== */
+  async function loadPause(){
+    var el=$('pauseList'); if(!el) return;
+    try{
+      var d=await api('/admin/ai-pause-list');
+      if(d.missing){ el.innerHTML='<div class="dim" style="font-size:.8rem">รัน SQL fafin_ai_pause_block ก่อนค่ะ</div>'; return; }
+      var list=d.paused||[];
+      if(!list.length){ el.innerHTML='<div class="dim" style="font-size:.8rem">ยังไม่มีลูกค้าที่หยุด AI</div>'; return; }
+      el.innerHTML=list.map(function(p){ return '<div class="costrow"><span>🤫 '+esc(p.session_key)+' <span class="dim">· ถึง '+fmtTime(p.until)+'</span></span><button class="btn ghost sm punp" data-k="'+esc(p.session_key)+'">คืน AI</button></div>'; }).join('');
+      Array.prototype.forEach.call(document.querySelectorAll('#pauseList .punp'), function(b){ b.addEventListener('click', function(){ pauseCustomer(b.dataset.k,false); }); });
+    }catch(e){ el.innerHTML=''; }
+  }
+  async function pauseCustomer(key, paused){
+    if(!key){ key=($('pauseKey')||{}).value; key=key?key.trim():''; }
+    if(!key){ toast('ใส่ id ลูกค้าก่อนค่ะ'); return; }
+    try{ await api('/admin/ai-pause',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:key,paused:paused})}); toast(paused?'หยุด AI แล้ว (2 ชม.)':'คืน AI แล้ว'); if(paused&&$('pauseKey'))$('pauseKey').value=''; loadPause(); loadTakeovers(); }
+    catch(e){ toast('ไม่สำเร็จ: '+e.message); }
+  }
+  async function loadBlocks(){
+    var el=$('blockList'); if(!el) return;
+    try{
+      var d=await api('/admin/block');
+      if(d.missing){ el.innerHTML='<div class="dim" style="font-size:.8rem">รัน SQL ก่อนค่ะ</div>'; return; }
+      var list=d.blocked||[];
+      if(!list.length){ el.innerHTML='<div class="dim" style="font-size:.8rem">ยังไม่มี IP ที่บล็อก</div>'; return; }
+      el.innerHTML=list.map(function(b){ return '<div class="costrow"><span>🚫 '+esc(b.ip)+(b.reason?' <span class="dim">· '+esc(b.reason)+'</span>':'')+'</span><button class="btn ghost sm ubk" data-ip="'+esc(b.ip)+'">ปลด</button></div>'; }).join('');
+      Array.prototype.forEach.call(document.querySelectorAll('#blockList .ubk'), function(b){ b.addEventListener('click', function(){ unblockIp(b.dataset.ip); }); });
+    }catch(e){ el.innerHTML=''; }
+  }
+  async function blockIpAdd(){
+    var ip=$('blockIp').value.trim(); if(!ip){ toast('ใส่ IP ก่อนค่ะ'); return; }
+    try{ await api('/admin/block',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ip:ip,reason:$('blockReason').value.trim()||null})}); $('blockIp').value='';$('blockReason').value=''; toast('บล็อกแล้ว'); loadBlocks(); }
+    catch(e){ toast('ไม่สำเร็จ: '+e.message); }
+  }
+  async function unblockIp(ip){
+    try{ await api('/admin/block',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'remove',ip:ip})}); toast('ปลดบล็อกแล้ว'); loadBlocks(); }
+    catch(e){ toast('ไม่สำเร็จ: '+e.message); }
+  }
+  function filterChat(){
+    if(!$('chatSearch')||!$('chatList')) return;
+    var q=($('chatSearch').value||'').toLowerCase().trim();
+    Array.prototype.forEach.call($('chatList').children, function(c){ c.style.display=(!q||c.textContent.toLowerCase().indexOf(q)>=0)?'':'none'; });
   }
 
   /* ===== export ออเดอร์เป็น CSV (เปิด Excel ได้ · BOM กันไทยเพี้ยน) ===== */
@@ -1653,7 +1712,7 @@
     if(tab==='assistant') mgrGreet();
     if(tab==='users') loadUsers();
     if(tab==='power'){ loadPower(); loadUsage(); }
-    if(tab==='chat'){ loadUsage(); loadTakeovers(); }
+    if(tab==='chat'){ loadUsage(); loadTakeovers(); loadPause(); loadBlocks(); }
     if(tab==='customers') loadLeads();
   }
   function showSoon(el){
@@ -1793,6 +1852,9 @@
     if($('anaBtn')) $('anaBtn').addEventListener('click', analyzeCampaignPerf);
     if($('chatReviewBtn')) $('chatReviewBtn').addEventListener('click', runChatReview);
     if($('exportCsvBtn')) $('exportCsvBtn').addEventListener('click', exportOrdersCSV);
+    if($('pauseBtn')) $('pauseBtn').addEventListener('click', function(){ pauseCustomer(null,true); });
+    if($('blockBtn')) $('blockBtn').addEventListener('click', blockIpAdd);
+    if($('chatSearch')) $('chatSearch').addEventListener('input', filterChat);
     Array.prototype.forEach.call(document.querySelectorAll('.ctog'), function(b){
       b.addEventListener('click', function(){ Array.prototype.forEach.call(document.querySelectorAll('.ctog'), function(x){ x.classList.remove('active'); }); b.classList.add('active'); revChartType=b.dataset.t; renderCharts(); });
     });
