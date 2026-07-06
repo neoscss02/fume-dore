@@ -284,6 +284,10 @@
     .row .addr{grid-column:1/3}
     .row .actcol{grid-column:1/3;display:flex;justify-content:flex-end}
   }
+  .lockhead{font-family:var(--head);font-size:.9rem;font-weight:600;color:var(--muted);padding:0 2px}
+  .lockhead .dim{font-weight:400;font-size:.76rem}
+  .panel.locked{opacity:.62;filter:saturate(.7)}
+  .panel.locked .lockbtn{pointer-events:auto;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -455,9 +459,14 @@
       <!-- STOCK (คลังสินค้า) -->
       <div class="tabview" id="tab-stock">
         <div class="stats" id="stockStats"></div>
+        <div id="stockInsight"></div>
         <div class="card">
           <div class="card-head"><h3>🧴 สินค้า & สต็อก</h3><span class="dim" style="margin-left:auto">แก้ราคา/ต้นทุน/สต็อก แล้วกดบันทึก</span></div>
           <div id="stockList"></div>
+        </div>
+        <div class="panel locked" style="margin-top:16px" id="stockAudit">
+          <div class="card-head"><h3>🧾 ประวัติสต็อก (audit log)</h3><span class="badge b-new" style="margin-left:auto">🔒 เปิดใช้งานภายหลัง</span></div>
+          <div class="ph-sub" style="margin-top:8px">บันทึกทุกการเคลื่อนไหวสต็อก (ตัดเมื่อจ่ายเงิน · คืนเมื่อยกเลิก · ปรับมือ) พร้อมกันตัดซ้ำ — พร้อมเปิดเมื่อร้านเริ่มมีสินค้าหลายรายการ</div>
         </div>
       </div>
 
@@ -475,7 +484,41 @@
           </div>
           <div id="mktResult" class="mktresult"><div class="empty">เลือกประเภทด้านบนเพื่อให้ AI ร่างคอนเทนต์ค่ะ 🌹</div></div>
         </div>
+        <div class="panel" style="max-width:820px;margin-top:16px">
+          <h3>🎯 ยิงแคมเปญเจาะกลุ่ม 4 แบบ</h3>
+          <div class="ph-sub">AI ร่างข้อความแคมเปญตามกลุ่มเป้าหมาย (ผลออกในช่องด้านบน)</div>
+          <div class="mktbtns">
+            <button class="btn ghost sm mktc" data-seg="lapsed">🕒 ดึงลูกค้าหาย</button>
+            <button class="btn ghost sm mktc" data-seg="vip">👑 ดูแล VIP / ซื้อซ้ำ</button>
+            <button class="btn ghost sm mktc" data-seg="once">🔁 กระตุ้นซื้อครั้งเดียว</button>
+            <button class="btn ghost sm mktc" data-seg="cat">🏷️ บันเดิล / ตามหมวด</button>
+          </div>
+        </div>
         <div class="panel" style="max-width:820px;margin-top:16px"><h3>👥 กลุ่มลูกค้า (ฐานยิงการตลาด)</h3><div class="ph-sub">สรุปจากออเดอร์จริง · ใช้เล็งกลุ่มซื้อซ้ำ / ดึงลูกค้าหาย</div><div id="mktSeg" style="margin-top:10px"></div></div>
+
+        <div class="lockgroup" style="max-width:820px;margin-top:22px">
+          <div class="lockhead">🧰 ฟีเจอร์เสริม · พร้อมเปิดใช้งานภายหลัง <span class="dim">(ลูกค้าเปิดเองได้เมื่อพร้อม — ยังไม่มีค่าใช้จ่ายจนกว่าจะเปิด)</span></div>
+          <div class="panel locked" style="margin-top:10px">
+            <div class="card-head"><h3>🖼️ สร้างรูปโปร / รูปสินค้า (AI)</h3><span class="badge b-new" style="margin-left:auto">🔒 ปิดอยู่</span></div>
+            <div class="ph-sub" style="margin-top:8px">ให้ AI ออกแบบรูปโปรโมชั่น/รูปสินค้าเสมือน (Gemini) — พร้อมเปิดเมื่อต้องการ</div>
+            <button class="btn ghost sm lockbtn" style="margin-top:10px">✨ สร้างรูป</button>
+          </div>
+          <div class="panel locked" style="margin-top:12px">
+            <div class="card-head"><h3>👁️ เขียนแคปชั่นจากรูปสินค้า</h3><span class="badge b-new" style="margin-left:auto">🔒 ปิดอยู่</span></div>
+            <div class="ph-sub" style="margin-top:8px">อัปรูปสินค้า → AI มองรูปแล้วเขียนแคปชั่น/โพสต์ให้ (AI vision)</div>
+            <button class="btn ghost sm lockbtn" style="margin-top:10px">📷 อัปรูป + เขียนแคปชั่น</button>
+          </div>
+          <div class="panel locked" style="margin-top:12px">
+            <div class="card-head"><h3>🎬 ทำคลิปสั้นด้วย AI</h3><span class="badge b-new" style="margin-left:auto">🔒 ปิดอยู่</span></div>
+            <div class="ph-sub" style="margin-top:8px">พิมพ์หัวข้อ → AI สร้างวิดีโอสั้นจากรูปสินค้า (Kling) — สำหรับลง TikTok/Reels</div>
+            <button class="btn ghost sm lockbtn" style="margin-top:10px">🎞️ สร้างคลิป</button>
+          </div>
+          <div class="panel locked" style="margin-top:12px">
+            <div class="card-head"><h3>📢 Broadcast LINE / โพสต์เพจ FB</h3><span class="badge b-new" style="margin-left:auto">🔒 ปิดอยู่</span></div>
+            <div class="ph-sub" style="margin-top:8px">ยิงโปรถึงลูกค้าทุกคนทาง LINE OA + โพสต์ลงเพจ Facebook พร้อมกัน — เปิดหลังเชื่อม LINE OA / FB</div>
+            <button class="btn ghost sm lockbtn" style="margin-top:10px">📣 ยิง Broadcast</button>
+          </div>
+        </div>
       </div>
 
       <!-- MANAGER AI CHAT (คุยกับผู้จัดการ) -->
@@ -514,6 +557,22 @@
             <div class="ph-sub">รายได้ตามวิธีชำระ (ไม่รวมออเดอร์ยกเลิก)</div>
             <div id="finPay"></div>
           </div>
+        </div>
+        <div class="grid2">
+          <div class="panel">
+            <h3>📦 กำไรรายสินค้า</h3>
+            <div class="ph-sub">ราคาขาย − ต้นทุน ต่อชิ้น · เรียงตัวที่คุ้มสุด → บางสุด</div>
+            <div id="finProd"></div>
+          </div>
+          <div class="panel">
+            <h3>🧾 ค่าใช้จ่ายแยกหมวด (เดือนนี้)</h3>
+            <div class="ph-sub">จากที่บันทึกผ่านผู้จัดการ/แชท (เช่น "จดค่าโฆษณา 500")</div>
+            <div id="finExp"></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:16px">
+          <div class="card-head"><h3>⏳ ลูกหนี้ / ค้างจ่าย (AR aging)</h3><span class="dim" style="margin-left:auto">ออเดอร์ใหม่ที่ยังไม่ยืนยัน แยกตามอายุ</span></div>
+          <div id="finAR"></div>
         </div>
       </div>
 
@@ -600,6 +659,11 @@
               <a href="https://neoscss02.github.io/fume-dore/" target="_blank" style="color:var(--gold-bright)">Live</a></div></div>
           </div>
         </div>
+        <div class="panel locked" style="max-width:640px;margin-top:16px">
+          <div class="card-head"><h3>📊 รายงานสรุปเข้า LINE</h3><span class="badge b-new" style="margin-left:auto">🔒 เปิดใช้งานภายหลัง</span></div>
+          <div class="ph-sub" style="margin-top:8px">ผู้จัดการสรุปยอดขาย/กำไร/ของใกล้หมด ส่งเข้า LINE เจ้าของ (และกลุ่มทีม) อัตโนมัติ รายวัน/รายสัปดาห์ — เปิดหลังเชื่อม LINE OA</div>
+          <button class="btn ghost sm lockbtn" style="margin-top:10px">🔔 ตั้งค่ารายงาน</button>
+        </div>
       </div>
     </div>
   </main>
@@ -629,7 +693,7 @@
   var ORDERS = [];            // last loaded
   var AILOGS = [];            // ai usage / chat logs
   var SNAP = null;            // snapshot ธุรกิจ grounded (กำไร/ต้นทุน/segment) จาก /admin/snapshot
-  async function loadSnapshot(){ try{ SNAP = await api('/admin/snapshot'); renderFinance(); renderMktSeg(); renderDashInsight(); }catch(e){} }
+  async function loadSnapshot(){ try{ SNAP = await api('/admin/snapshot'); renderFinance(); renderMktSeg(); renderDashInsight(); if($('tab-dashboard')&&$('tab-dashboard').classList.contains('active')) renderDashboard(); }catch(e){} }
   var VISITS = [];            // ผู้เข้าชม (null = ตารางยังไม่มี)
   var DASH = { mode:'today', from:null, to:null };   // ช่วงเวลา dashboard (today/3d/7d/30d/month/all/custom)
   var SRC_META = { direct:{ic:'🔗',n:'เข้าตรง'}, facebook:{ic:'📘',n:'Facebook'}, instagram:{ic:'📸',n:'Instagram'}, line:{ic:'💬',n:'LINE'}, google:{ic:'🔍',n:'Google'}, tiktok:{ic:'🎵',n:'TikTok'}, referral:{ic:'🌐',n:'เว็บอื่น'} };
@@ -751,7 +815,13 @@
     var rev=active.reduce(function(a,o){ return a+(o.total||0); },0);
     var qty=active.reduce(function(a,o){ return a+(o.qty||0); },0);
     var dv=dashVisits(); var visN=dv?uniqVisitors(dv):0;
-    $('stats').innerHTML = stat(active.length,'ออเดอร์','') + stat(visN,'ผู้เข้าชม','') + stat(qty,'ขวดขาย','') + stat(money(rev),'รายได้','');
+    var f=(SNAP&&SNAP.finance)||{};
+    var aov=active.length?Math.round(rev/active.length):0;
+    var conv=visN?Math.round(active.length/visN*100):0;
+    var cards = stat(money(rev),'รายได้','') + stat(active.length,'ออเดอร์','') + stat(visN,'ผู้เข้าชม','')
+      + (visN>0 ? stat(conv+'%','ปิดการขาย','') : '') + stat(money(aov),'เฉลี่ย/บิล','') + stat(qty,'ขวดขาย','');
+    if(f.hasCost){ cards += stat(f.margin+'%','margin ขั้นต้น','') + stat(money(f.netMon),'กำไรสุทธิ/เดือน', f.netMon<0?'⚠️ ขาดทุน':''); }
+    $('stats').innerHTML = cards;
     renderCharts();
     renderSources(dv);
   }
@@ -986,7 +1056,9 @@
     var avg = n?Math.round(rev/n):0;
     var mc=(SNAP&&SNAP.finance&&SNAP.finance.mainCost)||0, hasCost=!!(SNAP&&SNAP.finance&&SNAP.finance.hasCost);
     var gross=rev-qty*mc, fmargin=rev>0?Math.round(gross/rev*100):0;
-    $('finStats').innerHTML = stat(money(rev),'รายได้รวม','') + (hasCost?stat(money(gross),'กำไรขั้นต้น','margin '+fmargin+'%'):'') + stat(n,'ออเดอร์','') + stat(money(avg),'เฉลี่ย/ออเดอร์','') + stat(qty,'ขวดขาย','');
+    var netMon=(SNAP&&SNAP.finance&&SNAP.finance.netMon)||0;
+    $('finStats').innerHTML = stat(money(rev),'รายได้รวม','') + (hasCost?stat(money(gross),'กำไรขั้นต้น','margin '+fmargin+'%'):'') + (hasCost?stat(money(netMon),'กำไรสุทธิ/เดือน',netMon<0?'⚠️ ขาดทุน':''):'') + stat(n,'ออเดอร์','') + stat(money(avg),'เฉลี่ย/ออเดอร์','') + stat(qty,'ขวดขาย','');
+    renderFinExtras();
     var pm={}; active.forEach(function(o){ var k=o.payment_method||'-'; if(!pm[k])pm[k]={n:0,rev:0}; pm[k].n++; pm[k].rev+=(o.total||0); });
     var PL={cod:'ปลายทาง (COD)',transfer:'โอนเงิน',wholesale:'ราคาส่ง (รอตกลง)'};
     var keys=Object.keys(pm);
@@ -1004,6 +1076,47 @@
     $('finChartSub').textContent = periodLabel(FIN)+' · กราฟ '+span+' วัน';
   }
 
+  /* กำไรรายสินค้า + ค่าใช้จ่ายแยกหมวด + ลูกหนี้ค้างจ่าย (AR aging) */
+  function renderFinExtras(){
+    // กำไรรายสินค้า (จาก snapshot.stock — ราคา/ต้นทุนต่อชิ้น)
+    if($('finProd')){
+      var prod=(SNAP&&SNAP.stock)||[];
+      var pm2=prod.filter(function(p){ return Number(p.cost)>0 && Number(p.price)>0; })
+        .map(function(p){ var m=Number(p.price)-Number(p.cost); return {name:p.name,price:Number(p.price),cost:Number(p.cost),margin:m,pct:Math.round(m/Number(p.price)*100)}; })
+        .sort(function(a,b){ return b.pct-a.pct; });
+      $('finProd').innerHTML = pm2.length ? pm2.map(function(p){
+        var lowb=p.pct<25?' style="color:#e8a33d"':'';
+        return '<div class="costrow"><span>'+esc(p.name)+' · ทุน '+money(p.cost)+' → ขาย '+money(p.price)+'</span><span class="cv"'+lowb+'>'+money(p.margin)+' ('+p.pct+'%)</span></div>';
+      }).join('') : '<div class="empty">ยังไม่ได้ใส่ต้นทุนสินค้า (ใส่ที่แท็บคลังสินค้า)</div>';
+    }
+    // ค่าใช้จ่ายแยกหมวด (เดือนนี้)
+    if($('finExp')){
+      var eb=(SNAP&&SNAP.finance&&SNAP.finance.expByCat)||{};
+      var eks=Object.keys(eb).sort(function(a,b){ return eb[b]-eb[a]; });
+      $('finExp').innerHTML = eks.length
+        ? eks.map(function(k){ return '<div class="costrow"><span>'+esc(k)+'</span><span class="cv">'+money(eb[k])+'</span></div>'; }).join('')
+          + '<div class="costrow tot"><span>รวมค่าใช้จ่ายเดือนนี้</span><span class="cv">'+money((SNAP.finance&&SNAP.finance.expMon)||0)+'</span></div>'
+        : '<div class="empty">ยังไม่มีค่าใช้จ่ายบันทึกเดือนนี้</div>';
+    }
+    // ลูกหนี้ / ค้างจ่าย (AR aging) — ออเดอร์ status=new แยกตามอายุ
+    if($('finAR')){
+      var news=ORDERS.filter(function(o){ return o.status==='new'; });
+      if(!news.length){ $('finAR').innerHTML='<div class="empty">ไม่มีออเดอร์ค้างจ่ายค่ะ ✅</div>'; }
+      else{
+        var now=Date.now();
+        var withAge=news.map(function(o){ var age=0; try{ age=(now-new Date(o.created_at).getTime())/864e5; }catch(e){} return {o:o,age:age}; })
+          .sort(function(a,b){ return b.age-a.age; });
+        var arSum=news.reduce(function(a,o){ return a+(o.total||0); },0);
+        $('finAR').innerHTML = '<div class="costrow tot"><span>รวมค้างจ่าย '+news.length+' ออเดอร์</span><span class="cv">'+money(arSum)+'</span></div>'
+          + withAge.map(function(x){
+              var d=Math.floor(x.age), col=x.age>7?'#e0466b':(x.age>2?'#e8a33d':'#8a8578');
+              var tag=x.age>7?'เกินกำหนด':(x.age>2?'ค้างนาน':'ใหม่');
+              return '<div class="costrow"><span>'+code(x.o.id)+' · '+esc(x.o.customer_name||'-')+' · <span style="color:'+col+'">'+d+' วัน · '+tag+'</span></span><span class="cv">'+money(x.o.total)+'</span></div>';
+            }).join('');
+      }
+    }
+  }
+
   /* ===== การตลาด: กลุ่มลูกค้า + ภาพรวม insight (จาก snapshot grounded) ===== */
   function renderMktSeg(){
     var el=$('mktSeg'); if(!el) return;
@@ -1014,12 +1127,31 @@
   function renderDashInsight(){
     var el=$('dashInsight'); if(!el) return;
     var f=(SNAP&&SNAP.finance)||{}, s=(SNAP&&SNAP.segment)||{}, low=(SNAP&&SNAP.lowStock)||[];
+    // ── แจ้งเตือนเชิงรุก (proactive alerts) ──
+    var news=ORDERS.filter(function(o){ return o.status==='new'; });
+    var now=Date.now();
+    var overdue=news.filter(function(o){ try{ return (now-new Date(o.created_at).getTime())>2*864e5; }catch(e){ return false; } });
+    var COL={red:'#e0466b',orange:'#e8a33d',blue:'#6cb6ff'}, alerts=[];
+    if(f.hasCost && f.netMon<0) alerts.push({lv:'red',ic:'⚠️',t:'ขาดทุนเดือนนี้ '+money(f.netMon),s:'รายรับหักต้นทุน+ค่าใช้จ่ายแล้วติดลบ — ทบทวนราคา/ต้นทุน'});
+    if(low.length) alerts.push({lv:'orange',ic:'📦',t:'สต็อกใกล้หมด '+low.length+' รายการ',s:low.map(function(x){return x.name+' ('+x.stock+')';}).join(' · ')});
+    if(overdue.length) alerts.push({lv:'orange',ic:'⏰',t:'ลูกหนี้/ค้างจ่ายเกินกำหนด '+overdue.length+' ออเดอร์',s:'ออเดอร์ใหม่ค้างเกิน 2 วัน ยังไม่ยืนยัน'});
+    else if(news.length) alerts.push({lv:'blue',ic:'💸',t:'รอตรวจ/ยืนยัน '+news.length+' ออเดอร์',s:'ออเดอร์ใหม่รอดำเนินการ'});
+    if(s.lapsedC) alerts.push({lv:'blue',ic:'🕒',t:'ลูกค้าหาย '+s.lapsedC+' ราย',s:'ไม่ซื้อเกิน 30 วัน — ยิงโปรดึงกลับได้'});
+    // ── สรุปเชิงบวก (chips) ──
     var chips=[];
-    if(f.hasCost){ chips.push('💰 กำไรสะสม '+money(f.gross)+' (margin '+f.margin+'%)'); chips.push((f.netMon<0?'🔴':'🟢')+' กำไรสุทธิเดือนนี้ '+money(f.netMon)); }
-    if(s.buyers) chips.push('👥 ลูกค้า '+s.buyers+' ราย · ซื้อซ้ำ '+s.repeatC);
-    if(low.length) chips.push('⚠️ ใกล้หมด: '+low.map(function(x){return x.name+' ('+x.stock+')';}).join(', '));
-    if(!chips.length){ el.innerHTML=''; return; }
-    el.innerHTML='<div class="panel" style="margin-bottom:14px"><h3>🧭 ผู้จัดการสรุปให้</h3><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">'+chips.map(function(c){return '<span style="background:rgba(212,175,55,.10);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:.85rem">'+esc(c)+'</span>';}).join('')+'</div></div>';
+    if(f.hasCost){ chips.push((f.netMon<0?'🔴':'🟢')+' กำไรสุทธิเดือนนี้ '+money(f.netMon)); chips.push('💰 กำไรขั้นต้นสะสม '+money(f.gross)+' (margin '+f.margin+'%)'); }
+    if(s.buyers) chips.push('👥 ลูกค้า '+s.buyers+' ราย · ซื้อซ้ำ '+s.repeatC+' ('+(s.buyers?Math.round(s.repeatC/s.buyers*100):0)+'%)');
+    if(s.aov) chips.push('🧾 ยอดเฉลี่ย/บิล '+money(s.aov));
+    var html='';
+    if(alerts.length){
+      html+='<div class="panel" style="margin-bottom:14px"><h3>🔔 แจ้งเตือนเชิงรุก</h3><div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">'
+        +alerts.map(function(a){ return '<div style="display:flex;gap:10px;align-items:flex-start;border-left:3px solid '+COL[a.lv]+';background:rgba(212,175,55,.05);border-radius:8px;padding:8px 12px"><span style="font-size:1.1rem">'+a.ic+'</span><div><div style="font-weight:600;font-size:.9rem">'+esc(a.t)+'</div><div class="dim" style="font-size:.8rem;margin-top:2px">'+esc(a.s)+'</div></div></div>'; }).join('')
+        +'</div></div>';
+    }
+    if(chips.length){
+      html+='<div class="panel" style="margin-bottom:14px"><h3>🧭 ผู้จัดการสรุปให้</h3><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">'+chips.map(function(c){return '<span style="background:rgba(212,175,55,.10);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:.85rem">'+esc(c)+'</span>';}).join('')+'</div></div>';
+    }
+    el.innerHTML=html;
   }
 
   /* ===== คุยกับผู้จัดการ AI ===== */
@@ -1101,6 +1233,7 @@
     var totalStock=list.reduce(function(a,p){return a+(p.stock||0);},0);
     var low=list.filter(function(p){return (p.stock||0)<=5;}).length;
     $('stockStats').innerHTML = stat(list.length,'รายการสินค้า','') + stat(totalStock,'สต็อกรวม (ชิ้น)','') + stat(low,'ใกล้หมด (≤5)','');
+    renderStockInsight(list);
     if(!list.length){ $('stockList').innerHTML='<div class="empty">ยังไม่มีสินค้า</div>'; return; }
     var ro=(myRole==='viewer');
     $('stockList').innerHTML=list.map(function(p){
@@ -1116,6 +1249,33 @@
     if(ro) return;
     Array.prototype.forEach.call(document.querySelectorAll('#stockList .psave'), function(b){ b.addEventListener('click', function(){ saveProduct(b.dataset.id); }); });
   }
+  /* ผู้จัดการวิเคราะห์คลัง: พยากรณ์ของหมด · ควรเติมเท่าไร · dead stock/เงินจม (ระดับร้าน จากยอด 30 วัน) */
+  function renderStockInsight(list){
+    var el=$('stockInsight'); if(!el) return;
+    var fin=(SNAP&&SNAP.finance)||{};
+    var velo = fin.qtyMon ? fin.qtyMon/30 : 0;
+    var totalStock=list.reduce(function(a,p){ return a+(p.stock||0); },0);
+    var outList=list.filter(function(p){ return (p.stock||0)<=0; });
+    var lowList=list.filter(function(p){ return (p.stock||0)>0 && (p.stock||0)<=5; });
+    var tied=list.reduce(function(a,p){ return a+((p.stock||0)*(Number(p.cost)||0)); },0);
+    var rows=[];
+    if(velo>0){
+      rows.push({ic:'📈',t:'ความเร็วขาย ~'+velo.toFixed(1)+' ชิ้น/วัน',s:'เฉลี่ยจากยอดขาย 30 วันล่าสุด'});
+      rows.push({ic:'⏳',t:'สต็อกรวมจะหมดใน ~'+Math.max(0,Math.round(totalStock/velo))+' วัน',s:'ถ้าขายต่อเนื่องที่ความเร็วนี้'});
+      var need=Math.ceil(velo*30-totalStock);
+      if(need>0) rows.push({ic:'🛒',t:'ควรเติม ~'+need+' ชิ้น',s:'ให้สต็อกพอขายอีก 30 วัน'});
+    } else {
+      rows.push({ic:'📉',t:'ยังไม่มียอดขายเดือนนี้',s:'ประเมินความเร็ว/พยากรณ์ไม่ได้ — สต็อกที่มีถือเป็นของค้าง'});
+    }
+    if(outList.length) rows.push({lv:'red',ic:'🔴',t:'ของหมด '+outList.length+' รายการ',s:outList.map(function(p){return p.name;}).join(' · ')});
+    if(lowList.length) rows.push({lv:'orange',ic:'🟠',t:'ใกล้หมด '+lowList.length+' รายการ',s:lowList.map(function(p){return p.name+' ('+p.stock+')';}).join(' · ')});
+    if(velo===0 && tied>0) rows.push({lv:'orange',ic:'💤',t:'Dead Stock · เงินจม ~'+money(tied),s:'สต็อกไม่เคลื่อนไหวเดือนนี้ — พิจารณาจัดโปรระบาย'});
+    if(!rows.length){ el.innerHTML=''; return; }
+    var COL={red:'#e0466b',orange:'#e8a33d'};
+    el.innerHTML='<div class="panel" style="margin-bottom:14px"><h3>🧠 ผู้จัดการวิเคราะห์คลัง</h3><div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">'
+      +rows.map(function(a){ var c=COL[a.lv]||'#6cb6ff'; return '<div style="display:flex;gap:10px;align-items:flex-start;border-left:3px solid '+c+';background:rgba(212,175,55,.05);border-radius:8px;padding:8px 12px"><span style="font-size:1.1rem">'+a.ic+'</span><div><div style="font-weight:600;font-size:.9rem">'+esc(a.t)+'</div><div class="dim" style="font-size:.8rem;margin-top:2px">'+esc(a.s)+'</div></div></div>'; }).join('')
+      +'</div></div>';
+  }
   async function saveProduct(id){
     var row=document.querySelector('.prow[data-id="'+id+'"]'); if(!row) return;
     var body={id:Number(id)};
@@ -1125,12 +1285,21 @@
   }
 
   /* ===== การตลาด: สร้างคอนเทนต์ ===== */
-  async function mktGen(kind, btn){
-    Array.prototype.forEach.call(document.querySelectorAll('.mkt'), function(x){ x.disabled=true; });
+  var CAMPAIGN_BRIEF = {
+    lapsed:'แคมเปญดึงลูกค้าที่หายไป (ไม่ซื้อเกิน 30 วัน) ให้กลับมาซื้อ — ข้อความอบอุ่น + โปรกระตุ้น',
+    vip:'แคมเปญดูแลลูกค้า VIP/ซื้อซ้ำ ให้รู้สึกพิเศษ + เสนอสิทธิพิเศษ/ของแถม',
+    once:'แคมเปญกระตุ้นลูกค้าที่ซื้อครั้งเดียวให้ซื้อซ้ำ — เหตุผลกลับมาซื้อ + ข้อเสนอ',
+    cat:'แคมเปญบันเดิลของขายดีกับของค้าง จัด flash sale ตามหมวดสินค้า'
+  };
+  function mktCampaign(seg, btn){ mktGen('promo', btn, CAMPAIGN_BRIEF[seg]||''); }
+  async function mktGen(kind, btn, briefOverride){
+    Array.prototype.forEach.call(document.querySelectorAll('.mkt,.mktc'), function(x){ x.disabled=true; });
     $('mktResult').innerHTML='<div class="empty">กำลังสร้าง… ✨</div>';
     try{
+      var brief=(briefOverride!=null?briefOverride:'');
+      var ub=$('mktBrief').value.trim(); if(ub) brief = brief ? (brief+' · '+ub) : ub;
       var hdr=Object.assign({'Content-Type':'application/json'}, await authHeaders());
-      var res=await fetch(WORKER+'/admin/marketing',{method:'POST',headers:hdr,body:JSON.stringify({kind:kind, brief:$('mktBrief').value.trim()})});
+      var res=await fetch(WORKER+'/admin/marketing',{method:'POST',headers:hdr,body:JSON.stringify({kind:kind, brief:brief})});
       var text=await res.text();
       if(!res.ok){ var er; try{er=JSON.parse(text).error;}catch(e){} var msg=(er==='power_out')?'ถังพลังการตลาดหมด 🪫 เติมที่แท็บพลัง AI ก่อนนะคะ':('สร้างไม่ได้ ('+(er||('http_'+res.status))+')'); $('mktResult').innerHTML='<div class="empty">'+msg+'</div>'; return; }
       $('mktResult').textContent=text;
@@ -1138,7 +1307,7 @@
       cp.addEventListener('click', function(){ try{ navigator.clipboard.writeText(text); toast('คัดลอกแล้ว'); }catch(e){ toast('คัดลอกไม่ได้'); } });
       $('mktResult').appendChild(document.createElement('br')); $('mktResult').appendChild(cp);
     }catch(e){ $('mktResult').innerHTML='<div class="empty">เชื่อมต่อไม่ได้: '+esc(e.message)+'</div>'; }
-    finally{ Array.prototype.forEach.call(document.querySelectorAll('.mkt'), function(x){ x.disabled=false; }); }
+    finally{ Array.prototype.forEach.call(document.querySelectorAll('.mkt,.mktc'), function(x){ x.disabled=false; }); }
   }
 
   /* ===== charts ===== */
@@ -1338,6 +1507,12 @@
     $('mgrMsg').addEventListener('keydown', function(e){ if(e.key==='Enter') mgrSend(); });
     Array.prototype.forEach.call(document.querySelectorAll('.mkt'), function(b){
       b.addEventListener('click', function(){ mktGen(b.dataset.kind, b); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.mktc'), function(b){
+      b.addEventListener('click', function(){ mktCampaign(b.dataset.seg, b); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.lockbtn'), function(b){
+      b.addEventListener('click', function(){ toast('🔒 ฟีเจอร์เสริม · เปิดใช้งานภายหลังค่ะ'); });
     });
     $('kbAdd').addEventListener('click', addKB);
     Array.prototype.forEach.call(document.querySelectorAll('.dashp'), function(b){
