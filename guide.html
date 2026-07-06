@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>คู่มือการใช้งานระบบ Fumé Doré — ฉบับละเอียด</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 15mm 13mm 16mm 13mm; }
+  * { box-sizing: border-box; }
+  :root{
+    --gold:#c9a227; --gold-b:#e6c34d; --gold-dk:#9a7d1c; --gold-l:#f3e9c9;
+    --cream:#fbf7ee; --line:#ece0c6;
+    --ink:#3a332a; --ink-s:#7a6f5e; --dark:#241f18; --espresso:#1b1712;
+    --green:#2e7d52; --rose:#c15a6b; --blue:#2f6db5;
+  }
+  body { font-family:'Sarabun','Leelawadee UI','Tahoma',sans-serif; color:var(--ink); font-size:11pt; line-height:1.6; margin:0; background:#fff; }
+  .wrap{ max-width:900px; margin:0 auto; padding:0 4px; }
+  .accent{ color:var(--gold-dk); font-weight:700 }
+  h1,h2,h3,h4,.mtitle,.grp,.cover h1,.cover .ttl2,.big{ font-family:'Playfair Display','Sarabun',serif; }
+  .cover{ height:252mm; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;
+    background:linear-gradient(150deg,#1b1712 0%,#2e2519 46%,#5a4718 100%); color:#f6ecd2; border-radius:20px; padding:48px 40px; page-break-after:always; position:relative; overflow:hidden }
+  .cover::after{ content:""; position:absolute; inset:0; background:radial-gradient(circle at 50% 26%, rgba(230,195,77,.26), transparent 62%); }
+  .cover .logo{ width:118px; height:118px; border-radius:50%; background:linear-gradient(140deg,#f3e2a6,#c9a227 60%,#9a7d1c); display:flex; align-items:center; justify-content:center; font-size:50px; margin-bottom:24px; box-shadow:0 14px 38px rgba(0,0,0,.45); z-index:1; color:#241f18; font-family:'Playfair Display',serif; font-weight:800 }
+  .cover h1{ font-size:36pt; margin:4px 0; font-weight:800; letter-spacing:1px; z-index:1; color:#fff }
+  .cover .ttl2{ font-size:17pt; font-weight:600; margin:2px 0 6px; color:#efd9a0; z-index:1 }
+  .cover .sub{ font-size:13pt; opacity:.94; margin-bottom:24px; z-index:1 }
+  .cover .pill{ display:inline-block; background:rgba(246,236,210,.10); border:1px solid rgba(230,195,77,.5); padding:6px 15px; border-radius:999px; font-size:10.5pt; margin:4px; z-index:1 }
+  .cover .tagline{ font-size:11.5pt; font-style:italic; opacity:.9; margin-top:16px; z-index:1 }
+  .cover .meta{ font-size:10.5pt; opacity:.82; margin-top:34px; z-index:1 }
+  .section{ page-break-before:always; padding-top:2px }
+  h2.sec{ font-size:18pt; color:#fff; background:linear-gradient(135deg,#9a7d1c,#c9a227); padding:11px 18px; border-radius:12px; margin:0 0 16px; box-shadow:0 4px 14px rgba(154,125,28,.28); font-weight:700 }
+  h3{ font-size:13.5pt; color:var(--gold-dk); border-left:5px solid var(--gold); padding-left:10px; margin:20px 0 8px; font-weight:700 }
+  h4{ font-size:11.5pt; color:var(--gold-dk); margin:13px 0 4px; font-weight:600 }
+  p{ margin:6px 0 }
+  ul,ol{ margin:6px 0 10px; padding-left:22px }
+  li{ margin:3px 0 }
+  table{ width:100%; border-collapse:collapse; margin:10px 0 14px; font-size:10pt }
+  th{ background:#f7efd8; color:var(--gold-dk); text-align:left; padding:8px 10px; border:1px solid var(--gold-l); font-weight:700 }
+  td{ padding:7px 10px; border:1px solid var(--line); vertical-align:top }
+  td:first-child{ font-weight:600 }
+  tr:nth-child(even) td{ background:#fbf7ec }
+  .block{ break-inside:avoid; page-break-inside:avoid }
+  h2.sec,h3,h4,.mtitle{ break-after:avoid; page-break-after:avoid }
+  .tip{ background:#e9f6ee; border-left:5px solid var(--green); padding:9px 13px; border-radius:9px; margin:10px 0; font-size:10pt }
+  .warn{ background:#fbf1de; border-left:5px solid var(--gold); padding:9px 13px; border-radius:9px; margin:10px 0; font-size:10pt }
+  .star{ background:#f7eed6; border-left:5px solid var(--gold-b); padding:9px 13px; border-radius:9px; margin:10px 0; font-size:10pt }
+  .ex{ background:#faf4e6; border:1px solid var(--gold-l); border-radius:10px; padding:6px 14px; margin:7px 0; font-size:10.3pt }
+  .ex b{ color:var(--gold-dk) }
+  .step{ background:#fbf7ee; border:1px solid var(--line); border-radius:9px; padding:6px 14px; margin:6px 0; font-size:10.3pt }
+  .lead{ font-size:11.5pt; color:var(--ink-s) }
+  .toc li{ margin:7px 0; font-size:11.5pt }
+  .badge{ display:inline-block; background:#f7efd8; color:var(--gold-dk); border:1px solid var(--gold-l); border-radius:6px; padding:1px 8px; font-size:9pt; font-weight:700 }
+  .kbd{ display:inline-block; background:#fff; border:1px solid var(--gold); color:var(--gold-dk); border-radius:6px; padding:1px 8px; font-size:9.5pt; font-weight:700 }
+  .soon{ display:inline-block; background:#8a7f66; color:#fff; border-radius:6px; padding:1px 7px; font-size:8.5pt; font-weight:700; vertical-align:middle; margin-left:4px }
+  .mtitle{ background:linear-gradient(135deg,#241f18,#5a4718); color:#f3e2a6; padding:8px 14px; border-radius:10px; font-weight:700; font-size:12.5pt; margin:18px 0 6px }
+  .grp{ display:inline-block; background:var(--gold-dk); color:#fff; border-radius:7px; padding:2px 11px; font-size:10pt; font-weight:700; margin:16px 0 2px }
+  .foot{ text-align:center; color:#b3a689; font-size:9pt; margin-top:26px; border-top:1px solid var(--line); padding-top:10px }
+  .card{ border:1px solid var(--gold-l); border-radius:12px; padding:12px 16px; background:#fdfaf1 }
+  .card h4{ margin-top:2px }
+  @media print { .noprint{ display:none } }
+  .toolbar{ position:sticky; top:0; background:#241f18; color:#f3e2a6; padding:10px 16px; display:flex; gap:10px; align-items:center; justify-content:center; z-index:99 }
+  .toolbar button{ background:var(--gold); color:#241f18; border:0; border-radius:8px; padding:8px 18px; font-weight:700; font-size:11pt; cursor:pointer; font-family:inherit }
+  .toolbar span{ font-size:10pt; opacity:.9 }
+</style>
+</head>
+<body>
+
+<div class="toolbar noprint">
+  <span>📖 คู่มือการใช้งานระบบ Fumé Doré</span>
+  <button onclick="window.print()">🖨️ พิมพ์ / บันทึกเป็น PDF</button>
+</div>
+
+<div class="wrap">
+
+<!-- ปก -->
+<div class="cover">
+  <div class="logo">FD</div>
+  <h1>Fumé Doré</h1>
+  <div class="ttl2">คู่มือการใช้งานระบบ — ฉบับละเอียด</div>
+  <div class="sub">น้ำหอมปรับอากาศในรถยนต์ลักชัวรี ขับเคลื่อนด้วยผู้ช่วย AI</div>
+  <div>
+    <span class="pill">🌐 เว็บหน้าร้าน + ตะกร้า</span>
+    <span class="pill">🖥️ หลังบ้าน 5 ตำแหน่งงาน</span>
+    <span class="pill">🤖 AI 2 ตัว · 5 ด้านความเชี่ยวชาญ</span>
+  </div>
+  <div class="tagline">"กลิ่นหอมหรู ติดทนยาวนาน สำหรับรถของคุณ"</div>
+  <div class="meta">ฉบับ กรกฎาคม 2569 · ระบบโดย NEO-S (neos-css.com)</div>
+</div>
+
+<!-- สารบัญ -->
+<div class="section">
+  <h2 class="sec">สารบัญ</h2>
+  <ol class="toc">
+    <li><b>ภาพรวมระบบ</b> — ช่องทาง + AI 2 ตัว ทำงานครบ 5 ตำแหน่ง</li>
+    <li><b>รู้จัก AI ของคุณ</b> — ฟูเม่ (ฝ่ายขาย) + ผู้จัดการ AI (ทำแทน 4 ตำแหน่งในตัวเดียว)</li>
+    <li><b>ความสามารถเด่น</b> — ครบเครื่องเหนือร้านทั่วไป</li>
+    <li><b>เว็บหน้าร้าน</b> (สำหรับลูกค้า) — สินค้า · แชทฟูเม่ · ตะกร้า · ชำระเงิน</li>
+    <li><b>เข้าสู่ระบบหลังบ้าน</b> + สิทธิ์ผู้ใช้ 3 ระดับ</li>
+    <li><b>ระบบหลังบ้าน — ทุกเมนู</b> (5 ตำแหน่ง + ตั้งค่า) อธิบายละเอียด</li>
+    <li><b>พลัง AI</b> (ระบบเครดิตการใช้งาน AI — 2 ถังแยกฝ่าย)</li>
+    <li><b>เคล็ดลับ · คำถามที่พบบ่อย · สิ่งที่ต่อยอดได้</b></li>
+  </ol>
+  <div class="tip">📖 คู่มือนี้เน้น "เห็นข้อมูลชัด ๆ" — อธิบายทุกเมนูเป็นตาราง พร้อม <b>ตัวอย่างคำสั่งจริงที่พิมพ์สั่งผู้จัดการ AI ได้</b> · กดปุ่ม "พิมพ์ / บันทึก PDF" ด้านบนเพื่อเก็บเป็นไฟล์</div>
+</div>
+
+<!-- 1 ภาพรวม -->
+<div class="section">
+  <h2 class="sec">1 · ภาพรวมระบบ</h2>
+  <p class="lead">Fumé Doré = ร้านน้ำหอมปรับอากาศในรถยนต์ออนไลน์ ที่มี <span class="accent">ผู้ช่วย AI ทำงานแทนพนักงานจริง</span> ตลอด 24 ชั่วโมง — ตั้งแต่คุยขายลูกค้า ปิดการขาย ไปจนถึงวิเคราะห์กำไรและวางแผนการตลาดให้เจ้าของ</p>
+
+  <h3>ช่องทางการทำงาน</h3>
+  <table>
+    <tr><th>ช่องทาง</th><th>ใช้ทำอะไร</th><th>ใครใช้</th></tr>
+    <tr><td>🌐 เว็บหน้าร้าน</td><td>ดูสินค้า · ปรึกษาฟูเม่ · หยิบใส่ตะกร้า · กรอกที่อยู่ · ชำระเงิน (โอน/ปลายทาง)</td><td>ลูกค้า</td></tr>
+    <tr><td>🖥️ ระบบหลังบ้าน (Admin)</td><td>ดูออเดอร์/ยอดขาย/กำไร · จัดการสินค้า/สต็อก/ราคา · ลูกค้า · การตลาด · การเงิน</td><td>เจ้าของ + ทีมงาน</td></tr>
+    <tr><td>📲 LINE / Facebook <span class="soon">พร้อมเชื่อม</span></td><td>ลูกค้าคุยกับฟูเม่ผ่าน LINE/FB · รายงานสรุปเข้า LINE เจ้าของ — ระบบรองรับแล้ว เปิดใช้เมื่อเชื่อมบัญชี</td><td>ลูกค้า + เจ้าของ</td></tr>
+  </table>
+
+  <h3>AI 2 ตัว — ทำงานครบ 5 ตำแหน่ง</h3>
+  <p>เบื้องหลังคือ <span class="accent">ผู้ช่วย AI 2 ตัว</span> ที่ครอบคลุมงานทั้งร้าน 5 ตำแหน่ง — ต่างจากร้านใหญ่ที่แยก AI หลายตัว Fumé Doré ออกแบบให้ <b>ผู้จัดการ AI เก่งครบ 4 ด้านในตัวเดียว</b> เพราะร้านเริ่มต้นสินค้าไม่กี่รายการ ทำแบบนี้คุ้มค่า ตอบเร็ว และง่ายต่อการดูแล:</p>
+  <table>
+    <tr><th>AI</th><th>บทบาท</th><th>อยู่ที่ไหน</th><th>ดูแล</th></tr>
+    <tr><td>💬 <b>ฟูเม่ (FUMÉ)</b></td><td>พนักงานขาย</td><td>เว็บ (+ LINE/FB เมื่อเชื่อม)</td><td>ขาย · ปิดการขาย · ดูแลลูกค้า</td></tr>
+    <tr><td>👔 <b>ผู้จัดการ AI</b></td><td>ผู้จัดการ (ทำแทน 4 ตำแหน่ง)</td><td>หลังบ้าน</td><td>ผู้จัดการ · การตลาด · คลังสินค้า · การเงิน</td></tr>
+  </table>
+  <div class="tip">💡 <b>ฟูเม่</b> = ด่านหน้า คุยลูกค้า · <b>ผู้จัดการ AI</b> = สมองหลังบ้าน วิเคราะห์+สั่งงานได้จริง ครอบคลุม 4 ด้าน (ผู้จัดการ/การตลาด/คลัง/การเงิน) ในตัวเดียว — เจ้าของถามอะไรก็ตอบได้ครบทุกมุม</div>
+  <div class="star">⭐ ทำไม "2 AI ทำ 5 ตำแหน่ง" ถึงเหมาะกับร้านเริ่มต้น: ผู้จัดการ AI ตัวเดียวถือข้อมูลทั้งร้าน (ยอดขาย/สต็อก/ต้นทุน/ลูกค้า) จึงวิเคราะห์เชื่อมโยงข้ามด้านได้ทันที เช่น "เช็คว่ากดราคาโปรแล้วยังมีกำไรไหม" โดยไม่ต้องส่งต่อระหว่างหลาย AI</div>
+</div>
+
+<!-- 2 รู้จัก AI -->
+<div class="section">
+  <h2 class="sec">2 · รู้จัก AI ของคุณ</h2>
+  <p class="lead">หัวใจของ Fumé Doré คือ AI 2 ตัวที่ทำงานเหมือนพนักงานจริง — ส่วนนี้อธิบายว่าแต่ละตัว "ทำอะไรได้" และ "ใช้งานยังไง"</p>
+
+  <div class="block">
+    <div class="mtitle">💬 ฟูเม่ (FUMÉ) — พนักงานขาย AI (ด่านหน้า)</div>
+    <p>ฟูเม่คือพนักงานขายที่คุยกับลูกค้าบนเว็บตลอด 24 ชม. บุคลิกหรูหราแต่เข้าถึงง่าย อบอุ่น ไม่ยัดเยียดขาย</p>
+    <table>
+      <tr><th>ฟูเม่ทำอะไรได้</th><th>รายละเอียด</th></tr>
+      <tr><td>ตอบคำถามสินค้า</td><td>แนะนำกลิ่น · ความติดทน · วิธีใช้/ติดตั้ง · ดึงจากคลังความรู้ + ข้อมูลสินค้าจริง</td></tr>
+      <tr><td>บอกราคาที่ถูกต้อง</td><td>ราคาสด: 1 ขวด 99 · 2 ขวด 169 · 3 ขวดขึ้นไปราคาส่ง (ทีมติดต่อกลับ) — คำนวณฝั่งเซิร์ฟเวอร์ กันปลอม</td></tr>
+      <tr><td>แนะนำ + upsell</td><td>ชวนซื้อคู่/เพิ่มจำนวนอย่างเป็นธรรมชาติ</td></tr>
+      <tr><td>พาลูกค้าไปตะกร้า</td><td>เมื่อลูกค้าสนใจ → แนะให้กดใส่ตะกร้า → ชำระเงินในที่เดียว (ประวัติครบ)</td></tr>
+      <tr><td>คลังความรู้ RAG</td><td>ตอบแม่นจากข้อมูลจริงที่เจ้าของใส่ไว้ กันตอบมั่ว/เคลมเกินจริง</td></tr>
+      <tr><td>🙋 ส่งต่อคนจริง</td><td>ลูกค้าพิมพ์ "ขอคุยกับคน/แอดมิน" → ระบบแจ้งเจ้าของ + เจ้าของกดหยุดฟูเม่แล้วคุยเองได้ (ดูหัวข้อ Human Takeover)</td></tr>
+      <tr><td>📇 เก็บ lead อัตโนมัติ</td><td>ลูกค้าทิ้งเบอร์ในแชท → ระบบเก็บเป็นรายชื่อให้เจ้าของติดตาม</td></tr>
+    </table>
+    <div class="tip">🛒 ฟูเม่บนเว็บออกแบบให้ <b>ซื้อผ่านตะกร้าทางเดียว</b> — แชทเป็น "ที่ปรึกษา" ไม่รับออเดอร์/สลิปในแชท เพื่อให้ประวัติการซื้อผูกกับออเดอร์ครบในที่เดียว · แม้ AI ล่ม ลูกค้าก็ยังสั่งผ่านตะกร้าได้</div>
+  </div>
+
+  <div class="block">
+    <div class="mtitle">👔 ผู้จัดการ AI — ทำแทน 4 ตำแหน่ง (มือขวาเจ้าของ)</div>
+    <p>ผู้จัดการ AI คือผู้จัดการร้าน + นักการตลาด + ดูแลคลัง + ดูแลการเงิน <b>ในสมองเดียว</b> คุยผ่านหน้าหลังบ้าน — ไม่ใช่แค่ตอบคำถาม แต่ <b>ลงมือจัดการให้จริง</b> (ทุกคำสั่งที่กระทบข้อมูล/เงิน จะถามยืนยันก่อนเสมอ)</p>
+    <table>
+      <tr><th>ด้าน</th><th>ผู้จัดการ AI ทำอะไรได้</th></tr>
+      <tr><td>📊 ผู้จัดการ/วิเคราะห์</td><td>ยอดวันนี้/7วัน/เดือนนี้/<b>ช่วงใดก็ได้</b> · %ปิดการขาย · KPI · แจ้งเตือนเชิงรุก (สต็อกต่ำ/ค้างจ่าย/ขาดทุน) · อ่านแชตคัดคนน่าปิดการขาย</td></tr>
+      <tr><td>📣 การตลาด</td><td>เขียนโพสต์/แคปชั่น · แคมเปญเจาะกลุ่ม 4 แบบ · <b>Campaign Advisor</b> (แนะนำแคมเปญจากยอดจริง) · <b>Campaign Analytics</b> (เทียบผลก่อน–ระหว่างแคมเปญ)</td></tr>
+      <tr><td>📦 คลังสินค้า</td><td>ตัดสต็อกอัตโนมัติเมื่อจ่าย/คืนเมื่อยกเลิก · พยากรณ์ของหมดกี่วัน + ควรเติมเท่าไร · ชี้ Dead Stock (เงินจม) · ประวัติสต็อก (audit log)</td></tr>
+      <tr><td>💰 การเงิน</td><td>กำไรขั้นต้น/สุทธิ · ต้นทุน(COGS) · margin% · กำไรแยกรายสินค้า · ค่าใช้จ่ายแยกหมวด · ลูกหนี้ค้างจ่าย (aging) · เตือนขาดทุน</td></tr>
+      <tr><td>🛠️ ลงมือจัดการ</td><td>ตั้งราคา/ต้นทุน/สต็อก · เพิ่ม/ลบสินค้า · เปิด/ปิดการขาย · ตั้งหมวด · บันทึกค่าใช้จ่าย</td></tr>
+    </table>
+
+    <h4>🗣️ ตัวอย่างคำสั่งจริง — พิมพ์แบบนี้สั่งผู้จัดการได้เลย (แท็บ "คุยกับผู้จัดการ")</h4>
+    <table>
+      <tr><th>อยากให้ทำ</th><th>พิมพ์ว่า (ตัวอย่าง)</th><th>ผู้จัดการทำให้</th></tr>
+      <tr><td>ถามยอด/กำไร</td><td><span class="kbd">ยอดขายวันนี้เท่าไหร่</span> · <span class="kbd">กำไรเดือนนี้</span></td><td>สรุปตัวเลขให้ทันที</td></tr>
+      <tr><td>เทียบช่วงเวลา</td><td><span class="kbd">ยอด 7 วันนี้เทียบสัปดาห์ก่อน</span></td><td>ดึง 2 ช่วงมาเทียบ + วิเคราะห์</td></tr>
+      <tr><td>ตั้งต้นทุน</td><td><span class="kbd">ตั้งทุน FRUITY = 35</span></td><td>ใส่ต้นทุน → คำนวณกำไร/margin ได้ (ยืนยันก่อน)</td></tr>
+      <tr><td>ปรับสต็อก</td><td><span class="kbd">ตั้งสต็อก FRUITY = 80</span></td><td>ปรับสต็อก + บันทึกประวัติ (ยืนยันก่อน)</td></tr>
+      <tr><td>เพิ่มสินค้า</td><td><span class="kbd">เพิ่มสินค้า กลิ่นกุหลาบ ราคา 129</span></td><td>เพิ่มเข้าระบบ (ยืนยันก่อน)</td></tr>
+      <tr><td>เปิด/ปิดการขาย</td><td><span class="kbd">ปิดการขาย FRUITY</span></td><td>ซ่อนจากแคตตาล็อก (ยืนยันก่อน)</td></tr>
+      <tr><td>บันทึกค่าใช้จ่าย</td><td><span class="kbd">จดค่าโฆษณา 500</span></td><td>บันทึกรายจ่าย → หักกำไรสุทธิ</td></tr>
+    </table>
+    <div class="warn">🔐 ทุกคำสั่งที่ <b>เปลี่ยนข้อมูล/เกี่ยวกับเงิน</b> (ราคา ต้นทุน สต็อก เพิ่ม/ลบสินค้า) ผู้จัดการจะแสดงตัวอย่าง + ขอ <b>"ยืนยัน"</b> ก่อนลงมือเสมอ — เจ้าของคุมทุกการตัดสินใจ</div>
+    <div class="tip">💬 ถ้าแค่ "ปรึกษา/ถาม" เฉย ๆ ผู้จัดการจะตอบเป็นคำแนะนำ ไม่ลงมือ — ต้องสั่งให้ "ทำ" ถึงจะถามยืนยันแล้วจัดการให้</div>
+  </div>
+</div>
+
+<!-- 3 ความสามารถเด่น -->
+<div class="section">
+  <h2 class="sec">3 · ความสามารถเด่น — ครบเครื่องเหนือร้านทั่วไป</h2>
+  <p class="lead">Fumé Doré ไม่ใช่แค่ "เว็บ + แชตบอท" — แต่เป็น <span class="accent">AI ที่ทำงานแทนพนักงานทั้งร้าน</span> ครบ 5 ตำแหน่ง ตลอด 24 ชม. · นี่คือสิ่งที่ทำได้จริง (ไม่ใช่โฆษณาเกินจริง)</p>
+
+  <div class="block card">
+    <h4>🙋 Human Takeover — เจ้าของแทรกคุยเองได้ทุกเมื่อ</h4>
+    <ul>
+      <li>ลูกค้าพิมพ์ <b>"ขอคุยกับคน/แอดมิน"</b> → ฟูเม่แจ้งเจ้าของทันที (ขึ้นในแท็บแชท พร้อม id ลูกค้า)</li>
+      <li>เจ้าของกด <b>"🤫 หยุด AI คุยเอง"</b> ที่ลูกค้าคนไหนก็ได้ → ฟูเม่ <b>เงียบเฉพาะคนนั้น</b> เจ้าของคุยเอง (ผ่าน LINE OA เมื่อเชื่อม) ไม่กระทบลูกค้าคนอื่น</li>
+      <li>คุยเสร็จกด <b>"คืน AI"</b> หรือรอระบบคืนอัตโนมัติใน 2 ชั่วโมง</li>
+    </ul>
+    <div class="tip">💡 ได้ทั้งความเร็วของ AI และความอุ่นใจของคนจริง — สลับได้ในคลิกเดียว</div>
+  </div>
+
+  <div class="block card">
+    <h4>📦 ตัดสต็อกอัตโนมัติ + ประวัติสต็อก (Audit Log)</h4>
+    <ul>
+      <li>เจ้าของมาร์คออเดอร์ <b>"ยืนยันแล้ว/จ่ายแล้ว"</b> → ระบบ <b>ตัดสต็อกอัตโนมัติ</b> · มาร์ค "ยกเลิก" → <b>คืนสต็อก</b> · มี <b>กันตัดซ้ำ</b></li>
+      <li><b>เว็บปฏิเสธออเดอร์ถ้าของไม่พอ</b> — ป้องกันขายเกินสต็อก</li>
+      <li>ทุกการเคลื่อนไหวบันทึกใน <b>ประวัติสต็อก</b> (ตัด/คืน/ปรับมือ) ตรวจสอบย้อนหลังได้</li>
+    </ul>
+  </div>
+
+  <div class="block card">
+    <h4>📣 ผู้จัดการวิเคราะห์การตลาดให้ (Campaign Advisor + Analytics)</h4>
+    <ul>
+      <li><b>Campaign Advisor</b> — เลือกช่วงเวลา + เป้าหมาย → AI อ่านยอดขายจริง แล้ว <b>แนะนำ 3 แคมเปญโปร</b> ที่เหมาะสม</li>
+      <li><b>Campaign Analytics</b> — ใส่ช่วงก่อน/ระหว่างแคมเปญ → AI <b>เทียบผล + บอก %เติบโต + แนะนำปรับปรุง</b></li>
+      <li><b>แคมเปญเจาะกลุ่ม 4 แบบ</b> — ลูกค้าหาย / VIP / ซื้อครั้งเดียว / ตามหมวด → AI ร่างข้อความให้</li>
+    </ul>
+  </div>
+
+  <h3>🏆 ฟีเจอร์ที่ "เหนือมาตรฐาน" ร้านทั่วไป</h3>
+  <table>
+    <tr><th>ความสามารถ</th><th>ทำไมเหนือกว่า</th></tr>
+    <tr><td>👔 ผู้จัดการ AI ครบ 4 ด้านในตัวเดียว</td><td>ถามอะไรก็ตอบได้ครบทุกมุม (ขาย/เงิน/สต็อก/การตลาด) เชื่อมโยงข้อมูลข้ามด้านได้ทันที</td></tr>
+    <tr><td>🙋 สลับ AI ↔ คนจริง ได้ทันที</td><td>ลูกค้าขอคุยคน หรือเจ้าของอยากแทรกเอง ทำได้ในคลิกเดียว</td></tr>
+    <tr><td>📈 พยากรณ์สต็อก + ควรเติมเท่าไร</td><td>AI คำนวณจากความเร็วขายจริง → ของจะหมดในกี่วัน + ควรเติมกี่ชิ้น</td></tr>
+    <tr><td>💸 ตรวจจับ Dead Stock (เงินจม)</td><td>ชี้สินค้าค้าง + คิดเงินที่จมเป็นบาท → จัดโปรระบายตรงจุด</td></tr>
+    <tr><td>📊 กำไรแยกรายสินค้า + margin%</td><td>รู้ว่าตัวไหนกำไรจริง ไม่ใช่ดูแค่ยอดขายรวม</td></tr>
+    <tr><td>🎯 แคมเปญเจาะกลุ่มลูกค้า</td><td>แยกกลุ่ม หาย/VIP/ซื้อครั้งเดียว → ยิงตรงกลุ่ม ไม่หว่านรบกวนทุกคน</td></tr>
+    <tr><td>🧠 คลังความรู้ AI (RAG)</td><td>ใส่ข้อมูลสินค้า/นโยบายให้ AI → ตอบลูกค้าแม่นยำ ไม่มั่ว</td></tr>
+    <tr><td>🛡️ กันออเดอร์ซ้ำ + บล็อก IP กวน</td><td>ป้องกันสั่งรัวซ้ำ + บล็อกคนกวนแชทได้</td></tr>
+  </table>
+  <div class="star">💎 จุดขายที่แท้จริง: <b>เจ้าของไม่ต้องเฝ้าร้าน</b> — AI ขายแทน · ตัดสต็อกแทน · เตือนแทน · วิเคราะห์แทน · เสนอแผนแทน · เหลือแค่เจ้าของ "เคาะตัดสินใจ" (ทุกอย่างที่กระทบเงิน AI ขอยืนยันก่อนเสมอ)</div>
+</div>
+
+<!-- 4 เว็บหน้าร้าน -->
+<div class="section">
+  <h2 class="sec">4 · เว็บหน้าร้าน (สำหรับลูกค้า)</h2>
+  <p class="lead">หน้าร้านโทนดำ-ทองหรูหรา — เปิดบนมือถือลื่น · ลูกค้าดูสินค้า ปรึกษาฟูเม่ แล้วซื้อผ่านตะกร้าได้ครบในที่เดียว</p>
+
+  <h3>🏠 หน้าแรก + สินค้า</h3>
+  <ul>
+    <li><b>Hero ภาพน้ำหอมหรูหรา</b> + จุดเด่นสินค้า (กลิ่น · ความติดทน 30–45 วัน · ขวดคริสตัลเจียระไน)</li>
+    <li><b>ราคาสดเสมอ</b> — 1 ขวด 99 · 2 ขวด 169 · 3 ขวดขึ้นไปราคาส่ง · คิดฝั่งเซิร์ฟเวอร์ กันลูกค้าแก้ราคา</li>
+  </ul>
+
+  <h3>💬 ปรึกษากับฟูเม่</h3>
+  <p>ปุ่มแชตมุมจอ — ลูกค้าถามอะไรก็ได้ (กลิ่นไหนหอมสด / ติดทนแค่ไหน / ราคาเท่าไหร่) ฟูเม่ตอบ + พาไปหยิบใส่ตะกร้า</p>
+
+  <h3>🛒 ตะกร้า + ชำระเงิน</h3>
+  <div class="step"><b>1 · หยิบใส่ตะกร้า</b> — เลือกจำนวนขวด (ระบบโชว์แถบราคาขั้น 99/169/ราคาส่ง)</div>
+  <div class="step"><b>2 · กรอกข้อมูล</b> — ชื่อ / เบอร์ / ที่อยู่ (3 ขวดขึ้นไปขอแค่ชื่อ+เบอร์ ทีมติดต่อกลับเรื่องราคาส่ง)</div>
+  <div class="step"><b>3 · เลือกวิธีชำระ</b> — โอนเงิน หรือ เก็บเงินปลายทาง (COD)</div>
+  <div class="step"><b>4 · ยืนยันสั่งซื้อ</b> — ได้รหัสออเดอร์ (FFxxxxx) · ออเดอร์เข้าหลังบ้านให้เจ้าของจัดการ</div>
+  <div class="warn">⚠️ ระบบมี <b>กันออเดอร์ซ้ำ</b> (กดสั่งรัว ๆ จะไม่เกิดออเดอร์ซ้ำภายใน 90 วินาที) และ <b>เช็คสต็อกก่อนรับ</b> (ของไม่พอ = ปฏิเสธ)</div>
+</div>
+
+<!-- 5 เข้าสู่ระบบ -->
+<div class="section">
+  <h2 class="sec">5 · เข้าสู่ระบบหลังบ้าน (Admin)</h2>
+  <p class="lead">เปิดที่ <b>เว็บ/admin.html</b> → เข้าสู่ระบบด้วย <b>ชื่อผู้ใช้ + รหัสผ่าน</b> ที่เจ้าของกำหนด (รองรับ Google login เมื่อตั้งค่า)</p>
+  <h3>🔐 สิทธิ์ผู้ใช้ 3 ระดับ</h3>
+  <table>
+    <tr><th>ระดับ</th><th>ทำอะไรได้</th></tr>
+    <tr><td><span class="badge">Admin</span> ผู้ดูแลสูงสุด</td><td>ทุกอย่าง — รวมจัดการผู้ใช้ ตั้งราคา ลบข้อมูล</td></tr>
+    <tr><td><span class="badge">Staff</span> ทีมงาน</td><td>จัดการออเดอร์/สินค้า/สต็อก/ลูกค้า/ค่าใช้จ่ายได้ · จัดการผู้ใช้ไม่ได้</td></tr>
+    <tr><td><span class="badge">Viewer</span> ดูอย่างเดียว</td><td>ดูข้อมูลได้ แก้ไขไม่ได้ (ปุ่มแก้ไขจะถูกซ่อน)</td></tr>
+  </table>
+  <p>หลังเข้าระบบ จะเห็นเมนูซ้ายแบ่งเป็น <b>3 กลุ่ม (ผู้จัดการ / ฝ่ายขาย / ตั้งค่า)</b> + ปุ่มสลับ <b>โหมดมืด/สว่าง</b> 🌙 มุมซ้ายล่าง และกระดิ่งแจ้งเตือนออเดอร์ใหม่ 🔔 มุมขวาบน</p>
+</div>
+
+<!-- 6 ทุกเมนู -->
+<div class="section">
+  <h2 class="sec">6 · ระบบหลังบ้าน — ทุกเมนู</h2>
+  <p class="lead">เมนูแบ่งตาม AI ที่ดูแล — 👔 ผู้จัดการ (ทำ 4 ตำแหน่ง) · 💬 ฝ่ายขาย · ⚙️ ตั้งค่า</p>
+
+  <div class="grp">👔 กลุ่ม: ผู้จัดการ AI</div>
+  <div class="block">
+    <div class="mtitle">📊 ภาพรวมธุรกิจ (Dashboard)</div>
+    <ul>
+      <li><b>แจ้งเตือนเชิงรุก</b> — ขาดทุน/สต็อกต่ำ/ค้างจ่ายเกินกำหนด/ลูกค้าหาย · <b>ผู้จัดการสรุปให้</b> (กำไร/margin/ลูกค้า)</li>
+      <li><b>KPI</b> รายได้ · ออเดอร์ · ผู้เข้าชม · %ปิดการขาย · เฉลี่ย/บิล · margin% · กำไรสุทธิ</li>
+      <li>กราฟยอดขายรายวัน (สลับเส้น/แท่ง) · กราฟผู้เข้าชม · ช่องทางที่มา · สัดส่วนสถานะ · ออเดอร์ล่าสุด · กลุ่มลูกค้า</li>
+      <li><b>🎯 วิเคราะห์การตลาด</b> — Campaign Advisor + Campaign Analytics อยู่ท้ายหน้านี้ (เห็นภาพรวมแล้วรู้เลยควรยิงอะไร)</li>
+    </ul>
+  </div>
+  <div class="block">
+    <div class="mtitle">📈 การเงิน</div>
+    <ul>
+      <li>เลือกช่วงเวลา · รายได้/กำไรขั้นต้น/กำไรสุทธิ/margin% · กราฟรายได้รายวัน · แยกตามวิธีชำระ</li>
+      <li><b>กำไรรายสินค้า</b> (เรียงตัวคุ้ม→บาง) · <b>ค่าใช้จ่ายแยกหมวด</b> · <b>ลูกหนี้/ค้างจ่าย (AR aging)</b> แยกตามอายุ</li>
+    </ul>
+  </div>
+  <div class="block">
+    <div class="mtitle">📣 การตลาด</div>
+    <ul>
+      <li>สร้างคอนเทนต์ AI (โพสต์/แคปชั่น/โปร/ตอบรีวิว) · <b>แคมเปญเจาะกลุ่ม 4 แบบ</b> (ร่างข้อความให้)</li>
+      <li>กลุ่มลูกค้า (ซื้อซ้ำ/หาย/AOV) · ฟีเจอร์เสริม <span class="soon">พร้อมเปิดภายหลัง</span>: สร้างรูปโปร/รูปสินค้า · ทำคลิป AI · Broadcast LINE/FB · แคปชั่นจากรูป</li>
+    </ul>
+  </div>
+  <div class="block">
+    <div class="mtitle">🧴 คลังสินค้า</div>
+    <ul>
+      <li>แก้ราคา/ต้นทุน/สต็อก · <b>ผู้จัดการวิเคราะห์คลัง</b> (ความเร็วขาย · ของจะหมดกี่วัน · ควรเติมกี่ชิ้น · Dead Stock)</li>
+      <li><b>ประวัติสต็อก</b> (audit log) — ตัด/คืน/ปรับมือ ทุกรายการ</li>
+    </ul>
+  </div>
+  <div class="block">
+    <div class="mtitle">📚 คลังความรู้ (Knowledge Base)</div>
+    <ul>
+      <li>ข้อมูลที่ <b>ฟูเม่และผู้จัดการใช้ตอบ</b> — เพิ่มได้ 2 แบบ: <b>①</b> ใส่ URL เว็บ + กด sync (ดึงเว็บ+สินค้าเข้าถัง) · <b>②</b> วางข้อมูลเอง (มีชื่อหัวข้อ + หมวด)</li>
+      <li>มีหมวด <b>"เฉพาะผู้จัดการ"</b> (การตลาด/คู่แข่ง/ข่าว) — ผู้จัดการเห็น แต่ฟูเม่ไม่เอาไปบอกลูกค้า</li>
+    </ul>
+    <div class="tip">💡 ยิ่งใส่ความรู้เยอะ ฟูเม่/ผู้จัดการยิ่งตอบแม่น — เป็น "สมอง" ของ AI</div>
+  </div>
+  <div class="block">
+    <div class="mtitle">🤖 คุยกับผู้จัดการ</div>
+    <ul><li>ห้องแชทสั่งงานผู้จัดการ AI — ถามยอด/กำไร/สต็อก หรือสั่งทำ (ตั้งราคา/สต็อก/เพิ่มสินค้า ฯลฯ · ยืนยันก่อน) ดูตัวอย่างคำสั่งในหัวข้อ 2</li></ul>
+  </div>
+  <div class="block">
+    <div class="mtitle">📲 รายงาน LINE <span class="soon">พร้อมเชื่อม</span></div>
+    <ul><li>ตั้งให้ผู้จัดการ <b>ส่งสรุปเข้า LINE เจ้าของอัตโนมัติ</b> (ยอดขาย/กำไร/ของใกล้หมด/ค้างจ่าย) รายวัน/รายสัปดาห์ — เด้งเข้ามือถือไม่ต้องเปิด admin · เปิดใช้หลังเชื่อม LINE OA</li></ul>
+  </div>
+
+  <div class="grp">💬 กลุ่ม: ฝ่ายขาย · ฟูเม่</div>
+  <div class="block">
+    <div class="mtitle">📦 ออเดอร์</div>
+    <ul>
+      <li>รายการสั่งซื้อทั้งหมด + สถานะ (ใหม่/ยืนยันแล้ว/จัดส่งแล้ว/เสร็จสิ้น/ยกเลิก) · กรองตามสถานะ/ช่วงเวลา</li>
+      <li>มาร์ค <b>"ยืนยันแล้ว"</b> → ตัดสต็อกอัตโนมัติ · <b>"ยกเลิก"</b> → คืนสต็อก · ปุ่ม <b>⬇️ CSV</b> ส่งออกเปิดใน Excel</li>
+    </ul>
+  </div>
+  <div class="block">
+    <div class="mtitle">🗨️ แชทลูกค้า <span class="badge">+ Human Takeover</span></div>
+    <ul>
+      <li>ประวัติแชทฟูเม่ทุกช่องทาง + <b>ช่องค้นหาข้อความ</b> · <b>ผู้จัดการวิเคราะห์แชต</b> (คัดคนใกล้ปิดการขาย + next step)</li>
+      <li>🙋 <b>แอดมินคุยเอง (หยุด AI)</b> — หยุดฟูเม่เฉพาะลูกค้าคนนั้น คุยเอง · <b>🛡️ บล็อก IP</b> คนกวน · แจ้งเตือน "ขอคุยคนจริง"</li>
+    </ul>
+  </div>
+  <div class="block">
+    <div class="mtitle">👤 ลูกค้า</div>
+    <ul><li>สรุปลูกค้าจากออเดอร์จริง (ยอดซื้อ/ซื้อซ้ำ/ล่าสุด) · <b>📇 Leads จากแชท</b> (คนที่ทิ้งเบอร์ไว้แต่ยังไม่ซื้อ)</li></ul>
+  </div>
+
+  <div class="grp">⚙️ กลุ่ม: ตั้งค่า</div>
+  <div class="block">
+    <div class="mtitle">⚡ พลัง AI · 👥 ผู้ใช้ & สิทธิ์ · 📖 คู่มือการใช้งาน</div>
+    <ul>
+      <li><b>พลัง AI</b> — ระบบเครดิตการใช้งาน AI (ดูหัวข้อ 7)</li>
+      <li><b>ผู้ใช้ & สิทธิ์</b> — เพิ่ม/ลบทีมงาน + กำหนดสิทธิ์ 3 ระดับ · ดูบัญชี/วิธีเข้าสู่ระบบปัจจุบัน</li>
+      <li><b>คู่มือการใช้งาน</b> — เปิดคู่มือฉบับนี้</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 7 พลัง AI -->
+<div class="section">
+  <h2 class="sec">7 · พลัง AI (ระบบเครดิตการใช้งาน)</h2>
+  <p class="lead">ทุกครั้งที่ AI ทำงาน (ตอบลูกค้า/วิเคราะห์) จะใช้ "พลัง" — Fumé Doré แยกเป็น <b>2 ถัง</b> ตาม AI 2 ตัว เพื่อคุมงบและดูว่าฝ่ายไหนใช้เท่าไหร่</p>
+  <table>
+    <tr><th>ถัง</th><th>ของใคร</th><th>ใช้ตอน</th></tr>
+    <tr><td>💬 ฝ่ายขาย</td><td>ฟูเม่</td><td>ตอบลูกค้าบนเว็บ/LINE/FB</td></tr>
+    <tr><td>👔 ผู้จัดการ</td><td>ผู้จัดการ AI</td><td>วิเคราะห์ · คุยหลังบ้าน · สร้างคอนเทนต์ · Campaign Advisor/Analytics</td></tr>
+  </table>
+  <ul>
+    <li>แต่ละถังมี <b>ความจุ / ใช้ไป / คงเหลือ</b> แสดงเป็น % + แถบสี (เขียว/เหลือง/แดง)</li>
+    <li>ถังหมด → ฝ่ายนั้นพักชั่วคราว (ไม่กระทบอีกฝ่าย) · <b>เติมได้</b> (เฉพาะ Admin) · มีประวัติการเติม</li>
+    <li>ดูการใช้งานจริงย้อนหลัง 14 วัน + ค่าใช้จ่ายโดยประมาณ</li>
+  </ul>
+  <div class="tip">💡 แยกถังทำให้เห็นชัดว่าค่า AI ไปกับ "การขาย" หรือ "การบริหาร" — วางแผนงบง่ายขึ้น</div>
+</div>
+
+<!-- 8 เคล็ดลับ + FAQ -->
+<div class="section">
+  <h2 class="sec">8 · เคล็ดลับ · คำถามที่พบบ่อย</h2>
+  <h3>💡 เคล็ดลับใช้งานให้คุ้ม</h3>
+  <ul>
+    <li><b>ใส่ต้นทุนสินค้าก่อน</b> — ผู้จัดการถึงจะคำนวณกำไร/margin ได้ (พิมพ์ "ตั้งทุน ... = ...")</li>
+    <li><b>ใส่ข้อมูลในคลังความรู้เยอะ ๆ</b> — ฟูเม่ยิ่งตอบลูกค้าแม่น (นโยบายคืนสินค้า/วิธีใช้/โปร/FAQ)</li>
+    <li><b>เปิดภาพรวมธุรกิจทุกเช้า</b> — ดูแจ้งเตือนเชิงรุก + กด Campaign Advisor ให้ผู้จัดการแนะแคมเปญ</li>
+    <li><b>มาร์คสถานะออเดอร์ให้ตรง</b> — "ยืนยันแล้ว" เมื่อได้เงิน (ตัดสต็อกอัตโนมัติ) · "ยกเลิก" คืนสต็อก</li>
+  </ul>
+  <h3>❓ คำถามที่พบบ่อย</h3>
+  <table>
+    <tr><th>คำถาม</th><th>คำตอบ</th></tr>
+    <tr><td>ทำไมมี AI แค่ 2 ตัว?</td><td>ร้านเริ่มต้นสินค้าไม่กี่รายการ — ผู้จัดการ AI ตัวเดียวดูแล 4 ด้านครบ (การตลาด/คลัง/การเงิน/จัดการ) คุ้มค่าและตอบเร็วกว่าแยกหลายตัว · เมื่อร้านโตขึ้นค่อยขยายได้</td></tr>
+    <tr><td>เปลี่ยนราคาแล้วฟูเม่รู้ไหม?</td><td>ราคาเว็บตอนนี้เป็นราคาขั้น (99/169/ราคาส่ง) คงที่ · การตั้งราคาในตารางสินค้าใช้กับการวิเคราะห์กำไร (เมื่อขยายเป็นหลายสินค้าจะดึงราคาจากตารางเต็มรูปแบบ)</td></tr>
+    <tr><td>ลูกค้าอยากคุยกับคนจริง?</td><td>ลูกค้าพิมพ์ "ขอคุยกับคน" → เจ้าของกด "หยุด AI คุยเอง" แล้วคุยแทน (คืน AI อัตโนมัติ 2 ชม.)</td></tr>
+    <tr><td>AI ตอบไม่ได้/เงียบ?</td><td>เช็ค "พลัง AI" ว่าถังหมดไหม (เติมได้) — ถังคนละใบ ฝ่ายขายหมดไม่กระทบผู้จัดการ</td></tr>
+  </table>
+  <h3>🚀 สิ่งที่ต่อยอดได้ (เปิดเมื่อพร้อม)</h3>
+  <ul>
+    <li><b>เชื่อม LINE / Facebook</b> — ฟูเม่ตอบลูกค้าผ่าน LINE/FB + รายงานสรุปเข้า LINE เจ้าของ (ระบบรองรับแล้ว รอใส่บัญชี)</li>
+    <li><b>ตรวจสลิปอัตโนมัติ (SlipOK)</b> · <b>สร้างรูปโปร/คลิป AI</b> · <b>Broadcast โปรถึงลูกค้าทุกคน</b></li>
+  </ul>
+  <div class="foot">Fumé Doré · คู่มือการใช้งานระบบ — ระบบ 2 AI · 5 ตำแหน่งงาน · โดย NEO-S (neos-css.com) · ฉบับ ก.ค. 2569</div>
+</div>
+
+</div>
+</body>
+</html>
