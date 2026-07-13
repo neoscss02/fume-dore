@@ -483,6 +483,12 @@
     .hero-stats{gap:26px}.foot-grid{grid-template-columns:1fr}.nav{padding:18px 24px}
     .brand b{font-size:.9rem;letter-spacing:.2em}
   }
+  /* demo notice bar (fixed bottom + shine sweep) */
+  .demo-bar{position:fixed;left:0;right:0;bottom:0;z-index:88;display:flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(90deg,#1b1714,#2e2620 50%,#1b1714);color:#EADFCD;font-size:12.5px;letter-spacing:.4px;text-align:center;padding:10px 18px;overflow:hidden;box-shadow:0 -6px 24px -10px rgba(0,0,0,.45);border-top:1px solid rgba(212,175,55,.2)}
+  .demo-bar b{color:var(--gold-bright);font-weight:600;letter-spacing:2px}
+  .demo-txt{background:linear-gradient(100deg,#d6c8b0 0%,#d6c8b0 44%,#fff6e6 50%,#d6c8b0 56%,#d6c8b0 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:textShine 6.5s linear infinite}
+  @keyframes textShine{0%{background-position:115% 0}100%{background-position:-115% 0}}
+  @media(max-width:860px){.demo-bar{font-size:11px;padding:8px 12px;line-height:1.4}}
 </style>
 </head>
 <body>
@@ -829,6 +835,7 @@
   const I18N = {
     /* ---------- ภาษาไทย ---------- */
     th:{
+      "demo.txt":"· เว็บสาธิตระบบ — การสั่งซื้อทั้งหมดเป็นการทดสอบ ไม่มีการจัดส่งสินค้าหรือเรียกเก็บเงินจริง",
       "nav.features":"จุดเด่น","nav.benefits":"คุณประโยชน์","nav.fragrance":"กลิ่นหอม","nav.reviews":"รีวิว","nav.order":"สั่งซื้อ",
       "hero.tag1":"หอมสดชื่น...ทุกการเดินทาง","hero.tag2":"เติมความหอม สะท้อนตัวตนที่มีสไตล์","hero.i1":"หอมติดทนนาน","hero.i2":"กลิ่นพรีเมียม<br>คุณภาพสูง","hero.i3":"ดีไซน์หรูหรา<br>ไม่เหมือนใคร","hero.cta":"สั่งซื้อเลย",
       "fb1.t":"หอมยาวนาน","fb1.d":"นานสูงสุด 30-45 วัน","fb2.t":"ออกแบบสำหรับรถยนต์","fb2.d":"โดยเฉพาะ","fb3.t":"กลิ่นผลไม้หอมสดชื่น","fb3.d":"ไม่ฉุน","fb4.t":"แพ็คเกจหรู","fb4.d":"เหมาะสำหรับเป็นของขวัญ",
@@ -890,6 +897,7 @@
     },
     /* ---------- English ---------- */
     en:{
+      "demo.txt":"· Demonstration site — all orders are for testing only, with no real shipping or charges.",
       "nav.features":"Features","nav.benefits":"Benefits","nav.fragrance":"The Fragrance","nav.reviews":"Reviews","nav.order":"Order Now",
       "hero.tag1":"Freshness in Every Journey","hero.tag2":"Add fragrance, express your style","hero.i1":"Long Lasting","hero.i2":"Premium<br>Quality","hero.i3":"Unique<br>Luxury Design","hero.cta":"Order Now",
       "fb1.t":"Long Lasting","fb1.d":"Up to 30–45 days","fb2.t":"Made for Cars","fb2.d":"Specifically designed","fb3.t":"Fresh Fruity Scent","fb3.d":"Never harsh","fb4.t":"Luxury Packaging","fb4.d":"Perfect for gifting",
@@ -1201,5 +1209,10 @@
   }catch(e){}
 })();
 </script>
+
+<!-- ===== DEMO NOTICE BAR ===== -->
+<div class="demo-bar">
+  <b>DEMO</b> <span class="demo-txt" data-i18n="demo.txt">· เว็บสาธิตระบบ — การสั่งซื้อทั้งหมดเป็นการทดสอบ ไม่มีการจัดส่งสินค้าหรือเรียกเก็บเงินจริง</span>
+</div>
 </body>
 </html>
